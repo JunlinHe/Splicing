@@ -71,6 +71,10 @@
         top:                            null
     },
     useBoundingClientRect:          false
+
+    //添加拖拽缩放控件
+    //@Author hjl
+    ,dragIcon:                       '.dragIcon'
   };
 
   //  ---------------------------------
@@ -119,6 +123,8 @@
     this.disabled       = false;
     this.activeDropRegions = [];
     this.resetVelocityQueue();
+      this.dragIconMove = false;
+      this.dragPosix = {};
 
     this.init();
     return this;
@@ -167,6 +173,27 @@
       this.onStartEventOnElementsWithInteraction
     );
 
+      // 当拖拽按钮被触发时，设置缩放标识，不移动元素，只控制其缩放
+      this.onDragIcon = function(e){
+          self.dragIconMove = true;
+          self.dragPosix = {
+              'w': self.$el.width(),
+              'h': self.$el.height(),
+              'x': e.pageX,
+              'y': e.pageY
+          };
+      };
+      this.$el.on(
+          this.startTrigger,
+          this.options.dragIcon,
+          this.onDragIcon
+      );
+      this.onStopDragIcon = function(){ self.dragIconMove = false; self.dragPosix = {}; };
+      this.$el.on(
+          this.stopTrigger,
+          this.options.dragIcon,
+          this.onStopDragIcon
+      );
     // Subscribe to our stop event
     this.onStopEvents = function(ev) { self.handleStop(ev); };
     this.$document.on(this.stopEvents, this.onStopEvents);
@@ -183,6 +210,16 @@
       this.options.elementsWithInteraction,
       this.onStartEventOnElementsWithInteraction
     );
+      this.$el.off(
+          this.startTrigger,
+          this.options.dragIcon,
+          this.onDragIcon
+      );
+      this.$el.off(
+          this.stopTrigger,
+          this.options.dragIcon,
+          this.onStopDragIcon
+      );
     this.$document.off(this.stopEvents, this.onStopEvents);
     this.$document.off(this.moveTrigger, this.onMoveEvents);
   };
@@ -324,21 +361,48 @@
               this.options.start.call(this, this.startEvent, this);
             }
 
-            // Move before calculate position and fire events
-            this.doMoveTo(dx, dy);
+                // 当拖拽按钮被触发时，不移动元素，只控制其缩放
+                if(this.dragIconMove === true){
 
-            // Calculate our drop regions
-            if ( this.options.droppable ) {
-              this.calculateActiveDropRegions();
-            }
+                    console.log(this.options.constrainTo)
+                    var upperXLimit, lowerXLimit, upperYLimit, lowerYLimit;
+                    if ( this.options.constrainTo[3] !== undefined && this.options.constrainTo[1] !== undefined ) {
+                        upperXLimit = this.options.constrainTo[1] === false ?  Infinity : this.options.constrainTo[1];
+                        lowerXLimit = this.options.constrainTo[3] === false ? -Infinity : this.options.constrainTo[3];
+                    }
+                    if ( this.options.constrainTo[0] !== false && this.options.constrainTo[2] !== false ) {
+                        upperYLimit = this.options.constrainTo[2] === false ?  Infinity : this.options.constrainTo[2];
+                        lowerYLimit = this.options.constrainTo[0] === false ? -Infinity : this.options.constrainTo[0];
+                    }
 
-            // fire user's drag event.
-            var continueDrag = this.options.drag.call(this, ev, this);
+                    console.log(curX +'...'+ upperXLimit)
+                    console.log(curY +'...'+ upperYLimit)
+                    if(curX >= upperXLimit) curX = upperXLimit;
+                    if(curY >= upperYLimit) curY = upperYLimit;
 
-            if ( continueDrag === false ) {
-              this.resetVelocityQueue();
-              return;
-            }
+                    var $pep = this.$el;
+                    $pep.css({
+                        'width': Math.max(30, curX - this.dragPosix.x + this.dragPosix.w),
+                        'height': Math.max(30, curY - this.dragPosix.y + this.dragPosix.h)
+                    });
+                }else{
+                    // Move before calculate position and fire events
+                    this.doMoveTo(dx, dy);
+
+                    // Calculate our drop regions
+                    if ( this.options.droppable ) {
+                        this.calculateActiveDropRegions();
+                    }
+
+                    // fire user's drag event.
+                    var continueDrag = this.options.drag.call(this, ev, this);
+
+                    if ( continueDrag === false ) {
+                        this.resetVelocityQueue();
+                        return;
+                    }
+                }
+
 
             // log the move trigger & event position
             this.log({ type: 'event', event: ev.type });
@@ -448,6 +512,9 @@
             // reset the velocity queue
             this.resetVelocityQueue();
 
+            // 移动停止，重置拖拽缩放标识
+            this.dragIconMove = false;
+            this.dragPosix = {};
   };
 
   //  ease();
