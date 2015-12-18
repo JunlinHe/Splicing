@@ -74,7 +74,10 @@
 
     //添加拖拽缩放控件
     //@Author hjl
-    ,dragIcon:                       '.dragIcon'
+    ,dragIcon:                      '.dragIcon'
+    ,minSize:                       {'w':100,'h':100}
+    ,maxSize:                       null
+    ,liveBind:                      false //是否动态绑定元素，true会影响运行性能
   };
 
   //  ---------------------------------
@@ -123,6 +126,8 @@
     this.disabled       = false;
     this.activeDropRegions = [];
     this.resetVelocityQueue();
+
+      // 声明全局变量控制拖拽按钮
       this.dragIconMove = false;
       this.dragPosix = {};
 
@@ -159,11 +164,10 @@
   //      e.g.:     $('#pep').trigger('stop')
   Pep.prototype.subscribe = function () {
     var self = this;
-
+console.log(this.el)
     // Subscribe to our start event
     this.onStartEvent = function(ev){ self.handleStart(ev); };
     this.$el.on(this.startTrigger, this.onStartEvent);
-
     // Add a flag to events that start on elements that should allow interaction
     // so handleStart() can ignore them but allow them to bubble up through the DOM
     this.onStartEventOnElementsWithInteraction = function(ev){ ev.ignorePropagation = true; };
@@ -175,12 +179,13 @@
 
       // 当拖拽按钮被触发时，设置缩放标识，不移动元素，只控制其缩放
       this.onDragIcon = function(e){
+          e = self.normalizeEvent(e);
           self.dragIconMove = true;
           self.dragPosix = {
               'w': self.$el.width(),
               'h': self.$el.height(),
-              'x': e.pageX,
-              'y': e.pageY
+              'x': e.pep.x,
+              'y': e.pep.y
           };
       };
       this.$el.on(
@@ -210,6 +215,7 @@
       this.options.elementsWithInteraction,
       this.onStartEventOnElementsWithInteraction
     );
+      // 移除绑定拖拽按钮事件
       this.$el.off(
           this.startTrigger,
           this.options.dragIcon,
@@ -364,26 +370,13 @@
                 // 当拖拽按钮被触发时，不移动元素，只控制其缩放
                 if(this.dragIconMove === true){
 
-                    console.log(this.options.constrainTo)
-                    var upperXLimit, lowerXLimit, upperYLimit, lowerYLimit;
-                    if ( this.options.constrainTo[3] !== undefined && this.options.constrainTo[1] !== undefined ) {
-                        upperXLimit = this.options.constrainTo[1] === false ?  Infinity : this.options.constrainTo[1];
-                        lowerXLimit = this.options.constrainTo[3] === false ? -Infinity : this.options.constrainTo[3];
-                    }
-                    if ( this.options.constrainTo[0] !== false && this.options.constrainTo[2] !== false ) {
-                        upperYLimit = this.options.constrainTo[2] === false ?  Infinity : this.options.constrainTo[2];
-                        lowerYLimit = this.options.constrainTo[0] === false ? -Infinity : this.options.constrainTo[0];
-                    }
-
-                    console.log(curX +'...'+ upperXLimit)
-                    console.log(curY +'...'+ upperYLimit)
-                    if(curX >= upperXLimit) curX = upperXLimit;
-                    if(curY >= upperYLimit) curY = upperYLimit;
+                    // 获得鼠标移动阀值内的移动数值
+                    var hash = this.handleDragIconMove(curX, curY);
 
                     var $pep = this.$el;
                     $pep.css({
-                        'width': Math.max(30, curX - this.dragPosix.x + this.dragPosix.w),
-                        'height': Math.max(30, curY - this.dragPosix.y + this.dragPosix.h)
+                        'width': Math.max(this.options.minSize.w, hash.curX - this.dragPosix.x + this.dragPosix.w),
+                        'height': Math.max(this.options.minSize.h, hash.curY - this.dragPosix.y + this.dragPosix.h)
                     });
                 }else{
                     // Move before calculate position and fire events
@@ -410,6 +403,50 @@
             this.log({ type: 'velocity' });
   };
 
+    /**
+     * 计算滑块缩放控件的活动范围
+     * @param curX
+     * @param curY
+     * @returns {{curX: boolean, curY: boolean}}
+     */
+    Pep.prototype.handleDragIconMove = function(curX, curY) {
+        var hash = { curX: false, curY: false };
+        var pTop, pLeft, pHeight, pWidth;
+
+        if ( $.isArray( this.options.constrainTo ) ) {
+
+            var $parent = this.activeDropRegions[0];
+            pTop = $parent.position().top;
+            pLeft = $parent.position().left;
+            pHeight = $parent.outerHeight();
+            pWidth = $parent.outerWidth();
+
+        } else if ( typeof this.options.constrainTo === 'string' ) {
+            var constrainTo = this.options.constrainTo;
+
+            pTop = 0;
+            pLeft = 0;
+            if(constrainTo ==='window'){
+                pHeight = $(window).height();
+                pWidth = $(window).width();
+            }else{
+                pHeight = this.$container.height();
+                pWidth = this.$container.width();
+            }
+
+        }
+
+        if(this.options.maxSize !== null){
+            if(curX >= pLeft+this.options.maxSize.w) curX = pLeft+this.options.maxSize.w;
+            if(curY >= pTop+this.options.maxSize.h) curY = pTop+this.options.maxSize.h;
+        }else{
+            if(curX >= pLeft+pWidth) curX = pLeft+pWidth;
+            if(curY >= pTop+pHeight) curY = pTop+pHeight;
+        }
+        hash.curX = curX;
+        hash.curY = curY;
+        return hash;
+    }
   Pep.prototype.doMoveTo = function(dx, dy) {
             var hash = this.handleConstraint(dx, dy);
             var xOp, yOp;

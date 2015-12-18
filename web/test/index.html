@@ -7,7 +7,7 @@
 
 
     <style type="text/css">
-        .tag-list {
+        #tag-list {
             height: 200px;
         }
 
@@ -120,40 +120,23 @@
     </style>
 </head>
 <body>
-<div class="tag-list">
+<div id="tag-list">
     <!--<div class="grid"></div>-->
-    <div class="window-btn placeholder">添加窗口</div>
-
-    <div id="test-window" class="pep window">
-        <!--<div class="window-btn pep">-->
-            <!--<div class="name">添加窗口</div>-->
-        <!--</div>-->
-        <div class="title">
-            按住标题拖动,点X关闭
-            <div class="button close">x</div>
-            <div class="button minus">-</div>
-        </div>
-        <div class="content">
-
-        </div>
-        <div class="coor"></div>
+    <div class="window-btn placeholder">拖拽我添加窗口</div>
+    <div class="window-btn drag">
+        拖拽我添加窗口
+        <div class="content"></div>
     </div>
 
-    <!--<div class="pep window">-->
+    <!--<div id="test-window" class="pep window">-->
+        <!-- -->
         <!--<div class="title">-->
             <!--按住标题拖动,点X关闭-->
             <!--<div class="button close">x</div>-->
             <!--<div class="button minus">-</div>-->
         <!--</div>-->
         <!--<div class="content"></div>-->
-    <!--</div>-->
-    <!--<div class="pep window">-->
-        <!--<div class="title">-->
-            <!--按住标题拖动,点X关闭-->
-            <!--<div class="button close">x</div>-->
-            <!--<div class="button minus">-</div>-->
-        <!--</div>-->
-        <!--<div class="content"></div>-->
+        <!--<div class="coor"></div>-->
     <!--</div>-->
 
     <button class="fullscreen" id="view-fullscreen">全屏</button>
@@ -169,62 +152,30 @@
 </div>
 <script src="jquery.js" type="text/javascript"></script>
 <script src="modernizr.min.js" type="text/javascript"></script>
+<script src="hammer.js" type="text/javascript"></script>
+<script src="jquery.hammer.js" type="text/javascript"></script>
 <script src="jquery.mousewheel.js" type="text/javascript"></script>
 <script src="jquery.pep.js" type="text/javascript"></script>
 <script src="fullscreen.js" type="text/javascript"></script>
-<!--<script src="drag.js" type="text/javascript"></script>-->
+<script src="app.js" type="text/javascript"></script>
+
 <script type="text/javascript">
     $(function () {
         try{
+//            var $pep = $('.pep');
+//            handleWindowCtrl($pep);
 
-            $('.window-btn.placeholder').off('click').on('click',function(){
-                $('.tag-list').append('<div class="pep window">'+
-                '<div class="title">'+
-                ' 按住标题拖动,点X关闭'+
-                '<div class="button close">x</div>'+
-                '<div class="button minus">-</div>'+
-                '</div>'+
-                '<div class="content"></div>'+
-                '</div>');
-            });
-
-
-            var $pep = $('.pep');
-            $pep.pep({
-                debug: true,
-                droppable: '.droppable',
-                dragIcon: '.window .coor',//添加的拖拽缩放功能
-                constrainTo: 'window',
-                elementsWithInteraction: '.window .title,.window .close',//指定某部分不会触发拖动
-                revert: true,
-                revertAfter: 'ease',
-                revertIf: function () {
-                    return !this.activeDropRegions.length;
-                },
-                overlapFunction: false,
-                useCSSTranslation: false,
-                initiate: function(ev,obj){
-
-                    var el = obj.$el;
-                    el.find('.button.close').off('click').on('click',function(){
-                        el.find('.content').html('');
-                        obj.revert();
-                        obj.options.constrainTo = 'window';
-                    });
-                },
-                start: function (ev, obj) {
-                    obj.noCenter = false;
-                },
-                drag: function (ev, obj) {
-                    //var vel = obj.velocity();
-                    //var rot = (vel.x) / 5;
-                    //rotate(obj.$el, rot);
-                },
-                stop: function (ev, obj) {
-                    //rotate(obj.$el, 0);
-                },
-                rest: handleCentering
-            });
+            var $drag = $('#tag-list .drag');
+            var windowCtrl = '<div class="pep window">'+
+                    '<div class="title">'+
+                    ' 按住标题拖动,点X关闭'+
+                    '<div class="button close">x</div>'+
+                    '<div class="button minus">-</div>'+
+                    '</div>'+
+                    '<div class="content"></div>'+
+                    '<div class="coor"></div>'+
+                    '</div>';
+            handleDragBtn($drag,1, windowCtrl);
 
             //mousewheelScale($('.panel'));
 
@@ -234,308 +185,6 @@
 
     });
 
-    /**
-     * 显示日志
-     * @param msg
-     */
-    function log(msg){
-        if(typeof msg == 'undefined'){
-            msg = 'undefined';
-        }else{
-            msg = msg.toString();
-        }
-        $('.display .content').prepend('<hr>').prepend(msg);
-    }
-
-    /**
-     * 滑块滑动动画结束后回调
-     * @param ev
-     * @param obj
-     */
-    function handleCentering(ev, obj) {
-        try{
-            log(obj.activeDropRegions.length);
-
-            if (obj.activeDropRegions.length > 0) {
-                //centerWithin(obj);
-                var pis = insideWithin(obj);
-                log(pis);
-                var info = 'x:'+pis[0]+'px <br>'+
-                        'y:'+pis[1]+'px <br>'+
-                        'height:'+pis[2]+'px <br>'+
-                        'width:'+pis[3]+'px <br>';
-                obj.$el.find('.content').html(info);
-
-                //发送位置信息
-                //callServer(pis);
-            }
-        }catch(e){
-            log(e.name+':'+e.message);
-        }
-
-    }
-
-    /**
-     * 将滑块置于编辑区中间
-     * @param obj
-     */
-    function centerWithin(obj) {
-        try{
-            var $parent = obj.activeDropRegions[0];
-            var pTop = $parent.position().top;
-            var pLeft = $parent.position().left;
-            var pHeight = $parent.outerHeight();
-            var pWidth = $parent.outerWidth();
-
-            var oTop = obj.$el.position().top;
-            var oLeft = obj.$el.position().left;
-            var oHeight = obj.$el.outerHeight();
-            var oWidth = obj.$el.outerWidth();
-
-            var cTop = pTop + (pHeight / 2);
-            var cLeft = pLeft + (pWidth / 2);
-
-            if (!obj.noCenter) {
-                if (!obj.shouldUseCSSTranslation()) {
-                    var moveTop = cTop - (oHeight / 2);
-                    var moveLeft = cLeft - (oWidth / 2);
-                    obj.$el.animate({top: moveTop, left: moveLeft}, 50);
-                } else {
-                    var moveTop = (cTop - oTop) - oHeight / 2;
-                    var moveLeft = (cLeft - oLeft) - oWidth / 2;
-                    obj.moveToUsingTransforms(moveTop, moveLeft);
-                }
-
-                obj.noCenter = true;
-
-                //将移动块约束在编辑区内 [top, right, bottom, left]
-                obj.$el.data('plugin_pep').options.constrainTo = [pTop,pLeft+pWidth-oWidth,pTop+pHeight-oHeight,pLeft];
-                return;
-            }
-
-            obj.noCenter = false;
-        }catch(e){
-            log(e.name+':'+e.message);
-        }
-
-    }
-
-    /**
-     * 将滑块置于编辑区内
-     * @param obj
-     */
-    function insideWithin(obj) {
-        try{
-            var $parent = obj.activeDropRegions[0];
-
-            var pTop = $parent.position().top;
-            var pLeft = $parent.position().left;
-            var pHeight = $parent.height();
-            var pWidth = $parent.width();
-
-            var oTop = obj.$el.position().top;
-            var oLeft = obj.$el.position().left;
-            var oHeight = obj.$el.outerHeight();
-            var oWidth = obj.$el.outerWidth();
-
-            var moveTop = oTop,moveLeft = oLeft;
-
-            if (!obj.shouldUseCSSTranslation()) {
-
-                if(pTop > oTop){
-                    moveTop = pTop;
-                }else if(pTop+pHeight-oHeight < oTop){
-                    moveTop = pTop + pHeight - oHeight;
-                }
-                if(pLeft > oLeft){
-                    moveLeft = pLeft;
-                }else if(pLeft+pWidth-oWidth < oLeft){
-                    moveLeft = pLeft + pWidth - oWidth;
-                }
-                obj.$el.animate({top: moveTop, left: moveLeft}, 0);
-            } else {
-
-                if(pTop > oTop){
-                    moveTop = pTop;
-                }else if(pTop+pHeight-oHeight < oTop){
-                    moveTop = pTop + pHeight - oHeight/2;
-                }
-                if(pLeft > oLeft){
-                    moveLeft = pLeft;
-                }else if(pLeft+pWidth-oWidth < oLeft){
-                    moveLeft = pLeft + pWidth - oWidth/2;
-                }
-                obj.moveToUsingTransforms(moveTop, moveLeft);
-            }
-
-            //将移动块约束在编辑区内 [top, right, bottom, left]
-            obj.$el.data('plugin_pep').options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
-
-            //计算滑块相对编辑区的位置
-            var fTop,fRight,fBottom,fLeft;
-            fTop = moveTop - pTop;
-            fLeft = moveLeft - pLeft;
-            fRight = pWidth - fLeft - oWidth;
-            fBottom = pHeight - fTop - oHeight;
-            //var pis = [fTop.toFixed(2), fRight.toFixed(2), fBottom.toFixed(2), fLeft.toFixed(2)];
-            var pis = [fTop.toFixed(2), fLeft.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];
-            return pis;
-        }catch(e){
-            log(e.name+':'+e.message);
-        }
-
-    }
-
-    /**
-     * 在滑块被拖动时晃动
-     * @param $obj
-     * @param deg
-     */
-    function rotate($obj, deg) {
-        try{
-            $obj.css({
-                "-webkit-transform": "rotate(" + deg + "deg)",
-                "-moz-transform": "rotate(" + deg + "deg)",
-                "-ms-transform": "rotate(" + deg + "deg)",
-                "-o-transform": "rotate(" + deg + "deg)",
-                "transform": "rotate(" + deg + "deg)"
-            });
-        }catch(e){
-            log(e.name+':'+e.message);
-        }
-
-    }
-
-    /**
-     * 滑动鼠标放大缩小滑块
-     * @param obj
-     */
-    function mousewheelScale(obj) {
-        try{
-            var i = 1;
-            obj.on("mousewheel", function (event, delta) {
-
-                i += delta * 0.1;
-                scale = Math.abs(i);
-
-                obj.css({
-                    '-webkit-transform': 'scale(' + scale + ')',
-                    '-moz-transform': 'scale(' + scale + ')',
-                    '-ms-transform': 'scale(' + scale + ')',
-                    '-o-transform': 'scale(' + scale + ')',
-                    'transform': 'scale(' + scale + ')'
-                })
-
-                //obj.data('plugin_pep').setScale(scale);
-                return false;
-            });
-        }catch(e){
-            log(e.name+':'+e.message);
-        }
-
-
-    }
-
-    /**
-     * 向显示器发送控件位置
-     * @param param
-     */
-    function callServer(param){
-        try{
-            var x = param[0];
-            var y = param[1];
-            var height = param[2];
-            var width = param[3];
-            $.ajax({
-                url:'http://192.168.1.126:8088/p',
-                data:'x='+x+'&y='+y+'&height='+height+'&width='+width,
-                type:'get',
-                contentType:'text/html;charset=UTF-8',
-                success:function(data){
-                    log(data);
-                },
-                error:function(XMLHttpRequest, textStatus, errorThrown){
-                    log(XMLHttpRequest.status);
-                    log(XMLHttpRequest.readyState);
-                    log(textStatus);
-                }
-            });
-        }catch(e){
-            console.log(e.name+':'+e.message);
-            log(e.name+':'+e.message);
-        }
-
-    }
-
-    function requestFullScreen() {
-        var de = document.documentElement;
-        if (de.requestFullscreen) {
-            de.requestFullscreen();
-        } else if (de.mozRequestFullScreen) {
-            de.mozRequestFullScreen();
-        } else if (de.webkitRequestFullScreen) {
-            de.webkitRequestFullScreen();
-        }
-    }
-    //退出全屏
-    function exitFullscreen() {
-        var de = document;
-        if (de.exitFullscreen) {
-            de.exitFullscreen();
-        } else if (de.mozCancelFullScreen) {
-            de.mozCancelFullScreen();
-        } else if (de.webkitCancelFullScreen) {
-            de.webkitCancelFullScreen();
-        }
-    }
-
-    function bindResize(el) {
-        //初始化参数
-        var els = el.style,
-        //鼠标的 X 和 Y 轴坐标
-                x = y = 0;
-        //邪恶的食指
-        $(el).mousedown(function (e) {
-            //按下元素后，计算当前鼠标与对象计算后的坐标
-            x = e.clientX - el.offsetWidth,
-                    y = e.clientY - el.offsetHeight;
-            //在支持 setCapture 做些东东
-            el.setCapture ? (
-                //捕捉焦点
-                    el.setCapture(),
-                        //设置事件
-                            el.onmousemove = function (ev) {
-                                mouseMove(ev || event);
-                            },
-                            el.onmouseup = mouseUp
-            ) : (
-                //绑定事件
-                    $(document).bind("mousemove", mouseMove).bind("mouseup", mouseUp)
-            );
-            //防止默认事件发生
-            e.preventDefault();
-        });
-        //移动事件
-        function mouseMove(e) {
-            //宇宙超级无敌运算中...
-            els.width = e.clientX - x + 'px',
-                    els.height = e.clientY - y + 'px';
-        }
-
-        //停止事件
-        function mouseUp() {
-            //在支持 releaseCapture 做些东东
-            el.releaseCapture ? (
-                //释放焦点
-                    el.releaseCapture(),
-                        //移除事件
-                            el.onmousemove = el.onmouseup = null
-            ) : (
-                //卸载事件
-                    $(document).off("mousemove", mouseMove).off("mouseup", mouseUp)
-            );
-        }
-    }
 </script>
 </body>
 </html>
