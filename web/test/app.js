@@ -301,11 +301,11 @@ function mousewheelScale(obj) {
             scale = Math.abs(i);
 
             obj.css({
-                '-webkit-transform': 'scale(' + scale + ')',
-                '-moz-transform': 'scale(' + scale + ')',
-                '-ms-transform': 'scale(' + scale + ')',
-                '-o-transform': 'scale(' + scale + ')',
-                'transform': 'scale(' + scale + ')'
+                '-webkit-transform': 'scale(' + scale + ',' + scale + ')',
+                '-moz-transform': 'scale(' + scale + ',' + scale + ')',
+                '-ms-transform': 'scale(' + scale + ',' + scale + ')',
+                '-o-transform': 'scale(' + scale + ',' + scale + ')',
+                'transform': 'scale(' + scale + ',' + scale + ')'
             })
 
             //obj.data('plugin_pep').setScale(scale);

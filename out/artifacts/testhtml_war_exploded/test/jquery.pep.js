@@ -164,7 +164,7 @@
   //      e.g.:     $('#pep').trigger('stop')
   Pep.prototype.subscribe = function () {
     var self = this;
-console.log(this.el)
+
     // Subscribe to our start event
     this.onStartEvent = function(ev){ self.handleStart(ev); };
     this.$el.on(this.startTrigger, this.onStartEvent);
