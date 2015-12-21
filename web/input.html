@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <link rel="stylesheet" href="assets/style.css">
+    <title>Hammer.js</title>
+</head>
+<body>
+    <div class="container">
+        <div id="hit" class="bg1" style="padding: 30px; height: 200px;">
+        </div>
+
+        <pre id="debug" style="overflow:hidden; background: #eee; padding: 15px;"></pre>
+
+        <pre id="log" style="overflow:hidden;"></pre>
+    </div>
+    <script src="lib/jquery.js" type="text/javascript"></script>
+    <script src="lib/hammer-js/hammer.js" type="text/javascript"></script>
+    <script src="lib/hammer-js/jquery.hammer.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function(){
+//            Object.prototype.toDirString = function() {
+//                var output = [];
+//                for(var key in this) {
+//                    if(this.hasOwnProperty(key)) {
+//                        var value = this[key];
+//                        if(Array.isArray(value)) {
+//                            value = "Array("+ value.length +"):"+ value;
+//                        } else if(value instanceof HTMLElement) {
+//                            value = value +" ("+ value.outerHTML.substring(0, 50) +"...)";
+//                        }
+//                        output.push(key +": "+ value);
+//                    }
+//                }
+//                return output.join("\n")
+//            };
+
+            var el = document.querySelector("#hit");
+            var log = document.querySelector("#log");
+            var debug = document.querySelector("#debug");
+
+
+            var $hit = $('#hit');
+            var w = $hit.width(), h = $hit.height();
+
+            var mc = new Hammer(el);
+            mc.get('pinch').set({ enable: true });
+
+//        mc.on("hammer.input", function(ev) {
+//            debug.innerHTML = [ev.srcEvent.type, ev.pointers.length, ev.isFinal, ev.deltaX, ev.deltaY].join("<br>");
+//        });
+
+            var initScale = 1;
+            var $hammer = $hit.hammer({
+                recognizers: [
+                    // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
+                    [Hammer.Rotate],
+                    [Hammer.Pinch, { enable: true }, ['rotate']],
+                    [Hammer.Swipe,{ direction: Hammer.DIRECTION_HORIZONTAL }]
+                ]
+            })
+
+            $hammer.on('pinch', function (ev) {
+                console.log(ev)
+                debug.innerHTML = [ev.type, ev.gesture.pointers.length, ev.gesture.isFinal, ev.gesture.deltaX, ev.gesture.deltaY].join("<br>");
+//                $hit.width(w + ev.deltaX);
+//                $hit.height(h + ev.deltaY);
+
+                log.innerHTML = ev.type;
+                if(ev.type == 'pinchstart') {
+                    initScale = transform.scale || 1;
+                }
+
+                var scale = initScale * ev.gesture.scale;
+                console.log(scale)
+                $hit.css({
+                    '-webkit-transform': 'scale(' + scale + ',' + scale + ')',
+                    '-moz-transform': 'scale(' + scale + ',' + scale + ')',
+                    '-ms-transform': 'scale(' + scale + ',' + scale + ')',
+                    '-o-transform': 'scale(' + scale + ',' + scale + ')',
+                    'transform': 'scale(' + scale + ',' + scale + ')'
+                });
+                return false;
+            });
+            mc.on('swipeleft', function(ev) {
+                debug.innerHTML = [ev.srcEvent.type, ev.pointers.length, ev.isFinal, ev.deltaX, ev.deltaY].join("<br>");
+//                $hit.width(w + ev.deltaX);
+//                $hit.height(h + ev.deltaY);
+
+                log.innerHTML = ev.type;
+                if(ev.type == 'pinchstart') {
+                    initScale = transform.scale || 1;
+                }
+
+                var scale = initScale * ev.scale;
+
+                $hit.css({
+                    '-webkit-transform': 'scale(' + scale + ', ' + scale + ')',
+                    '-moz-transform': 'scale(' + scale + ', ' + scale + ')',
+                    '-ms-transform': 'scale(' + scale + ', ' + scale + ')',
+                    '-o-transform': 'scale(' + scale + ', ' + scale + ')',
+                    "transform": 'scale(' + scale + ', ' + scale + ')'
+                });
+
+            });
+        });
+    </script>
+</body>
+</html>
