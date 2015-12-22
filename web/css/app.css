@@ -1,8 +1,11 @@
+.main-body{
+    background: url('../img/wood1.png');
+}
 #tag-list {
     height: 200px;
 }
 
-.panel {
+.panel.droppable {
     border: 1px solid #fff546;
     min-height: 300px;
 
@@ -107,3 +110,98 @@
 
 .coor { width: 20px; height: 20px; overflow: hidden; cursor: se-resize; position: absolute; right: 0; bottom: 0; background-color: #09C; }
 
+
+
+.sky-wrapper{
+    position: absolute;
+    top: 70px;left: 10px;right:10px;bottom:10px;
+}
+.sky-wrapper>.row{
+    margin: 0;
+    height:100%;
+}
+.sky-wrapper>.row>.col{
+    height:100%;
+    padding: 0 3px;
+}
+
+/* Special class on .container surrounding .navbar, used for positioning it into place. */
+.navbar-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 20;
+}
+
+/* Flip around the padding for proper display in narrow viewports */
+.navbar-wrapper > .container {
+    padding-right: 0;
+    padding-left: 0;
+    width: auto !important;
+}
+.navbar-wrapper .navbar {
+    padding-right: 0;
+    padding-left: 0;
+}
+.navbar-wrapper .navbar .container {
+    width: auto;
+}
+/*.navbar-wrapper .navbar-center {*/
+    /*float: none;*/
+    /*margin: 0 auto;*/
+    /*width: 100px;*/
+/*}*/
+
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+
+@media (min-width: 768px) {
+    /* Navbar positioning foo */
+    /*.navbar-wrapper {*/
+        /*margin-top: 20px;*/
+    /*}*/
+    .navbar-wrapper .container {
+        width: auto !important;
+    }
+    .navbar-wrapper .navbar {
+
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .navbar-wrapper .navbar-center {
+        float: none;
+        margin: 0 auto;
+        width: 100px;
+    }
+}
+
+.panel-inverse {
+    background: none;
+    border-color: #222;
+    height: 100%;
+    margin: 0;
+}
+.panel-inverse > .panel-heading, .panel-inverse > .panel-footer {
+    text-align: center;
+    color: #fff;
+    background-color: #222;
+    border-color: #222;
+}
+
+.panel-inverse > .panel-body {
+    color: #fff;
+    background-color: rgba(0,0,0,0.5);
+}
+.panel-inverse > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #222;
+}
+.panel-inverse > .panel-heading .badge {
+    color: #222;
+    background-color: #fff;
+}
+.panel-inverse > .panel-footer + .panel-collapse > .panel-body {
+    border-bottom-color: #222;
+}

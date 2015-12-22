@@ -3,5 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/web/lib/jquery-2.1.4.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web/visual.html" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
