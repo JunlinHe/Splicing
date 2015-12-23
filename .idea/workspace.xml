@@ -3,13 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c939f15a-c224-409b-ac17-0d048c5835f1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/css/app.css" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/css/app.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/lib/jquery-pep-js/jquery.pep.js" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/lib/jquery-pep-js/jquery.pep.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/test.html" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/test.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/css/app.css" afterPath="$PROJECT_DIR$/web/css/app.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/web/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js" afterPath="$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/test.html" afterPath="$PROJECT_DIR$/web/test.html" />
     </list>
     <ignored path="testhtml.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -853,7 +846,7 @@
       <workItem from="1450746764519" duration="245000" />
       <workItem from="1450747096864" duration="16154000" />
       <workItem from="1450831131699" duration="30955000" />
-      <workItem from="1450872968663" duration="7296000" />
+      <workItem from="1450872968663" duration="7394000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1450347083673</created>
@@ -879,11 +872,17 @@
       <option name="project" value="LOCAL" />
       <updated>1450777318769</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="todo offset position">
+      <created>1450882424396</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1450882424396</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="178861000" />
+    <option name="totallyTimeSpent" value="178959000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -931,7 +930,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
     <MESSAGE value="todo hammer.js" />
-    <option name="LAST_COMMIT_MESSAGE" value="todo hammer.js" />
+    <MESSAGE value="todo offset position" />
+    <option name="LAST_COMMIT_MESSAGE" value="todo offset position" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
