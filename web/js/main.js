@@ -1,6 +1,10 @@
 /**
  * Created by User on 2015/12/18.
  */
+//var defaltConstrainTo = [0, $(window).width(),$(window).height(), 0];
+//$(window).resize(function() {
+//    defaltConstrainTo = [0, $(window).width(),$(window).height(), 0];
+//});
 
 function templete(){
     try{
@@ -17,8 +21,11 @@ function templete(){
  * @param genCtrl 控件字符串
  */
 function handleDragBtn($drag, type, genCtrl){
+
+    var droppable = '.droppable';
+    var $droppable = $(droppable)
     $drag.pep({
-        droppable: '.droppable',
+        droppable: droppable,
         constrainTo: 'window',
         revert: true,
         revertAfter: 'stop',
@@ -35,14 +42,26 @@ function handleDragBtn($drag, type, genCtrl){
             //转换事件适配触摸
             ev = obj.normalizeEvent(ev);
             //记录鼠标或触目点的移动位置，写到全局中
-            obj.customPosix = {'x':ev.pep.x, 'y':ev.pep.y};
-            console.log(obj.customPosix)
+            if(obj.activeDropRegions.length !== 0 ){
+                var $relative = $droppable.parents().filter(function() {
+                    var $this = $(this);
+                    return $this.is('body') || $this.css('position') === 'relative'|| $this.css('position') === 'absolute';
+                })
+                if($relative.length>1){
+                    //当拖拽区的父容器存在position == relative||absolute时
+                    var relativeOffsetLeft = $relative.offset().left;
+                    var relativeOffsetTop = $relative.offset().top;
+                    obj.customPosix = {'x':ev.pep.x-relativeOffsetLeft, 'y':ev.pep.y-relativeOffsetTop};
+                }else{
+                    obj.customPosix = {'x':ev.pep.x, 'y':ev.pep.y};
+                }
+            }
+
         },
         stop: function (ev, obj) {
             //移除按钮中的控件
             //插入到编辑区鼠标停留位置
             var $ctrl = obj.$el.find('.content');
-            console.log(this.activeDropRegions.length)
             if(this.activeDropRegions.length !== 0){
 
                 var $contaner = this.activeDropRegions[0];
@@ -62,6 +81,7 @@ function handleDragBtn($drag, type, genCtrl){
             }
             //删除拖拽按钮中的控件
             $ctrl.html('');
+            console.log(obj.options.constrainTo)
         },
         rest: function (ev, obj){
             obj.revert();
@@ -113,6 +133,7 @@ function handleWindowCtrl($pep, startPos ){
         },
         stop: function (ev, obj) {
             //rotate(obj.$el, 0);
+            console.log(obj.options.constrainTo)
         },
         rest: handleCentering
     });

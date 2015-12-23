@@ -77,7 +77,6 @@
     ,dragIcon:                      '.dragIcon'
     ,minSize:                       {'w':100,'h':100}
     ,maxSize:                       null
-    ,liveBind:                      false //是否动态绑定元素，true会影响运行性能
   };
 
   //  ---------------------------------
@@ -187,7 +186,6 @@
               'x': e.pep.x,
               'y': e.pep.y
           };
-          console.log(e)
       };
       this.$el.on(
           this.startTrigger,
@@ -287,7 +285,7 @@
                     this.startY = this.ev.y = ev.pep.y;
 
                     // store initial offset.
-                    this.initialPosition = this.initialPosition || this.$el.position();
+                    this.initialPosition = this.$el.position();
 
                     // store the initial touch/click event, used to calculate the inital delta values.
                     this.startEvent = this.moveEvent = ev;
@@ -367,7 +365,7 @@
               this.$el.addClass('pep-start');
               this.options.start.call(this, this.startEvent, this);
             }
-console.log(this.dragIconMove)
+
                 // 当拖拽按钮被触发时，不移动元素，只控制其缩放
                 if(this.dragIconMove === true){
 
