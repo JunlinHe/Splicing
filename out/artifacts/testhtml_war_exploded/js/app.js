@@ -11,10 +11,10 @@ function templete(){
 }
 
 /**
- * Éú³Éwindow¿Ø¼ş
- * @param $drag °´Å¥¶ÔÏó
- * @param type ¿Ø¼şÀàĞÍ
- * @param genCtrl ¿Ø¼ş×Ö·û´®
+ * ç”Ÿæˆwindowæ§ä»¶
+ * @param $drag æŒ‰é’®å¯¹è±¡
+ * @param type æ§ä»¶ç±»å‹
+ * @param genCtrl æ§ä»¶å­—ç¬¦ä¸²
  */
 function handleDragBtn($drag, type, genCtrl){
     $drag.pep({
@@ -28,18 +28,18 @@ function handleDragBtn($drag, type, genCtrl){
         overlapFunction: false,
         useCSSTranslation: false,
         initiate: function(ev,obj){
-            //Éú³É¿Ø¼ş£¬²¢¸úËæ¸¡¶¯
+            //ç”Ÿæˆæ§ä»¶ï¼Œå¹¶è·Ÿéšæµ®åŠ¨
             obj.$el.find('.content').append(genCtrl);
         },
         drag: function (ev, obj) {
-            //×ª»»ÊÂ¼şÊÊÅä´¥Ãş
+            //è½¬æ¢äº‹ä»¶é€‚é…è§¦æ‘¸
             ev = obj.normalizeEvent(ev);
-            //¼ÇÂ¼Êó±ê»ò´¥Ä¿µãµÄÒÆ¶¯Î»ÖÃ£¬Ğ´µ½È«¾ÖÖĞ
+            //è®°å½•é¼ æ ‡æˆ–è§¦ç›®ç‚¹çš„ç§»åŠ¨ä½ç½®ï¼Œå†™åˆ°å…¨å±€ä¸­
             obj.customPosix = {'x':ev.pep.x, 'y':ev.pep.y};
         },
         stop: function (ev, obj) {
-            //ÒÆ³ı°´Å¥ÖĞµÄ¿Ø¼ş
-            //²åÈëµ½±à¼­ÇøÊó±êÍ£ÁôÎ»ÖÃ
+            //ç§»é™¤æŒ‰é’®ä¸­çš„æ§ä»¶
+            //æ’å…¥åˆ°ç¼–è¾‘åŒºé¼ æ ‡åœç•™ä½ç½®
             var $ctrl = obj.$el.find('.content');
             console.log(this.activeDropRegions.length)
             if(this.activeDropRegions.length !== 0){
@@ -59,7 +59,7 @@ function handleDragBtn($drag, type, genCtrl){
                 }
 
             }
-            //É¾³ıÍÏ×§°´Å¥ÖĞµÄ¿Ø¼ş
+            //åˆ é™¤æ‹–æ‹½æŒ‰é’®ä¸­çš„æ§ä»¶
             $ctrl.html('');
         },
         rest: function (ev, obj){
@@ -69,20 +69,20 @@ function handleDragBtn($drag, type, genCtrl){
 }
 
 /**
- * Éú³Éwindow¿Ø¼ş
- * @param $pep ¿Ø¼ş¶ÔÏó
- * @param startPos ÆğÊ¼Î»ÖÃ
+ * ç”Ÿæˆwindowæ§ä»¶
+ * @param $pep æ§ä»¶å¯¹è±¡
+ * @param startPos èµ·å§‹ä½ç½®
  */
 function handleWindowCtrl($pep, startPos ){
     if(!startPos) startPos = { left: null, top: null };
     $pep.pep({
         debug: true,
         droppable: '.droppable',
-        dragIcon: '.coor',//Ìí¼ÓµÄÍÏ×§Ëõ·Å¹¦ÄÜ
+        dragIcon: '.coor',//æ·»åŠ çš„æ‹–æ‹½ç¼©æ”¾åŠŸèƒ½
         minSize:{'w':100,'h':80},
         maxSize:null,
         constrainTo: 'window',
-        elementsWithInteraction: '.title, .close',//Ö¸¶¨Ä³²¿·Ö²»»á´¥·¢ÍÏ¶¯
+        elementsWithInteraction: '.title, .close',//æŒ‡å®šæŸéƒ¨åˆ†ä¸ä¼šè§¦å‘æ‹–åŠ¨
         revert: true,
         revertAfter: 'ease',
         revertIf: function () {
@@ -96,6 +96,7 @@ function handleWindowCtrl($pep, startPos ){
             el.find('.button.close').off('click').on('click',function(){
                 //el.find('.content').html('');
                 //obj.revert();
+                $.pep.unbind(el);
                 el.remove();
                 obj.options.constrainTo = 'window';
             });
@@ -117,7 +118,7 @@ function handleWindowCtrl($pep, startPos ){
 }
 
 /**
- * ÏÔÊ¾ÈÕÖ¾
+ * æ˜¾ç¤ºæ—¥å¿—
  * @param msg
  */
 function log(msg){
@@ -130,7 +131,7 @@ function log(msg){
 }
 
 /**
- * »¬¿é»¬¶¯¶¯»­½áÊøºó»Øµ÷
+ * æ»‘å—æ»‘åŠ¨åŠ¨ç”»ç»“æŸåå›è°ƒ
  * @param ev
  * @param obj
  */
@@ -148,7 +149,7 @@ function handleCentering(ev, obj) {
                 'width:'+pis[3]+'px <br>';
             obj.$el.find('.content').html(info);
 
-            //·¢ËÍÎ»ÖÃĞÅÏ¢
+            //å‘é€ä½ç½®ä¿¡æ¯
             //callServer(pis);
         }
     }catch(e){
@@ -158,7 +159,7 @@ function handleCentering(ev, obj) {
 }
 
 /**
- * ½«»¬¿éÖÃÓÚ±à¼­ÇøÖĞ¼ä
+ * å°†æ»‘å—ç½®äºç¼–è¾‘åŒºä¸­é—´
  * @param obj
  */
 function centerWithin(obj) {
@@ -190,7 +191,7 @@ function centerWithin(obj) {
 
             obj.noCenter = true;
 
-            //½«ÒÆ¶¯¿éÔ¼ÊøÔÚ±à¼­ÇøÄÚ [top, right, bottom, left]
+            //å°†ç§»åŠ¨å—çº¦æŸåœ¨ç¼–è¾‘åŒºå†… [top, right, bottom, left]
             obj.$el.data('plugin_pep').options.constrainTo = [pTop,pLeft+pWidth-oWidth,pTop+pHeight-oHeight,pLeft];
             return;
         }
@@ -203,7 +204,7 @@ function centerWithin(obj) {
 }
 
 /**
- * ½«»¬¿éÖÃÓÚ±à¼­ÇøÄÚ
+ * å°†æ»‘å—ç½®äºç¼–è¾‘åŒºå†…
  * @param obj
  */
 function insideWithin(obj) {
@@ -250,10 +251,10 @@ function insideWithin(obj) {
             obj.moveToUsingTransforms(moveTop, moveLeft);
         }
 
-        //½«ÒÆ¶¯¿éÔ¼ÊøÔÚ±à¼­ÇøÄÚ [top, right, bottom, left]
+        //å°†ç§»åŠ¨å—çº¦æŸåœ¨ç¼–è¾‘åŒºå†… [top, right, bottom, left]
         obj.$el.data('plugin_pep').options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
 
-        //¼ÆËã»¬¿éÏà¶Ô±à¼­ÇøµÄÎ»ÖÃ
+        //è®¡ç®—æ»‘å—ç›¸å¯¹ç¼–è¾‘åŒºçš„ä½ç½®
         var fTop,fRight,fBottom,fLeft;
         fTop = moveTop - pTop;
         fLeft = moveLeft - pLeft;
@@ -269,7 +270,7 @@ function insideWithin(obj) {
 }
 
 /**
- * ÔÚ»¬¿é±»ÍÏ¶¯Ê±»Î¶¯
+ * åœ¨æ»‘å—è¢«æ‹–åŠ¨æ—¶æ™ƒåŠ¨
  * @param $obj
  * @param deg
  */
@@ -289,7 +290,7 @@ function rotate($obj, deg) {
 }
 
 /**
- * »¬¶¯Êó±ê·Å´óËõĞ¡»¬¿é
+ * æ»‘åŠ¨é¼ æ ‡æ”¾å¤§ç¼©å°æ»‘å—
  * @param obj
  */
 function mousewheelScale(obj) {
@@ -319,7 +320,7 @@ function mousewheelScale(obj) {
 }
 
 /**
- * ÏòÏÔÊ¾Æ÷·¢ËÍ¿Ø¼şÎ»ÖÃ
+ * å‘æ˜¾ç¤ºå™¨å‘é€æ§ä»¶ä½ç½®
  * @param param
  */
 function callServer(param){
@@ -349,7 +350,7 @@ function callServer(param){
 
 }
 /**
- * È«ÆÁÏÔÊ¾ÍøÒ³
+ * å…¨å±æ˜¾ç¤ºç½‘é¡µ
  */
 function requestFullScreen() {
     var de = document.documentElement;
@@ -362,7 +363,7 @@ function requestFullScreen() {
     }
 }
 /**
- * ÍË³öÈ«ÆÁ
+ * é€€å‡ºå…¨å±
  */
 function exitFullscreen() {
     var de = document;

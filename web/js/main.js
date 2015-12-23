@@ -36,6 +36,7 @@ function handleDragBtn($drag, type, genCtrl){
             ev = obj.normalizeEvent(ev);
             //记录鼠标或触目点的移动位置，写到全局中
             obj.customPosix = {'x':ev.pep.x, 'y':ev.pep.y};
+            console.log(obj.customPosix)
         },
         stop: function (ev, obj) {
             //移除按钮中的控件
