@@ -1,10 +1,8 @@
 /**
- * Created by User on 2015/12/18.
+ * Created by hejunlin on 2015/12/18.
  */
-//var defaltConstrainTo = [0, $(window).width(),$(window).height(), 0];
-//$(window).resize(function() {
-//    defaltConstrainTo = [0, $(window).width(),$(window).height(), 0];
-//});
+
+var evStar = 'tap click';
 
 function templete(){
     try{
@@ -15,17 +13,205 @@ function templete(){
 }
 
 /**
+ * 初始化拖拽控件
+ * @param dragBtnCls
+ * @param droppableCls
+ */
+function init(dragBtnCls, droppableCls){
+    var $drag = $(dragBtnCls);
+    var windowCtrl = '<div class="pep window">'+
+        '<div class="title">'+
+        '按住标题拖动,点X关闭'+
+        '<div class="button close"><i class="fa fa-close"></i></div>'+
+        '<div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>'+
+        '</div>'+
+        '<div class="content"></div>'+
+        '<div class="coor"></div>'+
+        '</div>';
+    // 初始化拖拽按钮
+    handleDragBtn($drag, droppableCls, 1, windowCtrl);
+    //handleDroppablePanel(droppableCls);
+    // 初始化窗口控制事件
+    handleWindowAction(windowCtrl, droppableCls);
+
+    // 绘制canvas网格背景
+    drawGrid(droppableCls, 3, 3);
+    $(droppableCls).on('resize', function(){
+        console.log('hahah')
+        drawGrid(droppableCls, 3, 3);
+    });
+
+    // 控制面板左右切换
+    handlePanelSlide(droppableCls);
+}
+
+/**
+ * 面板滑动
+ * @param droppableCls
+ */
+function handlePanelSlide(droppableCls){
+
+    var $panel = $('.sky-wrapper');
+    $panel.off(evStar, '.collapse-btn').on(evStar, '.collapse-btn', function(){
+        var $this = $(this);
+        var index = $this.index();
+
+        switch(index){
+            case 1:
+                $panel.addClass('off');
+                break;
+            case 2:
+                $panel.removeClass('off');
+                break;
+            default:break;
+        }
+        // 重绘canvas
+        setTimeout(function(){
+            $(droppableCls).trigger("resize")
+        },600);
+
+    });
+}
+
+/**
+ * 控制屏幕区缩放
+ * @param droppableCls
+ */
+function handleDroppablePanel(droppableCls){
+    var $droppable = $(droppableCls)
+    $droppable.pep({
+    });
+
+    $('.sky-btn.dropdown').off('tap click').on('tap click','li', function() {
+        var $this = $(this);
+        var val = $this.find('a').html();
+        console.log(val)
+        $this.parent().siblings('a.dropdown-toggle').html(val+' <span class="caret"></span>');
+        var scale = parseInt(val)*0.01;
+        console.log(scale)
+        $droppable.css({
+            'transform': 'scale(' + scale + ')'
+        });
+
+        var $pepOoj = $droppable.data('plugin_pep')
+        $pepOoj.setScale(scale);
+        $pepOoj.setMultiplier(scale);
+    });
+}
+
+function handleWindowAction(windowCtrl, droppableCls){
+    var $contaner = $(droppableCls);
+
+    $('#new-win').on('click',function(){
+
+        $contaner.append(windowCtrl);
+
+        handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
+    });
+
+    $('#close-win').on('click',function(){
+        handleCloseWindow(droppableCls, '.pep.active')
+    });
+
+    $('#clear-win').on('click',function(){
+        handleCloseWindow(droppableCls, '.pep')
+    });
+}
+
+/**
+ * 关闭窗口控件
+ * @param droppableCls
+ * @param pepCls
+ */
+function handleCloseWindow(droppableCls, pepCls){
+    var $contaner = $(droppableCls);
+    var active = $contaner.find(pepCls);
+    $.pep.unbind(active);
+    active.remove();
+}
+
+function handleFullScreen($pep, droppableCls, pepCls){
+    var $contaner = $(droppableCls);
+    var active = $contaner.find(pepCls);
+    $pep.options.constrainTo
+}
+/**
+ * 绘制网格背景
+ * @param droppableCls 填充位置
+ * @param x
+ * @param y
+ */
+function drawGrid(droppableCls, x, y) {
+    var $droppable = $(droppableCls);
+
+    var idObject = document.getElementById('cvs');
+    if (idObject != null)
+        idObject.parentNode.removeChild(idObject);
+
+    var canvas = document.createElement("canvas");
+    canvas.id = 'cvs';
+    canvas.width = $droppable.innerWidth();
+    canvas.height = $droppable.innerHeight();
+    canvas.style.cssText = "margin:0 auto; position:absolute;";
+    $droppable.append(canvas);
+    var context = canvas.getContext("2d");
+
+    context.save();
+
+    context.strokeStyle = "#ffffff";
+    context.fillStyle = "#ffffff";
+    context.lineWidth = 0.6;
+
+    //画横线
+    var j = 0,stepX = canvas.width/x,stepY = canvas.height/y;
+    //10个像素位为单位,6个像素画线，4个像素空出来，成为虚线
+    for (var i = 1; i < y; i ++) {
+        context.beginPath();
+        for(j = 0;j < stepX;j++){
+            context.moveTo(j*10, stepY*i);
+            context.lineTo(j*10 + 6,  stepY*i);
+        }
+        context.stroke();
+    }
+
+    //画竖线
+    for (var i = 1; i < x; i ++) {
+        context.beginPath();
+        for(j = 0;j < stepY;j++){
+            context.moveTo(stepX*i, j*10 );
+            context.lineTo(stepX*i, j*10+6);
+        }
+        context.stroke();
+    }
+
+    // 画网格索引
+    var index = 0;
+    var posiX, posiY;
+    context.font="20px Georgia";
+
+    // 逐行填充索引
+    for(var k = 0; k < y; k ++){
+        for(var l = 0; l < x; l ++){
+            posiX = canvas.width * ((2*l+1)/(2*x));
+            posiY = canvas.height * ((2*k+1)/(2*y));
+            context.fillText( ++index + '', posiX-5, posiY+5);
+        }
+    }
+
+    context.restore();
+}
+/**
  * 生成window控件
  * @param $drag 按钮对象
+ * @param droppableCls 拖拽区class
  * @param type 控件类型
  * @param genCtrl 控件字符串
  */
-function handleDragBtn($drag, type, genCtrl){
+function handleDragBtn($drag, droppableCls, type, genCtrl){
 
-    var droppable = '.droppable';
-    var $droppable = $(droppable)
+    var $droppable = $(droppableCls)
     $drag.pep({
-        droppable: droppable,
+        droppable: droppableCls,
         constrainTo: 'window',
         revert: true,
         revertAfter: 'stop',
@@ -70,7 +256,7 @@ function handleDragBtn($drag, type, genCtrl){
                 var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
                 switch (type){
                     case 1:
-                        handleWindowCtrl($('.droppable .pep'), startPos);
+                        handleWindowCtrl($(droppableCls).find('.pep'), droppableCls, startPos);
                         break;
                     case 2:
                         break;
@@ -81,7 +267,6 @@ function handleDragBtn($drag, type, genCtrl){
             }
             //删除拖拽按钮中的控件
             $ctrl.html('');
-            console.log(obj.options.constrainTo)
         },
         rest: function (ev, obj){
             obj.revert();
@@ -92,14 +277,17 @@ function handleDragBtn($drag, type, genCtrl){
 /**
  * 生成window控件
  * @param $pep 控件对象
+ * @param droppableCls 拖拽区class
  * @param startPos 起始位置
  */
-function handleWindowCtrl($pep, startPos ){
+function handleWindowCtrl($pep, droppableCls, startPos ){
     if(!startPos) startPos = { left: null, top: null };
     $pep.pep({
-        debug: true,
-        droppable: '.droppable',
+        //debug: true,
+        droppable: droppableCls,
         dragIcon: '.coor',//添加的拖拽缩放功能
+        selectFloat: true,//选中元素上浮
+        allowDragEventPropagation: false,//禁止DOM冒泡
         minSize:{'w':100,'h':80},
         maxSize:null,
         constrainTo: 'window',
@@ -109,7 +297,6 @@ function handleWindowCtrl($pep, startPos ){
         revertIf: function () {
             return !this.activeDropRegions.length;
         },
-        overlapFunction: false,
         useCSSTranslation: false,
         initiate: function(ev,obj){
 
@@ -133,7 +320,6 @@ function handleWindowCtrl($pep, startPos ){
         },
         stop: function (ev, obj) {
             //rotate(obj.$el, 0);
-            console.log(obj.options.constrainTo)
         },
         rest: handleCentering
     });
@@ -283,7 +469,7 @@ function insideWithin(obj) {
         fRight = pWidth - fLeft - oWidth;
         fBottom = pHeight - fTop - oHeight;
         //var pis = [fTop.toFixed(2), fRight.toFixed(2), fBottom.toFixed(2), fLeft.toFixed(2)];
-        var pis = [fTop.toFixed(2), fLeft.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];
+        var pis = [fLeft.toFixed(2), fTop.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];//x y h w
         return pis;
     }catch(e){
         log(e.name+':'+e.message);
@@ -299,10 +485,6 @@ function insideWithin(obj) {
 function rotate($obj, deg) {
     try{
         $obj.css({
-            "-webkit-transform": "rotate(" + deg + "deg)",
-            "-moz-transform": "rotate(" + deg + "deg)",
-            "-ms-transform": "rotate(" + deg + "deg)",
-            "-o-transform": "rotate(" + deg + "deg)",
             "transform": "rotate(" + deg + "deg)"
         });
     }catch(e){
@@ -324,10 +506,6 @@ function mousewheelScale(obj) {
             scale = Math.abs(i);
 
             obj.css({
-                '-webkit-transform': 'scale(' + scale + ',' + scale + ')',
-                '-moz-transform': 'scale(' + scale + ',' + scale + ')',
-                '-ms-transform': 'scale(' + scale + ',' + scale + ')',
-                '-o-transform': 'scale(' + scale + ',' + scale + ')',
                 'transform': 'scale(' + scale + ',' + scale + ')'
             })
 
@@ -398,3 +576,27 @@ function exitFullscreen() {
     }
 }
 
+function fitElement(inner, container) {
+    $(inner).off("load").on("load", function() {
+        var $this = $(this);
+        var oWidth = $this.outerWidth();
+        var oHeight = $this.outerHeight();
+        var style;
+        var cWidth = $(container).innerWidth();
+        var cHeight = $(container).innerHeight();
+        if (oWidth / oHeight > cWidth / cHeight) {
+            var nWidth = Math.round(oWidth / (oHeight / cHeight));
+            var offsetLeft = (cWidth - nWidth) / 2;
+            style = "height:" + cHeight + "px;width:" + nWidth + "px;margin-left:" + offsetLeft + "px;"
+        } else {
+            if (oWidth / oHeight < cWidth / cHeight) {
+                var nHeight = Math.round(oHeight / (oWidth / cWidth));
+                var offsetTop = (cHeight - nHeight) / 2;
+                style = "width:100%;margin-top:" + offsetTop + "px;"
+            } else {
+                style = "width:100%"
+            }
+        }
+        $this.attr("style", style)
+    })
+}

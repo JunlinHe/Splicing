@@ -3,6 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="c939f15a-c224-409b-ac17-0d048c5835f1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/css/app.css" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/css/app.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/jquery-pep-js/demos/grid.html" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/jquery-pep-js/demos/grid.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/lib/jquery-pep-js/jquery.pep.js" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/lib/jquery-pep-js/jquery.pep.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/test.html" afterPath="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/test.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/css/app.css" afterPath="$PROJECT_DIR$/web/css/app.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html" afterPath="$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/web/js/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js" afterPath="$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/test.html" afterPath="$PROJECT_DIR$/web/test.html" />
     </list>
     <ignored path="testhtml.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,8 +36,8 @@
       <file leaf-file-name="test.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/test.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.9230769">
-              <caret line="83" column="6" selection-start-line="83" selection-start-column="6" selection-end-line="83" selection-end-column="6" />
+            <state vertical-scroll-proportion="-14.222222">
+              <caret line="192" column="2" selection-start-line="192" selection-start-column="2" selection-end-line="192" selection-end-column="2" />
               <folding>
                 <element signature="n#head#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
@@ -37,22 +46,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/css/app.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.576923">
-              <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/js/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6169355">
-              <caret line="51" column="22" selection-start-line="51" selection-start-column="22" selection-end-line="51" selection-end-column="22" />
-              <folding />
+            <state vertical-scroll-proportion="0.15675676">
+              <caret line="578" column="39" selection-start-line="578" selection-start-column="39" selection-end-line="578" selection-end-column="39" />
+              <folding>
+                <marker date="1451035610231" expanded="true" signature="344:661" placeholder="..." />
+                <marker date="1451035610231" expanded="true" signature="375:568" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -60,11 +62,21 @@
       <file leaf-file-name="jquery.pep.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-14.9">
-              <caret line="871" column="6" selection-start-line="868" selection-start-column="29" selection-end-line="871" selection-end-column="6" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="963" column="57" selection-start-line="963" selection-start-column="57" selection-end-line="963" selection-end-column="57" />
               <folding>
-                <marker date="1450875632100" expanded="true" signature="40690:40738" placeholder="..." />
+                <marker date="1450947374231" expanded="true" signature="41200:41248" placeholder="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="app.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/css/app.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-16.222221">
+              <caret line="163" column="16" selection-start-line="163" selection-start-column="16" selection-end-line="163" selection-end-column="16" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -113,12 +125,14 @@
         <option value="$PROJECT_DIR$/web/lib/jquery-2.1.4.js" />
         <option value="$PROJECT_DIR$/web/index.html" />
         <option value="$PROJECT_DIR$/web/input.html" />
-        <option value="$PROJECT_DIR$/web/1.html" />
         <option value="$PROJECT_DIR$/out/artifacts/testhtml_war_exploded/css/app.css" />
         <option value="$PROJECT_DIR$/web/js/app.js" />
+        <option value="$PROJECT_DIR$/web/jquery-pep-js/demos/pep-inside-pep.html" />
+        <option value="$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html" />
         <option value="$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js" />
-        <option value="$PROJECT_DIR$/web/test.html" />
+        <option value="$PROJECT_DIR$/web/1.html" />
         <option value="$PROJECT_DIR$/web/css/app.css" />
+        <option value="$PROJECT_DIR$/web/test.html" />
         <option value="$PROJECT_DIR$/web/js/main.js" />
       </list>
     </option>
@@ -141,6 +155,9 @@
         <option name="mavenHome" value="Bundled (Maven 3)" />
       </MavenGeneralSettings>
     </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState />
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
@@ -173,7 +190,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -284,8 +303,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -746,7 +763,7 @@
     <configuration default="true" type="osgi.bnd.run" factoryName="Test Launcher (JUnit)">
       <method />
     </configuration>
-    <configuration default="false" name="testhtml" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 7.0.65" ALTERNATIVE_JRE_ENABLED="false">
+    <configuration default="false" name="testhtml" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 7.0.39" ALTERNATIVE_JRE_ENABLED="false">
       <option name="UPDATE_ON_FRAME_DEACTIVATION" value="true" />
       <option name="UPDATE_CLASSES_ON_FRAME_DEACTIVATION" value="true" />
       <deployment>
@@ -847,6 +864,8 @@
       <workItem from="1450747096864" duration="16154000" />
       <workItem from="1450831131699" duration="30955000" />
       <workItem from="1450872968663" duration="7394000" />
+      <workItem from="1450918170906" duration="29033000" />
+      <workItem from="1451004702487" duration="23097000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1450347083673</created>
@@ -882,7 +901,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="178959000" />
+    <option name="totallyTimeSpent" value="231089000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -890,12 +909,12 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991454" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991454" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991454" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -942,147 +961,10 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/web/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="846" column="36" selection-start-line="846" selection-start-column="28" selection-end-line="846" selection-end-column="36" />
-          <folding>
-            <marker date="1450875632100" expanded="true" signature="40690:40738" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/src/jquery.pep.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="591" column="2" selection-start-line="591" selection-start-column="2" selection-end-line="591" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/test.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/custom-move.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="9" selection-start-line="48" selection-start-column="9" selection-end-line="48" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/src/jquery.pep.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="591" column="2" selection-start-line="591" selection-start-column="2" selection-end-line="591" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/test/jquery.pep.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/WEB-INF/web.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.16157989">
-          <caret line="5" column="10" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/droppable-custom-overlap.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23818526">
-          <caret line="7" column="39" selection-start-line="7" selection-start-column="39" selection-end-line="7" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/base-debug.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.3333335">
-          <caret line="8" column="93" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/libs/modernizr.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.6363636">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/custom-move.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="9" selection-start-line="48" selection-start-column="9" selection-end-line="48" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/test.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.85066164">
           <caret line="25" column="9" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/HTML5.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/src/jquery.pep.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3327338">
-          <caret line="174" column="4" selection-start-line="174" selection-start-column="4" selection-end-line="174" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/DHTML.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3327338">
-          <caret line="1549" column="0" selection-start-line="1549" selection-start-column="0" selection-end-line="1549" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1163,13 +1045,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/css-classes.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/BaseTemplate.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.0">
@@ -1191,44 +1066,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/lib/jquery-2.1.4.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7502" column="8" selection-start-line="7502" selection-start-column="8" selection-end-line="7502" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/visual.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-29.333334">
-          <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/input.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.3333335">
-          <caret line="11" column="38" selection-start-line="11" selection-start-column="38" selection-end-line="11" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/lib/bootstrap/css/bootstrap.min.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.37">
           <caret line="4" column="74473" selection-start-line="4" selection-start-column="74473" selection-end-line="4" selection-end-column="74473" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/1.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="307" column="7" selection-start-line="307" selection-start-column="7" selection-end-line="307" selection-end-column="7" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#div#0;n#div#1;n#div#7;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#div#0;n#div#0;n#div#1;n#div#7;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#div#8;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1257,7 +1098,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1269,26 +1109,228 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/index.html">
+    <entry file="file://$PROJECT_DIR$/web/js/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6136364">
-          <caret line="54" column="47" selection-start-line="44" selection-start-column="12" selection-end-line="54" selection-end-column="47" />
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="18" column="9" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/app.js">
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/constrain-to.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-15.333333">
+          <caret line="44" column="74" selection-start-line="44" selection-start-column="31" selection-end-line="44" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/custom-constraint.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.39772728">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/css-classes.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.3068182">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/disabling-api.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="6.4444447">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/droppable.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="20.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/droppable-advanced.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="52.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/droppable-custom-overlap.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.1818181">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/droppable-consuming-parent.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="371" column="0" selection-start-line="371" selection-start-column="0" selection-end-line="371" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/force-non-css3-movement.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/forward.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.888889">
+          <caret line="37" column="32" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/image-slider.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="34.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/return-false.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="10.444445">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/return-false-init.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="10.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/grid.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4090909">
+          <caret line="22" column="32" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/lib/jquery-2.1.4.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="2967" column="8" selection-start-line="2967" selection-start-column="8" selection-end-line="2967" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/input.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.6666667">
+          <caret line="11" column="38" selection-start-line="11" selection-start-column="38" selection-end-line="11" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/visual.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.6666667">
+          <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/pep-inside-pep.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-11.333333">
+          <caret line="17" column="42" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/scale.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="6.0">
+          <caret line="18" column="46" selection-start-line="18" selection-start-column="46" selection-end-line="18" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/demos/multiplier.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.6666665">
+          <caret line="25" column="55" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.75">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/jquery-pep-js/src/jquery.pep.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.7747748">
+          <caret line="816" column="10" selection-start-line="816" selection-start-column="10" selection-end-line="816" selection-end-column="10" />
+          <folding>
+            <marker date="1450080015244" expanded="true" signature="37316:37364" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/HTML5.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="1182" column="0" selection-start-line="1182" selection-start-column="0" selection-end-line="1182" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/DHTML.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="4704" column="0" selection-start-line="4704" selection-start-column="0" selection-end-line="4704" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/1.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.9772727">
+          <caret line="231" column="32" selection-start-line="0" selection-start-column="0" selection-end-line="307" selection-end-column="7" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#div#0;n#div#1;n#div#7;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#div#0;n#div#0;n#div#1;n#div#7;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#8;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="963" column="57" selection-start-line="963" selection-start-column="57" selection-end-line="963" selection-end-column="57" />
+          <folding>
+            <marker date="1450947374231" expanded="true" signature="41200:41248" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/css/app.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-16.222221">
+          <caret line="163" column="16" selection-start-line="163" selection-start-column="16" selection-end-line="163" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/test.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.9230769">
-          <caret line="83" column="6" selection-start-line="83" selection-start-column="6" selection-end-line="83" selection-end-column="6" />
+        <state vertical-scroll-proportion="-14.222222">
+          <caret line="192" column="2" selection-start-line="192" selection-start-column="2" selection-end-line="192" selection-end-column="2" />
           <folding>
             <element signature="n#head#0;n#html#0;n#!!top" expanded="false" />
             <element signature="n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
@@ -1296,29 +1338,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/css/app.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.576923">
-          <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/lib/jquery-pep-js/jquery.pep.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-14.9">
-          <caret line="871" column="6" selection-start-line="868" selection-start-column="29" selection-end-line="871" selection-end-column="6" />
-          <folding>
-            <marker date="1450875632100" expanded="true" signature="40690:40738" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6169355">
-          <caret line="51" column="22" selection-start-line="51" selection-start-column="22" selection-end-line="51" selection-end-column="22" />
-          <folding />
+        <state vertical-scroll-proportion="0.15675676">
+          <caret line="578" column="39" selection-start-line="578" selection-start-column="39" selection-end-line="578" selection-end-column="39" />
+          <folding>
+            <marker date="1451035610231" expanded="true" signature="344:661" placeholder="..." />
+            <marker date="1451035610231" expanded="true" signature="375:568" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>

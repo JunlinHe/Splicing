@@ -77,6 +77,7 @@
     ,dragIcon:                      '.dragIcon'
     ,minSize:                       {'w':100,'h':100}
     ,maxSize:                       null
+    ,selectFloat:                   false
   };
 
   //  ---------------------------------
@@ -244,6 +245,13 @@
             if ( this.isValidMoveEvent(ev) && !this.disabled ){
 
               if( !(this.options.ignoreRightClick && ev.which === 3) ) {
+                    // 使选中的元素上浮
+                    if(self.options.selectFloat){
+                        //self.$el.siblings().css({'z-index':'initial'});
+                        //self.$el.css({'z-index':'99'});
+                        self.$el.siblings().removeClass('active');
+                        self.$el.addClass('active');
+                    }
 
                     // IE10 Hack. Me not happy.
                     if ( this.isPointerEventCompatible() && ev.preventManipulation )
@@ -415,20 +423,22 @@
         if ( $.isArray( this.options.constrainTo ) ) {
 
             var $parent = this.activeDropRegions[0];
-            pTop = $parent.position().top;
-            pLeft = $parent.position().left;
+            pTop = $parent.offset().top;
+            pLeft = $parent.offset().left;
             pHeight = $parent.outerHeight();
             pWidth = $parent.outerWidth();
 
         } else if ( typeof this.options.constrainTo === 'string' ) {
             var constrainTo = this.options.constrainTo;
 
-            pTop = 0;
-            pLeft = 0;
             if(constrainTo ==='window'){
+                pTop = 0;
+                pLeft = 0;
                 pHeight = $(window).height();
                 pWidth = $(window).width();
             }else{
+                pTop = this.$container.offset().top;
+                pLeft = this.$container.offset().left;
                 pHeight = this.$container.height();
                 pWidth = this.$container.width();
             }

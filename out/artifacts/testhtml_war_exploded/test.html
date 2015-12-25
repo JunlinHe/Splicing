@@ -128,25 +128,30 @@
                 <div class="panel-heading">
 
                     <ul class="action-btn-group left">
-                        <li class="sky-btn item"><a class=""><i class="fa fa-plus"></i> 新建窗口</a></li>
-                        <li class="sky-btn item"><a class=""><i class="fa fa-close"></i> 关闭窗口</a></li>
-                        <li class="sky-btn item"><a class=""><i class="fa fa-trash-o"></i> 清空</a></li>
+                        <li class="sky-btn item"><a id="new-win"><i class="fa fa-plus"></i> 新建窗口</a></li>
+                        <li class="sky-btn item"><a id="close-win"><i class="fa fa-close"></i> 关闭窗口</a></li>
+                        <li class="sky-btn item"><a id="clear-win"><i class="fa fa-trash-o"></i> 清空</a></li>
                     </ul>
                     <ul class="action-btn-group right">
                         <li class="sky-btn item dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">25% <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">100% <span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                <li><a href="#">25%</a></li>
                                 <li><a href="#">50%</a></li>
                                 <li><a href="#">75%</a></li>
                                 <li><a href="#">100%</a></li>
+                                <li><a href="#">125%</a></li>
+                                <li><a href="#">150%</a></li>
+                                <li><a href="#">175%</a></li>
+                                <li><a href="#">200%</a></li>
                             </ul>
                         </li>
                     </ul>
 
                 </div>
-                <div class="panel-body">
-                    <div class="droppable">
-
+                <div class="panel-body" >
+                    <div class="droppable" >
+                        <img src="http://fanyi.baidu.com/static/i18n/zh/widget/translate/head/logo/logo_16ea8bb7.png">
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -178,38 +183,13 @@
 <script src="js/main.js" type="text/javascript"></script>
 <script>
 $(function(){
-try{
-    var evStar = 'tap click';
-    // 面板缩放
-    $('.collapse-btn').off(evStar).on(evStar, function(){
-        var $this = $(this);
-        var index = $this.index();
-        var $panel = $('.sky-wrapper');
-        switch(index){
-            case 1:
-                $panel.addClass('off');
-                break;
-            case 2:
-                $panel.removeClass('off');
-                break;
-            default:break;
-        }
-    });
 
-    var $drag = $('#ctrl-list .item .drag');
-    var windowCtrl = '<div class="pep window">'+
-            '<div class="title">'+
-            ' 按住标题拖动,点X关闭'+
-            '<div class="button close">x</div>'+
-            '<div class="button minus">-</div>'+
-            '</div>'+
-            '<div class="content"></div>'+
-            '<div class="coor"></div>'+
-            '</div>';
-    handleDragBtn($drag,1, windowCtrl);
-}catch(e){
-    log(e.name+':'+e.message);
-}
+    var dragBtnCls = '#ctrl-list .item .drag',
+            droppableCls = '.droppable';
+
+    init(dragBtnCls, droppableCls);
+
+    fitElement('.droppable img', '.droppable');
 })
 </script>
 </body>
