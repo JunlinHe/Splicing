@@ -28,16 +28,20 @@ function init(dragBtnCls, droppableCls){
         '<div class="content"></div>'+
         '<div class="coor"></div>'+
         '</div>';
+
     // 初始化拖拽按钮
     handleDragBtn($drag, droppableCls, 1, windowCtrl);
     //handleDroppablePanel(droppableCls);
     // 初始化窗口控制事件
     handleWindowAction(windowCtrl, droppableCls);
 
+    // 将编辑区设置为16:9（必须在绘制网格前）
+    request16to9($('.col.right .panel-body'));
     // 绘制canvas网格背景
     drawGrid(droppableCls, 3, 3);
     $(droppableCls).on('resize', function(){
         console.log('hahah')
+        request16to9($('.col.right .panel-body'));
         drawGrid(droppableCls, 3, 3);
     });
 
@@ -82,13 +86,13 @@ function handleDroppablePanel(droppableCls){
     $droppable.pep({
     });
 
-    $('.sky-btn.dropdown').off('tap click').on('tap click','li', function() {
+    $('.sky-btn.dropdown').off('tap click').on('tap click','li', function(){
         var $this = $(this);
         var val = $this.find('a').html();
-        console.log(val)
+
         $this.parent().siblings('a.dropdown-toggle').html(val+' <span class="caret"></span>');
         var scale = parseInt(val)*0.01;
-        console.log(scale)
+
         $droppable.css({
             'transform': 'scale(' + scale + ')'
         });
@@ -99,6 +103,11 @@ function handleDroppablePanel(droppableCls){
     });
 }
 
+/**
+ * 编辑区操作
+ * @param windowCtrl
+ * @param droppableCls
+ */
 function handleWindowAction(windowCtrl, droppableCls){
     var $contaner = $(droppableCls);
 
@@ -587,16 +596,42 @@ function fitElement(inner, container) {
         if (oWidth / oHeight > cWidth / cHeight) {
             var nWidth = Math.round(oWidth / (oHeight / cHeight));
             var offsetLeft = (cWidth - nWidth) / 2;
-            style = "height:" + cHeight + "px;width:" + nWidth + "px;margin-left:" + offsetLeft + "px;"
+            style = "height:" + cHeight + "px;width:" + nWidth + "px;margin-left:" + offsetLeft + "px;";
         } else {
             if (oWidth / oHeight < cWidth / cHeight) {
                 var nHeight = Math.round(oHeight / (oWidth / cWidth));
                 var offsetTop = (cHeight - nHeight) / 2;
                 style = "width:100%;margin-top:" + offsetTop + "px;"
             } else {
-                style = "width:100%"
+                style = "width:100%";
             }
         }
         $this.attr("style", style)
     })
+}
+
+function request16to9($element){
+
+    var pW, pH, padding;
+
+    pW = $element.innerWidth();
+    pH = $element.innerHeight();
+
+    if(pW/pH > 16/9){
+        padding = (pW - pH*16/9)/2;
+        $element.css({
+            //'height':pH,
+            //'width':pH*16/9,
+            'padding-left':padding,
+            'padding-right':padding
+        })
+    }else{
+        padding = (pH - pW*9/16)/2
+        $element.css({
+            //height:pW*9/16,
+            //width:pW,
+            'padding-top':padding,
+            'padding-bottom':padding
+        })
+    }
 }
