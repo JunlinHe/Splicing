@@ -12,12 +12,16 @@ function templete(){
     }
 }
 
+function SkyApp(){
+
+    return this;
+}
 /**
  * 初始化拖拽控件
  * @param dragBtnCls
  * @param droppableCls
  */
-function init(dragBtnCls, droppableCls){
+SkyApp.prototype.init = function(dragBtnCls, droppableCls){
     var $drag = $(dragBtnCls);
     var windowCtrl = '<div class="pep window">'+
         '<div class="title">'+
@@ -29,22 +33,23 @@ function init(dragBtnCls, droppableCls){
         '<div class="coor"></div>'+
         '</div>';
 
-    // 初始化拖拽按钮
-    handleDragBtn($drag, droppableCls, 1, windowCtrl);
-    //handleDroppablePanel(droppableCls);
-    // 初始化窗口控制事件
-    handleWindowAction(windowCtrl, droppableCls);
-
-    // 将编辑区设置为16:9（必须在绘制网格前）
-    request16to9($('.col.right .panel-body'));
-    // 绘制canvas网格背景
-    drawGrid(droppableCls, 3, 3);
+    // 将编辑区设置为16:9（必须在绘制网格前执行）
+    var $editPanel = $('.col.right .panel-body');
+    request16to9($editPanel);
+    // 绘制3x3 canvas网格背景
+    handleDrawGrid(droppableCls, 3, 3);
     $(droppableCls).on('resize', function(){
-        console.log('hahah')
-        request16to9($('.col.right .panel-body'));
-        drawGrid(droppableCls, 3, 3);
+
+        request16to9($editPanel);
+        handleDrawGrid(droppableCls, 3, 3);
     });
 
+    // 初始化拖拽按钮
+    handleDragBtn($drag, droppableCls, 1, windowCtrl);
+    // 控制屏幕区缩放
+    handleDroppablePanel(droppableCls);
+    // 初始化窗口控制事件
+    handleWindowAction(windowCtrl, droppableCls);
     // 控制面板左右切换
     handlePanelSlide(droppableCls);
 }
@@ -72,7 +77,7 @@ function handlePanelSlide(droppableCls){
         // 重绘canvas
         setTimeout(function(){
             $(droppableCls).trigger("resize")
-        },600);
+        },700);
 
     });
 }
@@ -83,8 +88,8 @@ function handlePanelSlide(droppableCls){
  */
 function handleDroppablePanel(droppableCls){
     var $droppable = $(droppableCls)
-    $droppable.pep({
-    });
+    //$droppable.pep({
+    //});
 
     $('.sky-btn.dropdown').off('tap click').on('tap click','li', function(){
         var $this = $(this);
@@ -97,9 +102,9 @@ function handleDroppablePanel(droppableCls){
             'transform': 'scale(' + scale + ')'
         });
 
-        var $pepOoj = $droppable.data('plugin_pep')
-        $pepOoj.setScale(scale);
-        $pepOoj.setMultiplier(scale);
+        //var $pepOoj = $droppable.data('plugin_pep')
+        //$pepOoj.setScale(scale);
+        //$pepOoj.setMultiplier(scale);
     });
 }
 
@@ -150,7 +155,7 @@ function handleFullScreen($pep, droppableCls, pepCls){
  * @param x
  * @param y
  */
-function drawGrid(droppableCls, x, y) {
+function handleDrawGrid(droppableCls, x, y) {
     var $droppable = $(droppableCls);
 
     var idObject = document.getElementById('cvs');
@@ -171,7 +176,7 @@ function drawGrid(droppableCls, x, y) {
     context.fillStyle = "#ffffff";
     context.lineWidth = 0.6;
 
-    //画横线
+    //画横虚线
     var j = 0,stepX = canvas.width/x,stepY = canvas.height/y;
     //10个像素位为单位,6个像素画线，4个像素空出来，成为虚线
     for (var i = 1; i < y; i ++) {
@@ -183,7 +188,7 @@ function drawGrid(droppableCls, x, y) {
         context.stroke();
     }
 
-    //画竖线
+    //画竖虚线
     for (var i = 1; i < x; i ++) {
         context.beginPath();
         for(j = 0;j < stepY;j++){
@@ -309,14 +314,7 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
         useCSSTranslation: false,
         initiate: function(ev,obj){
 
-            var el = obj.$el;
-            el.find('.button.close').off('click').on('click',function(){
-                //el.find('.content').html('');
-                //obj.revert();
-                $.pep.unbind(el);
-                el.remove();
-                obj.options.constrainTo = 'window';
-            });
+            handleInitWinCtrl(obj);
         },
         startPos: startPos,
         start: function (ev, obj) {
@@ -331,6 +329,17 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
             //rotate(obj.$el, 0);
         },
         rest: handleCentering
+    });
+}
+
+function handleInitWinCtrl($obj){
+    var $el = $obj.$el;
+    $el.find('.button.close').off('click').on('click',function(){
+        //$el.find('.content').html('');
+        //$obj.revert();
+        $.pep.unbind($el);
+        $el.remove();
+        $obj.options.constrainTo = 'window';
     });
 }
 
@@ -610,6 +619,10 @@ function fitElement(inner, container) {
     })
 }
 
+/**
+ * 将编辑区宽高比置为16:9
+ * @param $element
+ */
 function request16to9($element){
 
     var pW, pH, padding;
@@ -635,3 +648,5 @@ function request16to9($element){
         })
     }
 }
+
+

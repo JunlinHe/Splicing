@@ -30,6 +30,7 @@ a, a:link, a:visited, a:hover, a:active {
     background: rgba(0,0,0,0.7);
     height: 100%;
     width: 100%;
+    transform-origin: 0 0;
 }
 
 .refresh,.fullscreen{
@@ -391,6 +392,9 @@ a, a:link, a:visited, a:hover, a:active {
 .left .panel-inverse > .panel-body {
     padding: 0;
 }
+.right .panel-inverse > .panel-body {
+    overflow: auto;
+}
 .panel-inverse > .panel-body > .left-body-btn{
     list-style: none;
     color: #fff;
@@ -415,6 +419,10 @@ a, a:link, a:visited, a:hover, a:active {
     display: block;
     width: 100%;
     z-index: 8;
+}
+
+.right .panel-footer{
+    line-height: inherit;
 }
 
 .panel-inverse > .panel-heading + .panel-collapse > .panel-body {

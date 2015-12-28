@@ -1,69 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN" class="main-html">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-    <title>拼接屏</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="favicon.ico">-->
+    <title>Bootstrap 基础 Template</title>
 
+    <!-- Bootstrap本地服务器css文件 -->
+    <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="lib/font-awesome-4.4.0/css/font-awesome.min.css">
+    <!--<link href="lib/bootstrap/css/carousel.css" rel="stylesheet">-->
     <link href="css/app.css" rel="stylesheet">
+
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <!--<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+    <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+    <!--<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<body>
-<div id="tag-list">
-    <!--<div class="grid"></div>-->
-    <div class="window-btn placeholder">拖拽我添加窗口</div>
-    <div class="window-btn drag">
-        拖拽我添加窗口
-        <div class="content"></div>
-    </div>
+<body class="main-body">
+
+<!--导航条-->
+<div class="navbar-wrapper">
+    <div class="container">
+        <!--导航条-->
+        <nav class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand toc item" href="#"><i class="fa fa-user"></i> admin</a>
+                </div>
+
+                <div id="navbar" class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="fa fa-refresh" aria-hidden="true"></span> 同步</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="fa fa-bars" aria-hidden="true"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">导航头</li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-center">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">屏幕墙一 <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
 
 
-    <button class="fullscreen" id="view-fullscreen">全屏</button>
-    <button class="fullscreen" id="cancel-fullscreen">退出全屏</button>
-    <a href="" class="refresh">刷新页面</a>
-    <div class="display">
-        <div class="title">log</div>
-        <div class="content"></div>
+            </div>
+        </nav>
+
     </div>
 </div>
-<div class="panel droppable">
 
+<div class="sky-wrapper">
+    <div class="row">
+        <div class="col left">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <span>输入信号</span>
+                    <a class="sky-btn collapse-btn">
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
+                    <a class="sky-btn collapse-btn">
+                        <i class="fa fa-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <ul id="ctrl-list" class="left-body-btn">
+                        <li class="sky-btn item">
+                            <i class="fa fa-desktop fa-lg"></i>
+                            <div class="drag">
+                                <a>1.1-DVI</a>
+                                <div class="content"></div>
+                            </div>
+                        </li>
+                        <li class="sky-btn item">
+                            <i class="fa fa-desktop fa-lg"></i>
+                            <div class="drag">
+                                <a>1.2-DVI</a>
+                                <div class="content"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <ul class="left-footer-btn">
+                        <li class="sky-btn item"><i class="fa fa-desktop fa-lg"></i><a>输入</a></li>
+                        <li class="sky-btn item"><i class="fa fa-th-large fa-lg"></i><a>情景模式</a></li>
+                        <li class="sky-btn item"><i class="fa fa-gear fa-lg"></i><a>设置</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col right">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+
+                    <ul class="action-btn-group left">
+                        <li class="sky-btn item"><a id="new-win"><i class="fa fa-plus"></i> 新建窗口</a></li>
+                        <li class="sky-btn item"><a id="close-win"><i class="fa fa-close"></i> 关闭窗口</a></li>
+                        <li class="sky-btn item"><a id="clear-win"><i class="fa fa-trash-o"></i> 清空</a></li>
+                    </ul>
+                    <ul class="action-btn-group right">
+                        <li class="sky-btn item dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">100% <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">25%</a></li>
+                                <li><a href="#">50%</a></li>
+                                <li><a href="#">75%</a></li>
+                                <li><a href="#">100%</a></li>
+                                <li><a href="#">125%</a></li>
+                                <li><a href="#">150%</a></li>
+                                <li><a href="#">175%</a></li>
+                                <li><a href="#">200%</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="panel-body" >
+                    <div class="droppable" >
+                        <!--<img src="http://fanyi.baidu.com/static/i18n/zh/widget/translate/head/logo/logo_16ea8bb7.png">-->
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <!--<ul class="ellipsis-btn">-->
+                        <!--<li class="sky-btn item"><a>01</a></li>-->
+                        <!--<li class="sky-btn item"><a>02</a></li>-->
+                        <!--<li class="sky-btn item"><a>03</a></li>-->
+                        <!--<li class="sky-btn item"><a>04</a></li>-->
+                        <!--<li class="sky-btn item"><i class="fa fa-ellipsis-h"></i></li>-->
+                    <!--</ul>-->
+                    <ul class="nav nav-pills">
+                        <li role="presentation" class="active"><a href="#">01</a></li>
+                        <li role="presentation"><a href="#">02</a></li>
+                        <li role="presentation"><a href="#">03</a></li>
+                        <li role="presentation"><a href="#"><i class="fa fa-ellipsis-h"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="lib/jquery-2.1.4.js" type="text/javascript"></script>
-<!--<script src="lib/jquery-1.7.2.js" type="text/javascript"></script>-->
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="lib/jquery-2.1.4.js"></script>
+<!--<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>-->
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<!--<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+
 <script src="lib/modernizr.min.js" type="text/javascript"></script>
-<script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>
+<!--<script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>-->
 <script src="lib/jquery-pep-js/jquery.pep.js" type="text/javascript"></script>
 <script src="lib/fullscreen.js" type="text/javascript"></script>
-<script src="js/app.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
+<script>
+$(function(){
 
-<script type="text/javascript">
-    $(function () {
-        try{
-//            var $pep = $('.pep');
-//            handleWindowCtrl($pep);
+    var dragBtnCls = '#ctrl-list .item .drag',
+            droppableCls = '.droppable';
 
-            var $drag = $('#tag-list .drag');
-            var windowCtrl = '<div class="pep window">'+
-                    '<div class="title">'+
-                    ' 按住标题拖动,点X关闭'+
-                    '<div class="button close">x</div>'+
-                    '<div class="button minus">-</div>'+
-                    '</div>'+
-                    '<div class="content"></div>'+
-                    '<div class="coor"></div>'+
-                    '</div>';
-            handleDragBtn($drag,1, windowCtrl);
+    var app = new SkyApp();
+    app.init(dragBtnCls, droppableCls);
+//    fitElement('.droppable img', '.droppable');
 
-            //mousewheelScale($('.panel'));
-            $('.display').on('MSPointerDown pointerdown touchstart mousedown','.title',function(){
-                alert(0);
-            });
-        }catch(e){
-            log(e.name+':'+e.message);
-        }
-
-    });
-
+})
 </script>
 </body>
 </html>
