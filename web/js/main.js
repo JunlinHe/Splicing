@@ -2,7 +2,8 @@
  * Created by hejunlin on 2015/12/18.
  */
 
-var evStar = 'tap click';
+var evStar = 'tap click',
+    GRID_POINT = [];
 
 function templete(){
     try{
@@ -33,15 +34,16 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
         '<div class="coor"></div>'+
         '</div>';
 
+    loadProperties('Messages', 'assets/');
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     var $editPanel = $('.col.right .panel-body');
     request16to9($editPanel);
     // 绘制3x3 canvas网格背景
-    handleDrawGrid(droppableCls, 3, 3);
+    GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
     $(droppableCls).on('resize', function(){
 
         request16to9($editPanel);
-        handleDrawGrid(droppableCls, 3, 3);
+        GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
     });
 
     // 初始化拖拽按钮
@@ -52,6 +54,39 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
     handleWindowAction(windowCtrl, droppableCls);
     // 控制面板左右切换
     handlePanelSlide(droppableCls);
+}
+
+/**
+ * 加载本地化文件，替换html中的字符串，用于服务器没有本地化的情况
+ * @param name
+ * @param path
+ * @param lang
+ */
+function loadProperties(name, path, lang){
+    var lang = lang || navigator.language;
+    $.i18n.properties({
+        name:name,
+        path:path,
+        mode:'both',
+        language: lang,
+        callback: function() {
+            $("[data-localize]").each(function() {
+                var elem = $(this),
+                    localizedValue = $.i18n.prop(elem.data("localize"));
+                if (elem.is("input[type=text]") || elem.is("input[type=password]") || elem.is("input[type=email]")) {
+                    elem.attr("placeholder", localizedValue);
+                } else if (elem.is("input[type=button]") || elem.is("input[type=submit]")) {
+                    elem.attr("value", localizedValue);
+                } else if (elem.is("[data-replace=left]")){
+                    elem.html(localizedValue + elem.html());
+                } else if (elem.is("[data-replace=right]")){
+                    elem.html(elem.html() + localizedValue);
+                } else {
+                    elem.html(localizedValue);
+                }
+            });
+        }
+    });
 }
 
 /**
@@ -91,7 +126,7 @@ function handleDroppablePanel(droppableCls){
     //$droppable.pep({
     //});
 
-    $('.sky-btn.dropdown').off('tap click').on('tap click','li', function(){
+    $('.sky-btn.dropdown').off(evStar).on(evStar,'li', function(){
         var $this = $(this);
         var val = $this.find('a').html();
 
@@ -116,18 +151,18 @@ function handleDroppablePanel(droppableCls){
 function handleWindowAction(windowCtrl, droppableCls){
     var $contaner = $(droppableCls);
 
-    $('#new-win').on('click',function(){
+    $('#new-win').on(evStar,function(){
 
         $contaner.append(windowCtrl);
 
         handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
     });
 
-    $('#close-win').on('click',function(){
+    $('#close-win').on(evStar,function(){
         handleCloseWindow(droppableCls, '.pep.active')
     });
 
-    $('#clear-win').on('click',function(){
+    $('#clear-win').on(evStar,function(){
         handleCloseWindow(droppableCls, '.pep')
     });
 }
@@ -213,6 +248,16 @@ function handleDrawGrid(droppableCls, x, y) {
     }
 
     context.restore();
+
+    // 计算线条交叉点
+    var gridPoint = [];
+    for(var m = 1; m < y; m ++){
+        for(var n = 1; n < x; n ++){
+            gridPoint.push([stepX*n, stepY*m])
+        }
+    }
+    console.log(gridPoint)
+    return gridPoint;
 }
 /**
  * 生成window控件
@@ -314,7 +359,7 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
         useCSSTranslation: false,
         initiate: function(ev,obj){
 
-            handleInitWinCtrl(obj);
+            handleInitWinCtrlAction(obj);
         },
         startPos: startPos,
         start: function (ev, obj) {
@@ -332,15 +377,36 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
     });
 }
 
-function handleInitWinCtrl($obj){
+/**
+ * 窗口控件操作事件
+ * @param $obj
+ */
+function handleInitWinCtrlAction($obj){
     var $el = $obj.$el;
-    $el.find('.button.close').off('click').on('click',function(){
+
+    // 移除控件
+    $el.off(evStar,'.close').on(evStar,'.close', function(){
         //$el.find('.content').html('');
         //$obj.revert();
         $.pep.unbind($el);
         $el.remove();
         $obj.options.constrainTo = 'window';
     });
+    // 按钮 单屏最大化
+    $el.off(evStar,'.fullscreen').on(evStar,'.fullscreen', function(){
+        if(GRID_POINT.length === 0)
+            return false;
+        var oTop, oLeft, oWidth, oHeight;
+        oTop = $obj.position().top;
+        oLeft = $obj.position().left;
+        oWidth = $obj.width();
+        oHeight = $obj.height();
+
+
+        //$obj.moveTo(0, 80)
+    });
+    // 双击 单屏最大化
+    // 按钮 全屏最大化
 }
 
 /**
