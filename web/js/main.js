@@ -250,14 +250,13 @@ function handleDrawGrid(droppableCls, x, y) {
     context.restore();
 
     // 计算线条交叉点
-    var gridPoint = [];
-    for(var m = 1; m < y; m ++){
-        for(var n = 1; n < x; n ++){
-            gridPoint.push([stepX*n, stepY*m])
-        }
-    }
-    console.log(gridPoint)
-    return gridPoint;
+    //var gridPoint = [];
+    //for(var m = 0; m <= y; m ++){
+    //    for(var n = 0; n <= x; n ++){
+    //        gridPoint.push([stepX*n, stepY*m])
+    //    }
+    //}
+    return [x, y, stepX, stepY];
 }
 /**
  * 生成window控件
@@ -382,7 +381,9 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
  * @param $obj
  */
 function handleInitWinCtrlAction($obj){
-    var $el = $obj.$el;
+    var $el = $obj.$el,
+        $elParent = $obj.$el.parent();
+
 
     // 移除控件
     $el.off(evStar,'.close').on(evStar,'.close', function(){
@@ -392,18 +393,59 @@ function handleInitWinCtrlAction($obj){
         $el.remove();
         $obj.options.constrainTo = 'window';
     });
+
     // 按钮 单屏最大化
     $el.off(evStar,'.fullscreen').on(evStar,'.fullscreen', function(){
-        if(GRID_POINT.length === 0)
+        var len = GRID_POINT.length
+        if(len === 0)
             return false;
-        var oTop, oLeft, oWidth, oHeight;
-        oTop = $obj.position().top;
-        oLeft = $obj.position().left;
-        oWidth = $obj.width();
-        oHeight = $obj.height();
+        var x, y, stepX, stepY,
+            oTop, oLeft, oWidth, oHeight,
+            dTop, dLeft, dWidth, dHeight;
 
+        console.log(GRID_POINT)
+        x = GRID_POINT[0];
+        y = GRID_POINT[1];
+        stepX = GRID_POINT[2];
+        stepY = GRID_POINT[3];
 
-        //$obj.moveTo(0, 80)
+        oTop = $el.position().top - $elParent.position().top;
+        oLeft = $el.position().left - $elParent.position().left;
+        oWidth = $el.innerWidth();
+        oHeight = $el.innerHeight();
+        console.log(oTop+'-'+oLeft+'-'+oWidth+'-'+oHeight)
+
+        for(var i = 0; i <= x; i ++){
+            if(stepX*i < oLeft && oLeft < stepX*(i+1)){
+                dLeft = stepX*i;
+                break;
+            }
+        }
+        for(var j = 0; j <= y; j ++){
+            if(stepY*j < oTop && oTop < stepY*(j+1)){
+                dTop = stepY*j;
+                break;
+            }
+        }
+        for(var k = 0; k <= x; k ++){
+            var w = oLeft+oWidth;
+            if(stepX*k < w && w < stepX*(k+1)){
+                dWidth = dLeft + stepX*(k+1);
+                break;
+            }
+        }
+        for(var l = 0; l <= y; l ++){
+            var h = oTop+oHeight;
+            if(stepY*l < h && h < stepY*(l+1)){
+                dHeight = dTop + stepY*(l+1);
+                break;
+            }
+        }
+
+        $el.width(dWidth);
+        $el.height(dHeight);
+        console.log([dLeft,dTop,dWidth,dHeight])
+        $obj.moveTo(dLeft, dTop)
     });
     // 双击 单屏最大化
     // 按钮 全屏最大化
