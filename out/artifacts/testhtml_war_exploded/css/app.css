@@ -55,20 +55,18 @@ a, a:link, a:visited, a:hover, a:active {
 }
 
 .window {
-    position: relative;
+    position: absolute;
     width: 200px;
     height: 100px;
-    background: #eee;
-    border-radius: 3px;
-    margin: 10px;
-    border: 2px solid #ccc;
-    -moz-box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
-    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+    color: #222222;
+    /*margin: 10px;*/
+    border: 1px solid #ccc;
+    cursor: move;
+    z-index: 9;
 }
 .window.active{
     z-index: 99;
-    border: 2px solid red;
+    border: 1px solid red;
 }
 .window .title {
     position: absolute;
@@ -89,7 +87,6 @@ a, a:link, a:visited, a:hover, a:active {
     font-weight: normal;
     font-size: 12px;
     border-radius: inherit;
-    background: #333;
     margin: 2px 2px;
 
     box-sizing: border-box;
@@ -108,10 +105,10 @@ a, a:link, a:visited, a:hover, a:active {
     background: #2b81af;
 }
 .window .content {
-    cursor: move;
     height: 100%;
-    background: #ddd;
+    background: rgba(3, 103, 132, 0.7);
     padding-top: 20px;
+    color: #fff;
 }
 
 /*.grid{*/
@@ -207,6 +204,7 @@ a, a:link, a:visited, a:hover, a:active {
     right: 0;
     left: 0;
     z-index: 9;
+    white-space: nowrap;/*强制不换行*/
 }
 
 /* Flip around the padding for proper display in narrow viewports */

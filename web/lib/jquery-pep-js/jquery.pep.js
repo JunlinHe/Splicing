@@ -674,7 +674,7 @@
     } else{
       this.$el.stop(true, false).css({ top: y , left: x });
     }
-
+    console.log('执行一次moveTo'+[x,y]);
   };
 
   //  moveToUsingTransforms();

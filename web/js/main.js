@@ -3,6 +3,7 @@
  */
 
 var evStar = 'tap click',
+    dbClick = 'doubletap dblclick',
     GRID_POINT = [];
 
 function templete(){
@@ -26,9 +27,10 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
     var $drag = $(dragBtnCls);
     var windowCtrl = '<div class="pep window">'+
         '<div class="title">'+
-        '按住标题拖动,点X关闭'+
+        '1.1-DVI'+
         '<div class="button close"><i class="fa fa-close"></i></div>'+
         '<div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>'+
+        '<div class="button full-single-screen"><i class="fa fa-expand"></i></div>'+
         '</div>'+
         '<div class="content"></div>'+
         '<div class="coor"></div>'+
@@ -39,11 +41,11 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
     var $editPanel = $('.col.right .panel-body');
     request16to9($editPanel);
     // 绘制3x3 canvas网格背景
-    GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
+    GRID_POINT = handleDrawGrid(droppableCls, 4, 4);
     $(droppableCls).on('resize', function(){
 
         request16to9($editPanel);
-        GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
+        GRID_POINT = handleDrawGrid(droppableCls, 4, 4);
     });
 
     // 初始化拖拽按钮
@@ -186,9 +188,10 @@ function handleFullScreen($pep, droppableCls, pepCls){
 }
 /**
  * 绘制网格背景
- * @param droppableCls 填充位置
+ * @param droppableCls
  * @param x
  * @param y
+ * @returns {*[]}
  */
 function handleDrawGrid(droppableCls, x, y) {
     var $droppable = $(droppableCls);
@@ -349,16 +352,17 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
         minSize:{'w':100,'h':80},
         maxSize:null,
         constrainTo: 'window',
-        elementsWithInteraction: '.title, .close',//指定某部分不会触发拖动
+        elementsWithInteraction: '.close',//指定某部分不会触发拖动
         revert: true,
         revertAfter: 'ease',
+        cssEaseDuration: 300,//滑动时间
         revertIf: function () {
             return !this.activeDropRegions.length;
         },
         useCSSTranslation: false,
         initiate: function(ev,obj){
-
-            handleInitWinCtrlAction(obj);
+            //console.log(0);
+            //handleInitWinCtrlAction(obj);
         },
         startPos: startPos,
         start: function (ev, obj) {
@@ -374,6 +378,8 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
         },
         rest: handleCentering
     });
+
+    handleInitWinCtrlAction($pep.data('plugin_pep'));
 }
 
 /**
@@ -383,10 +389,10 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
 function handleInitWinCtrlAction($obj){
     var $el = $obj.$el,
         $elParent = $obj.$el.parent();
-
+    console.log(0);
 
     // 移除控件
-    $el.off(evStar,'.close').on(evStar,'.close', function(){
+    $el.find('.close').hammer().off(evStar).on(evStar, function(){
         //$el.find('.content').html('');
         //$obj.revert();
         $.pep.unbind($el);
@@ -395,61 +401,137 @@ function handleInitWinCtrlAction($obj){
     });
 
     // 按钮 单屏最大化
-    $el.off(evStar,'.fullscreen').on(evStar,'.fullscreen', function(){
-        var len = GRID_POINT.length
-        if(len === 0)
-            return false;
-        var x, y, stepX, stepY,
-            oTop, oLeft, oWidth, oHeight,
-            dTop, dLeft, dWidth, dHeight;
+    $el.find('.full-single-screen').hammer().off(evStar).on(evStar, function(){
+        requestFullSingleScreen($obj, true)
+    });
+    // 双击 单屏最大化
+    //$el.off(dbClick,'.content').on(dbClick,'.content', function(){
+    //    requestFullSingleScreen($obj, true)
+    //});
+    $el.find('.content').hammer().off(dbClick).on(dbClick, function(){
+        requestFullSingleScreen($obj, true)
+    });
+    // 按钮 全屏最大化
+    $el.find('.fullscreen').hammer().off(evStar).on(evStar, function(){
+        requestFullSingleScreen($obj, false)
+    });
+}
 
-        console.log(GRID_POINT)
-        x = GRID_POINT[0];
-        y = GRID_POINT[1];
-        stepX = GRID_POINT[2];
-        stepY = GRID_POINT[3];
+/**
+ * 控件单屏最大化
+ * @param $obj
+ * @param single 单屏或全屏最大化
+ * @returns {boolean}
+ */
+function requestFullSingleScreen($obj, single){
 
-        oTop = $el.position().top - $elParent.position().top;
-        oLeft = $el.position().left - $elParent.position().left;
-        oWidth = $el.innerWidth();
-        oHeight = $el.innerHeight();
-        console.log(oTop+'-'+oLeft+'-'+oWidth+'-'+oHeight)
+    var len = GRID_POINT.length,
+        $el = $obj.$el,
+        $elParent = $el.parent();
 
+    if(len === 0)
+        return false;
+    var x, y, stepX, stepY,
+        oTop, oLeft, oWidth, oHeight,
+        pTop, pLeft, pWidth, pHeight,
+        dTop, dLeft, dWidth, dHeight;
+
+    x = GRID_POINT[0];
+    y = GRID_POINT[1];
+    stepX = GRID_POINT[2];
+    stepY = GRID_POINT[3];
+
+    pTop = Math.round($elParent.position().top);
+    pLeft = Math.round($elParent.position().left);
+    pWidth = Math.round($elParent.innerWidth());
+    pHeight = Math.round($elParent.innerHeight());
+
+    oTop = Math.round($el.position().top - pTop);
+    oLeft = Math.round($el.position().left - pLeft);
+    oWidth = Math.round($el.outerWidth());
+    oHeight = Math.round($el.outerHeight());
+
+    //全屏最大化
+    if(!single){
+
+        if(oTop+pTop === pTop && oLeft+pLeft === pLeft && oWidth === pWidth && oHeight === pHeight){
+
+            $el.outerWidth($obj.reverPosix.w);
+            $el.outerHeight($obj.reverPosix.h);
+            $obj.moveTo($obj.reverPosix.x + pLeft, $obj.reverPosix.y + pTop);
+        }else{
+
+            $el.outerWidth(pWidth);
+            $el.outerHeight(pHeight);
+            $obj.moveTo(pLeft, pTop);
+            // 保存控件变化前的坐标尺寸
+            $obj.reverPosix = {
+                x:oLeft,
+                y:oTop,
+                w:oWidth,
+                h:oHeight
+            };
+        }
+
+    }else{//单屏最大化
         for(var i = 0; i <= x; i ++){
-            if(stepX*i < oLeft && oLeft < stepX*(i+1)){
-                dLeft = stepX*i;
+            if(stepX*i <= oLeft && oLeft < stepX*(i+1)){
+                dLeft = Math.round(stepX*i);
                 break;
             }
         }
         for(var j = 0; j <= y; j ++){
-            if(stepY*j < oTop && oTop < stepY*(j+1)){
-                dTop = stepY*j;
+            if(stepY*j <= oTop && oTop < stepY*(j+1)){
+                dTop = Math.round(stepY*j);
                 break;
             }
         }
         for(var k = 0; k <= x; k ++){
             var w = oLeft+oWidth;
-            if(stepX*k < w && w < stepX*(k+1)){
-                dWidth = dLeft + stepX*(k+1);
+            if(stepX*k < w && w <= stepX*(k+1)){
+                dWidth = Math.round(stepX*(k+1) - dLeft);
                 break;
             }
         }
         for(var l = 0; l <= y; l ++){
             var h = oTop+oHeight;
-            if(stepY*l < h && h < stepY*(l+1)){
-                dHeight = dTop + stepY*(l+1);
+            if(stepY*l < h && h <= stepY*(l+1)){
+                dHeight = Math.round(stepY*(l+1) - dTop);
                 break;
             }
         }
 
-        $el.width(dWidth);
-        $el.height(dHeight);
-        console.log([dLeft,dTop,dWidth,dHeight])
-        $obj.moveTo(dLeft, dTop)
-    });
-    // 双击 单屏最大化
-    // 按钮 全屏最大化
+        console.log([oTop, oLeft, oWidth, oHeight])
+
+        console.log([pTop, pLeft, pWidth, pHeight])
+        console.log([dTop, dLeft, dWidth, dHeight])
+        //尺寸不变则缩小
+        if(oTop === dTop && oLeft === dLeft && oWidth === dWidth && oHeight === dHeight){
+            console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
+            $el.outerWidth($obj.reverPosix.w);
+            $el.outerHeight($obj.reverPosix.h);
+            $obj.moveTo($obj.reverPosix.x + pLeft, $obj.reverPosix.y + pTop)
+        }else{
+
+            $el.outerWidth(dWidth);
+            $el.outerHeight(dHeight);
+            $obj.moveTo(dLeft + pLeft, dTop + pTop)
+            //$obj.moveTo(dLeft, dTop)
+            console.log([oTop, oLeft, oWidth, oHeight])
+            console.log('-----------------------------')
+            // 保存控件变化前的坐标尺寸
+            $obj.reverPosix = {
+                x:oLeft,
+                y:oTop,
+                w:oWidth,
+                h:oHeight
+            };
+        }
+    }
+
+
 }
+
 
 /**
  * 显示日志
@@ -477,10 +559,8 @@ function handleCentering(ev, obj) {
             //centerWithin(obj);
             var pis = insideWithin(obj);
             log(pis);
-            var info = 'x:'+pis[0]+'px <br>'+
-                'y:'+pis[1]+'px <br>'+
-                'height:'+pis[2]+'px <br>'+
-                'width:'+pis[3]+'px <br>';
+            var info = 'x,y:'+pis[0]+','+pis[1]+'<br>'+
+                'h,w:'+pis[2]+','+pis[3];
             obj.$el.find('.content').html(info);
 
             //发送位置信息
@@ -678,7 +758,7 @@ function callServer(param){
 /**
  * 全屏显示网页
  */
-function requestFullScreen() {
+function requestDocFullScreen() {
     var de = document.documentElement;
     if (de.requestFullscreen) {
         de.requestFullscreen();
@@ -691,7 +771,7 @@ function requestFullScreen() {
 /**
  * 退出全屏
  */
-function exitFullscreen() {
+function exitDocFullscreen() {
     var de = document;
     if (de.exitFullscreen) {
         de.exitFullscreen();
