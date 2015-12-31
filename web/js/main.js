@@ -15,8 +15,15 @@ function templete(){
 }
 
 function SkyApp(){
+    var self = this;
+    // 加载本地化配置
+    loadProperties('Messages', 'assets/');
 
-    return this;
+    // 将编辑区设置为16:9（必须在绘制网格前执行）
+    self.$editPanel = $('.col.right .panel-body');
+    request16to9(self.$editPanel);
+
+    return self;
 }
 /**
  * 初始化拖拽控件
@@ -24,6 +31,7 @@ function SkyApp(){
  * @param droppableCls
  */
 SkyApp.prototype.init = function(dragBtnCls, droppableCls){
+    var self = this;
     var $drag = $(dragBtnCls);
     var windowCtrl = '<div class="pep window">'+
         '<div class="title">'+
@@ -36,16 +44,14 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
         '<div class="coor"></div>'+
         '</div>';
 
-    loadProperties('Messages', 'assets/');
-    // 将编辑区设置为16:9（必须在绘制网格前执行）
-    var $editPanel = $('.col.right .panel-body');
-    request16to9($editPanel);
+
+
     // 绘制3x3 canvas网格背景
-    GRID_POINT = handleDrawGrid(droppableCls, 4, 4);
+    GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
     $(droppableCls).on('resize', function(){
 
-        request16to9($editPanel);
-        GRID_POINT = handleDrawGrid(droppableCls, 4, 4);
+        request16to9(self.$editPanel);
+        GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
     });
 
     // 初始化拖拽按钮
@@ -97,7 +103,7 @@ function loadProperties(name, path, lang){
  */
 function handlePanelSlide(droppableCls){
 
-    var $panel = $('.sky-wrapper');
+    var $panel = $('#sky-wrapper');
     $panel.off(evStar, '.collapse-btn').on(evStar, '.collapse-btn', function(){
         var $this = $(this);
         var index = $this.index();
@@ -153,18 +159,18 @@ function handleDroppablePanel(droppableCls){
 function handleWindowAction(windowCtrl, droppableCls){
     var $contaner = $(droppableCls);
 
-    $('#new-win').on(evStar,function(){
+    $('.new-win').on(evStar,function(){
 
         $contaner.append(windowCtrl);
 
         handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
     });
 
-    $('#close-win').on(evStar,function(){
+    $('.close-win').on(evStar,function(){
         handleCloseWindow(droppableCls, '.pep.active')
     });
 
-    $('#clear-win').on(evStar,function(){
+    $('.clear-win').on(evStar,function(){
         handleCloseWindow(droppableCls, '.pep')
     });
 }
@@ -516,7 +522,6 @@ function requestFullSingleScreen($obj, single){
             $el.outerWidth(dWidth);
             $el.outerHeight(dHeight);
             $obj.moveTo(dLeft + pLeft, dTop + pTop)
-            //$obj.moveTo(dLeft, dTop)
             console.log([oTop, oLeft, oWidth, oHeight])
             console.log('-----------------------------')
             // 保存控件变化前的坐标尺寸
