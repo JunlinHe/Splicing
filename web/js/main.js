@@ -23,6 +23,9 @@ function SkyApp(){
     self.$editPanel = $('.col.right .panel-body');
     request16to9(self.$editPanel);
 
+    // 控制面板左右切换
+    handlePanelSlide();
+
     return self;
 }
 /**
@@ -60,8 +63,7 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
     handleDroppablePanel(droppableCls);
     // 初始化窗口控制事件
     handleWindowAction(windowCtrl, droppableCls);
-    // 控制面板左右切换
-    handlePanelSlide(droppableCls);
+
 }
 
 /**
@@ -99,9 +101,8 @@ function loadProperties(name, path, lang){
 
 /**
  * 面板滑动
- * @param droppableCls
  */
-function handlePanelSlide(droppableCls){
+function handlePanelSlide(){
 
     var $panel = $('#sky-wrapper');
     $panel.off(evStar, '.collapse-btn').on(evStar, '.collapse-btn', function(){
@@ -119,7 +120,7 @@ function handlePanelSlide(droppableCls){
         }
         // 重绘canvas
         setTimeout(function(){
-            $(droppableCls).trigger("resize")
+            $panel.find('.right .panel-body>*').trigger("resize")
         },700);
 
     });
