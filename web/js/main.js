@@ -2,29 +2,24 @@
  * Created by hejunlin on 2015/12/18.
  */
 
-var evStar = 'tap click',
-    dbClick = 'doubletap dblclick',
-    GRID_POINT = [];
-
-function templete(){
-    try{
-
-    }catch(e){
-        log(e.name+':'+e.message);
-    }
-}
-
 function SkyApp(){
     var self = this;
+
+    self.evStar = 'tap click';
+    self.dbClick = 'doubletap dblclick';
+    self.editPanelSize = {w:false, h:false};
+    self.GRID_POINT = [];
+
     // 加载本地化配置
-    loadProperties('Messages', 'assets/');
+    self.loadProperties('Messages', 'assets/');
+    // 控制面板左右切换
+    self.handlePanelSlide();
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     self.$editPanel = $('.col.right .panel-body');
-    request16to9(self.$editPanel);
+    self.editPanelSize = self.request16to9(self.$editPanel);
 
-    // 控制面板左右切换
-    handlePanelSlide();
+    self.init();
 
     return self;
 }
@@ -33,10 +28,13 @@ function SkyApp(){
  * @param dragBtnCls
  * @param droppableCls
  */
-SkyApp.prototype.init = function(dragBtnCls, droppableCls){
-    var self = this;
-    var $drag = $(dragBtnCls);
-    var windowCtrl = '<div class="pep window">'+
+SkyApp.prototype.init = function(){
+    var self = this,
+        dragBtnCls = '#input-list .item .drag',
+        droppableCls1 = '#screen-wall-one .droppable',
+        droppableCls2 = '#screen-wall-two .droppable',
+        $drag = $(dragBtnCls),
+        windowCtrl = '<div class="pep window">'+
         '<div class="title">'+
         '1.1-DVI'+
         '<div class="button close"><i class="fa fa-close"></i></div>'+
@@ -47,23 +45,19 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
         '<div class="coor"></div>'+
         '</div>';
 
-
-
     // 绘制3x3 canvas网格背景
-    GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
-    $(droppableCls).on('resize', function(){
+    self.GRID_POINT = self.handleDrawGrid(droppableCls1, 3, 3);
+    $(droppableCls1).on('resize', function(){
 
-        request16to9(self.$editPanel);
-        GRID_POINT = handleDrawGrid(droppableCls, 3, 3);
+        self.GRID_POINT = self.handleDrawGrid(droppableCls1, 3, 3);
     });
 
     // 初始化拖拽按钮
-    handleDragBtn($drag, droppableCls, 1, windowCtrl);
+    self.handleDragBtn($drag, droppableCls1, 1, windowCtrl);
     // 控制屏幕区缩放
-    handleDroppablePanel(droppableCls);
+    self.handleDroppablePanelScale(droppableCls1);
     // 初始化窗口控制事件
-    handleWindowAction(windowCtrl, droppableCls);
-
+    self.handleWindowAction(windowCtrl, droppableCls1);
 }
 
 /**
@@ -72,7 +66,7 @@ SkyApp.prototype.init = function(dragBtnCls, droppableCls){
  * @param path
  * @param lang
  */
-function loadProperties(name, path, lang){
+SkyApp.prototype.loadProperties = function(name, path, lang){
     var lang = lang || navigator.language;
     $.i18n.properties({
         name:name,
@@ -102,10 +96,14 @@ function loadProperties(name, path, lang){
 /**
  * 面板滑动
  */
-function handlePanelSlide(){
+SkyApp.prototype.handlePanelSlide = function(){
 
-    var $panel = $('#sky-wrapper');
-    $panel.off(evStar, '.collapse-btn').on(evStar, '.collapse-btn', function(){
+    var self = this,
+        $panel = $('#sky-wrapper'),
+        $editPanel = $panel.find('.right .panel-body'),
+        $dropable = $editPanel.find(":first-child");
+
+    $panel.off(self.evStar, '.collapse-btn').on(self.evStar, '.collapse-btn', function(){
         var $this = $(this);
         var index = $this.index();
 
@@ -118,11 +116,14 @@ function handlePanelSlide(){
                 break;
             default:break;
         }
+
         // 重绘canvas
         setTimeout(function(){
-            $panel.find('.right .panel-body>*').trigger("resize")
-        },700);
+            // 将编辑区宽高比置为16:9
+            self.editPanelSize = self.request16to9($editPanel);
 
+            $dropable.trigger("resize")
+        },700);
     });
 }
 
@@ -130,12 +131,13 @@ function handlePanelSlide(){
  * 控制屏幕区缩放
  * @param droppableCls
  */
-function handleDroppablePanel(droppableCls){
-    var $droppable = $(droppableCls)
+SkyApp.prototype.handleDroppablePanelScale = function(droppableCls){
+    var self = this,
+        $droppable = $(droppableCls)
     //$droppable.pep({
     //});
 
-    $('.sky-btn.dropdown').off(evStar).on(evStar,'li', function(){
+    $('.sky-btn.dropdown').off(self.evStar).on(self.evStar,'li', function(){
         var $this = $(this);
         var val = $this.find('a').html();
 
@@ -157,22 +159,23 @@ function handleDroppablePanel(droppableCls){
  * @param windowCtrl
  * @param droppableCls
  */
-function handleWindowAction(windowCtrl, droppableCls){
-    var $contaner = $(droppableCls);
+SkyApp.prototype.handleWindowAction = function(windowCtrl, droppableCls){
+    var self = this,
+        $contaner = $(droppableCls);
 
-    $('.new-win').on(evStar,function(){
+    $('.new-win').on(self.evStar,function(){
 
         $contaner.append(windowCtrl);
 
-        handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
+        self.handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
     });
 
-    $('.close-win').on(evStar,function(){
-        handleCloseWindow(droppableCls, '.pep.active')
+    $('.close-win').on(self.evStar,function(){
+        self.handleCloseWindow(droppableCls, '.pep.active')
     });
 
-    $('.clear-win').on(evStar,function(){
-        handleCloseWindow(droppableCls, '.pep')
+    $('.clear-win').on(self.evStar,function(){
+        self.handleCloseWindow(droppableCls, '.pep')
     });
 }
 
@@ -181,18 +184,13 @@ function handleWindowAction(windowCtrl, droppableCls){
  * @param droppableCls
  * @param pepCls
  */
-function handleCloseWindow(droppableCls, pepCls){
+SkyApp.prototype.handleCloseWindow = function(droppableCls, pepCls){
     var $contaner = $(droppableCls);
     var active = $contaner.find(pepCls);
     $.pep.unbind(active);
     active.remove();
 }
 
-function handleFullScreen($pep, droppableCls, pepCls){
-    var $contaner = $(droppableCls);
-    var active = $contaner.find(pepCls);
-    $pep.options.constrainTo
-}
 /**
  * 绘制网格背景
  * @param droppableCls
@@ -200,17 +198,23 @@ function handleFullScreen($pep, droppableCls, pepCls){
  * @param y
  * @returns {*[]}
  */
-function handleDrawGrid(droppableCls, x, y) {
-    var $droppable = $(droppableCls);
+SkyApp.prototype.handleDrawGrid = function(droppableCls, x, y) {
+    var self = this,
+        $droppable = $(droppableCls);
 
-    var idObject = document.getElementById('cvs');
+    var idObject = document.getElementById('cvs'+x+'-'+y);
     if (idObject != null)
         idObject.parentNode.removeChild(idObject);
 
     var canvas = document.createElement("canvas");
-    canvas.id = 'cvs';
-    canvas.width = $droppable.innerWidth();
-    canvas.height = $droppable.innerHeight();
+    canvas.id = 'cvs'+x+'-'+y;
+
+    canvas.width = self.editPanelSize.w;
+    canvas.height = self.editPanelSize.h;
+    //canvas.width = $droppable.innerWidth();
+    //canvas.height = $droppable.innerHeight();
+
+    console.log(canvas.width)
     canvas.style.cssText = "margin:0 auto; position:absolute;";
     $droppable.append(canvas);
     var context = canvas.getContext("2d");
@@ -269,15 +273,17 @@ function handleDrawGrid(droppableCls, x, y) {
     return [x, y, stepX, stepY];
 }
 /**
- * 生成window控件
+ * 拖拽生成window控件
  * @param $drag 按钮对象
  * @param droppableCls 拖拽区class
  * @param type 控件类型
  * @param genCtrl 控件字符串
  */
-function handleDragBtn($drag, droppableCls, type, genCtrl){
+SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
 
-    var $droppable = $(droppableCls)
+    var self = this,
+        $droppable = $(droppableCls)
+
     $drag.pep({
         droppable: droppableCls,
         constrainTo: 'window',
@@ -297,7 +303,11 @@ function handleDragBtn($drag, droppableCls, type, genCtrl){
             ev = obj.normalizeEvent(ev);
             //记录鼠标或触目点的移动位置，写到全局中
             if(obj.activeDropRegions.length !== 0 ){
-                var $relative = $droppable.parents().filter(function() {
+                //var $relative = $droppable.parents().filter(function() {
+                //    var $this = $(this);
+                //    return $this.is('body') || $this.css('position') === 'relative'|| $this.css('position') === 'absolute';
+                //})
+                var $relative = obj.activeDropRegions[0].parents().filter(function() {
                     var $this = $(this);
                     return $this.is('body') || $this.css('position') === 'relative'|| $this.css('position') === 'absolute';
                 })
@@ -310,7 +320,6 @@ function handleDragBtn($drag, droppableCls, type, genCtrl){
                     obj.customPosix = {'x':ev.pep.x, 'y':ev.pep.y};
                 }
             }
-
         },
         stop: function (ev, obj) {
             //移除按钮中的控件
@@ -324,7 +333,7 @@ function handleDragBtn($drag, droppableCls, type, genCtrl){
                 var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
                 switch (type){
                     case 1:
-                        handleWindowCtrl($(droppableCls).find('.pep'), droppableCls, startPos);
+                        self.handleWindowCtrl($contaner.find('.pep'), droppableCls, startPos);
                         break;
                     case 2:
                         break;
@@ -348,8 +357,10 @@ function handleDragBtn($drag, droppableCls, type, genCtrl){
  * @param droppableCls 拖拽区class
  * @param startPos 起始位置
  */
-function handleWindowCtrl($pep, droppableCls, startPos ){
+SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos ){
     if(!startPos) startPos = { left: null, top: null };
+
+    var self = this;
     $pep.pep({
         //debug: true,
         droppable: droppableCls,
@@ -383,23 +394,26 @@ function handleWindowCtrl($pep, droppableCls, startPos ){
         stop: function (ev, obj) {
             //rotate(obj.$el, 0);
         },
-        rest: handleCentering
+        rest: function (ev, obj){
+            self.handleCentering(ev, obj);
+        }
+
     });
 
-    handleInitWinCtrlAction($pep.data('plugin_pep'));
+    self.handleInitWinCtrlAction($pep.data('plugin_pep'));
 }
 
 /**
  * 窗口控件操作事件
  * @param $obj
  */
-function handleInitWinCtrlAction($obj){
-    var $el = $obj.$el,
+SkyApp.prototype.handleInitWinCtrlAction = function($obj){
+    var self = this,
+        $el = $obj.$el,
         $elParent = $obj.$el.parent();
-    console.log(0);
 
     // 移除控件
-    $el.find('.close').hammer().off(evStar).on(evStar, function(){
+    $el.find('.close').hammer().off(self.evStar).on(self.evStar, function(){
         //$el.find('.content').html('');
         //$obj.revert();
         $.pep.unbind($el);
@@ -408,45 +422,47 @@ function handleInitWinCtrlAction($obj){
     });
 
     // 按钮 单屏最大化
-    $el.find('.full-single-screen').hammer().off(evStar).on(evStar, function(){
-        requestFullSingleScreen($obj, true)
+    $el.find('.full-single-screen').hammer().off(self.evStar).on(self.evStar, function(){
+        self.requestFullSingleScreen($obj, self.GRID_POINT, true)
     });
     // 双击 单屏最大化
-    //$el.off(dbClick,'.content').on(dbClick,'.content', function(){
+    //$el.off(self.dbClick,'.content').on(self.dbClick,'.content', function(){
     //    requestFullSingleScreen($obj, true)
     //});
-    $el.find('.content').hammer().off(dbClick).on(dbClick, function(){
-        requestFullSingleScreen($obj, true)
+    $el.find('.content').hammer().off(self.dbClick).on(self.dbClick, function(){
+        self.requestFullSingleScreen($obj, self.GRID_POINT, true)
     });
     // 按钮 全屏最大化
-    $el.find('.fullscreen').hammer().off(evStar).on(evStar, function(){
-        requestFullSingleScreen($obj, false)
+    $el.find('.fullscreen').hammer().off(self.evStar).on(self.evStar, function(){
+        self.requestFullSingleScreen($obj, self.GRID_POINT, false)
     });
 }
 
 /**
  * 控件单屏最大化
  * @param $obj
- * @param single 单屏或全屏最大化
+ * @param grid
+ * @param single
  * @returns {boolean}
  */
-function requestFullSingleScreen($obj, single){
+SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
 
-    var len = GRID_POINT.length,
+    var self = this,
+        len = grid.length,
         $el = $obj.$el,
         $elParent = $el.parent();
 
-    if(len === 0)
+    if(len === 0 || !grid instanceof Array)
         return false;
     var x, y, stepX, stepY,
         oTop, oLeft, oWidth, oHeight,
         pTop, pLeft, pWidth, pHeight,
         dTop, dLeft, dWidth, dHeight;
 
-    x = GRID_POINT[0];
-    y = GRID_POINT[1];
-    stepX = GRID_POINT[2];
-    stepY = GRID_POINT[3];
+    x = grid[0];
+    y = grid[1];
+    stepX = grid[2];
+    stepY = grid[3];
 
     pTop = Math.round($elParent.position().top);
     pLeft = Math.round($elParent.position().left);
@@ -508,13 +524,13 @@ function requestFullSingleScreen($obj, single){
             }
         }
 
-        console.log([oTop, oLeft, oWidth, oHeight])
-
-        console.log([pTop, pLeft, pWidth, pHeight])
-        console.log([dTop, dLeft, dWidth, dHeight])
+        //console.log([oTop, oLeft, oWidth, oHeight])
+        //
+        //console.log([pTop, pLeft, pWidth, pHeight])
+        //console.log([dTop, dLeft, dWidth, dHeight])
         //尺寸不变则缩小
         if(oTop === dTop && oLeft === dLeft && oWidth === dWidth && oHeight === dHeight){
-            console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
+            //console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
             $el.outerWidth($obj.reverPosix.w);
             $el.outerHeight($obj.reverPosix.h);
             $obj.moveTo($obj.reverPosix.x + pLeft, $obj.reverPosix.y + pTop)
@@ -523,8 +539,8 @@ function requestFullSingleScreen($obj, single){
             $el.outerWidth(dWidth);
             $el.outerHeight(dHeight);
             $obj.moveTo(dLeft + pLeft, dTop + pTop)
-            console.log([oTop, oLeft, oWidth, oHeight])
-            console.log('-----------------------------')
+            //console.log([oTop, oLeft, oWidth, oHeight])
+            //console.log('-----------------------------')
             // 保存控件变化前的坐标尺寸
             $obj.reverPosix = {
                 x:oLeft,
@@ -543,7 +559,7 @@ function requestFullSingleScreen($obj, single){
  * 显示日志
  * @param msg
  */
-function log(msg){
+SkyApp.prototype.log = function(msg){
     if(typeof msg == 'undefined'){
         msg = 'undefined';
     }else{
@@ -557,24 +573,21 @@ function log(msg){
  * @param ev
  * @param obj
  */
-function handleCentering(ev, obj) {
-    try{
-        log(obj.activeDropRegions.length);
+SkyApp.prototype.handleCentering = function(ev, obj) {
+    var self = this;
 
-        if (obj.activeDropRegions.length > 0) {
-            //centerWithin(obj);
-            var pis = insideWithin(obj);
-            log(pis);
-            var info = 'x,y:'+pis[0]+','+pis[1]+'<br>'+
-                'h,w:'+pis[2]+','+pis[3];
-            obj.$el.find('.content').html(info);
+    if (obj.activeDropRegions.length > 0) {
+        //centerWithin(obj);
+        var pis = self.insideWithin(obj);
 
-            //发送位置信息
-            //callServer(pis);
-        }
-    }catch(e){
-        log(e.name+':'+e.message);
+        var info = 'x,y:'+pis[0]+','+pis[1]+'<br>'+
+            'h,w:'+pis[2]+','+pis[3];
+        obj.$el.find('.content').html(info);
+
+        //发送位置信息
+        //callServer(pis);
     }
+
 
 }
 
@@ -582,7 +595,7 @@ function handleCentering(ev, obj) {
  * 将滑块置于编辑区中间
  * @param obj
  */
-function centerWithin(obj) {
+SkyApp.prototype.centerWithin = function(obj) {
     try{
         var $parent = obj.activeDropRegions[0];
         var pTop = $parent.position().top;
@@ -627,66 +640,61 @@ function centerWithin(obj) {
  * 将滑块置于编辑区内
  * @param obj
  */
-function insideWithin(obj) {
-    try{
-        var $parent = obj.activeDropRegions[0];
+SkyApp.prototype.insideWithin = function(obj) {
+    var $parent = obj.activeDropRegions[0];
 
-        var pTop = $parent.position().top;
-        var pLeft = $parent.position().left;
-        var pHeight = $parent.height();
-        var pWidth = $parent.width();
+    var pTop = $parent.position().top;
+    var pLeft = $parent.position().left;
+    var pHeight = $parent.height();
+    var pWidth = $parent.width();
 
-        var oTop = obj.$el.position().top;
-        var oLeft = obj.$el.position().left;
-        var oHeight = obj.$el.outerHeight();
-        var oWidth = obj.$el.outerWidth();
+    var oTop = obj.$el.position().top;
+    var oLeft = obj.$el.position().left;
+    var oHeight = obj.$el.outerHeight();
+    var oWidth = obj.$el.outerWidth();
 
-        var moveTop = oTop,moveLeft = oLeft;
+    var moveTop = oTop,moveLeft = oLeft;
 
-        if (!obj.shouldUseCSSTranslation()) {
+    if (!obj.shouldUseCSSTranslation()) {
 
-            if(pTop > oTop){
-                moveTop = pTop;
-            }else if(pTop+pHeight-oHeight < oTop){
-                moveTop = pTop + pHeight - oHeight;
-            }
-            if(pLeft > oLeft){
-                moveLeft = pLeft;
-            }else if(pLeft+pWidth-oWidth < oLeft){
-                moveLeft = pLeft + pWidth - oWidth;
-            }
-            obj.$el.animate({top: moveTop, left: moveLeft}, 0);
-        } else {
-
-            if(pTop > oTop){
-                moveTop = pTop;
-            }else if(pTop+pHeight-oHeight < oTop){
-                moveTop = pTop + pHeight - oHeight/2;
-            }
-            if(pLeft > oLeft){
-                moveLeft = pLeft;
-            }else if(pLeft+pWidth-oWidth < oLeft){
-                moveLeft = pLeft + pWidth - oWidth/2;
-            }
-            obj.moveToUsingTransforms(moveTop, moveLeft);
+        if(pTop > oTop){
+            moveTop = pTop;
+        }else if(pTop+pHeight-oHeight < oTop){
+            moveTop = pTop + pHeight - oHeight;
         }
+        if(pLeft > oLeft){
+            moveLeft = pLeft;
+        }else if(pLeft+pWidth-oWidth < oLeft){
+            moveLeft = pLeft + pWidth - oWidth;
+        }
+        obj.$el.animate({top: moveTop, left: moveLeft}, 0);
+    } else {
 
-        //将移动块约束在编辑区内 [top, right, bottom, left]
-        obj.$el.data('plugin_pep').options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
-
-        //计算滑块相对编辑区的位置
-        var fTop,fRight,fBottom,fLeft;
-        fTop = moveTop - pTop;
-        fLeft = moveLeft - pLeft;
-        fRight = pWidth - fLeft - oWidth;
-        fBottom = pHeight - fTop - oHeight;
-        //var pis = [fTop.toFixed(2), fRight.toFixed(2), fBottom.toFixed(2), fLeft.toFixed(2)];
-        var pis = [fLeft.toFixed(2), fTop.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];//x y h w
-        return pis;
-    }catch(e){
-        log(e.name+':'+e.message);
+        if(pTop > oTop){
+            moveTop = pTop;
+        }else if(pTop+pHeight-oHeight < oTop){
+            moveTop = pTop + pHeight - oHeight/2;
+        }
+        if(pLeft > oLeft){
+            moveLeft = pLeft;
+        }else if(pLeft+pWidth-oWidth < oLeft){
+            moveLeft = pLeft + pWidth - oWidth/2;
+        }
+        obj.moveToUsingTransforms(moveTop, moveLeft);
     }
 
+    //将移动块约束在编辑区内 [top, right, bottom, left]
+    obj.$el.data('plugin_pep').options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
+
+    //计算滑块相对编辑区的位置
+    var fTop,fRight,fBottom,fLeft;
+    fTop = moveTop - pTop;
+    fLeft = moveLeft - pLeft;
+    fRight = pWidth - fLeft - oWidth;
+    fBottom = pHeight - fTop - oHeight;
+    //var pis = [fTop.toFixed(2), fRight.toFixed(2), fBottom.toFixed(2), fLeft.toFixed(2)];
+    var pis = [fLeft.toFixed(2), fTop.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];//x y h w
+    return pis;
 }
 
 /**
@@ -694,77 +702,60 @@ function insideWithin(obj) {
  * @param $obj
  * @param deg
  */
-function rotate($obj, deg) {
-    try{
-        $obj.css({
-            "transform": "rotate(" + deg + "deg)"
-        });
-    }catch(e){
-        log(e.name+':'+e.message);
-    }
-
+SkyApp.prototype.rotate = function($obj, deg) {
+    $obj.css({
+        "transform": "rotate(" + deg + "deg)"
+    });
 }
 
 /**
  * 滑动鼠标放大缩小滑块
  * @param obj
  */
-function mousewheelScale(obj) {
-    try{
-        var i = 1;
-        obj.on("mousewheel", function (event, delta) {
+SkyApp.prototype.mousewheelScale = function(obj) {
+    var i = 1;
+    obj.on("mousewheel", function (event, delta) {
 
-            i += delta * 0.1;
-            scale = Math.abs(i);
+        i += delta * 0.1;
+        scale = Math.abs(i);
 
-            obj.css({
-                'transform': 'scale(' + scale + ',' + scale + ')'
-            })
+        obj.css({
+            'transform': 'scale(' + scale + ',' + scale + ')'
+        })
 
-            //obj.data('plugin_pep').setScale(scale);
-            return false;
-        });
-    }catch(e){
-        log(e.name+':'+e.message);
-    }
-
-
+        //obj.data('plugin_pep').setScale(scale);
+        return false;
+    });
 }
 
 /**
  * 向显示器发送控件位置
  * @param param
  */
-function callServer(param){
-    try{
-        var x = param[0];
-        var y = param[1];
-        var height = param[2];
-        var width = param[3];
-        $.ajax({
-            url:'http://192.168.1.126:8088/p',
-            data:'x='+x+'&y='+y+'&height='+height+'&width='+width,
-            type:'get',
-            contentType:'text/html;charset=UTF-8',
-            success:function(data){
-                log(data);
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown){
-                log(XMLHttpRequest.status);
-                log(XMLHttpRequest.readyState);
-                log(textStatus);
-            }
-        });
-    }catch(e){
-        console.log(e.name+':'+e.message);
-        log(e.name+':'+e.message);
-    }
-
+SkyApp.prototype.callServer = function(param){
+    var x = param[0];
+    var y = param[1];
+    var height = param[2];
+    var width = param[3];
+    $.ajax({
+        url:'http://192.168.1.126:8088/p',
+        data:'x='+x+'&y='+y+'&height='+height+'&width='+width,
+        type:'get',
+        contentType:'text/html;charset=UTF-8',
+        success:function(data){
+            log(data);
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            log(XMLHttpRequest.status);
+            log(XMLHttpRequest.readyState);
+            log(textStatus);
+        }
+    });
 }
 /**
  * 全屏显示网页
  */
-function requestDocFullScreen() {
+SkyApp.prototype.requestDocFullScreen = function() {
     var de = document.documentElement;
     if (de.requestFullscreen) {
         de.requestFullscreen();
@@ -777,7 +768,7 @@ function requestDocFullScreen() {
 /**
  * 退出全屏
  */
-function exitDocFullscreen() {
+SkyApp.prototype.exitDocFullscreen = function() {
     var de = document;
     if (de.exitFullscreen) {
         de.exitFullscreen();
@@ -788,7 +779,7 @@ function exitDocFullscreen() {
     }
 }
 
-function fitElement(inner, container) {
+SkyApp.prototype.fitElement = function(inner, container) {
     $(inner).off("load").on("load", function() {
         var $this = $(this);
         var oWidth = $this.outerWidth();
@@ -817,29 +808,38 @@ function fitElement(inner, container) {
  * 将编辑区宽高比置为16:9
  * @param $element
  */
-function request16to9($element){
+SkyApp.prototype.request16to9 = function($element){
 
-    var pW, pH, padding;
+    var oW, oH, padding;
 
-    pW = $element.innerWidth();
-    pH = $element.innerHeight();
+    oW = $element.innerWidth();
+    oH = $element.innerHeight();
 
-    if(pW/pH > 16/9){
-        padding = (pW - pH*16/9)/2;
+    if(oW/oH > 16/9){
+        padding = (oW - oH*16/9)/2;
         $element.css({
             //'height':pH,
             //'width':pH*16/9,
-            'padding-left':padding,
-            'padding-right':padding
+            'padding-top': 15,
+            'padding-bottom': 15,
+            'padding-left': padding,
+            'padding-right': padding
         })
     }else{
-        padding = (pH - pW*9/16)/2
+        padding = (oH - oW*9/16)/2
         $element.css({
-            //height:pW*9/16,
-            //width:pW,
-            'padding-top':padding,
-            'padding-bottom':padding
+            //height:oW*9/16,
+            //width:oW,
+            'padding-left': 15,
+            'padding-right': 15,
+            'padding-top': padding,
+            'padding-bottom': padding
         })
+    }
+
+    return {
+        w:$element.width(),
+        h:$element.height()
     }
 }
 

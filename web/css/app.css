@@ -410,10 +410,10 @@ a, a:link, a:visited, a:hover, a:active {
     background-color: rgba(0,0,0,0.5);
 }
 
-#sky-wrapper .left > .panel-body {
+#sky-wrapper .left .panel-body {
     padding: 0;
 }
-#sky-wrapper .right > .panel-body {
+#sky-wrapper .right .panel-body {
     overflow: auto;
 }
 
