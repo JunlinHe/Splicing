@@ -55,9 +55,9 @@ SkyApp.prototype.init = function(){
     // 初始化拖拽按钮
     self.handleDragBtn($drag, droppableCls1, 1, windowCtrl);
     // 控制屏幕区缩放
-    self.handleDroppablePanelScale(droppableCls1);
+    self.handleDroppablePanelScale();
     // 初始化窗口控制事件
-    self.handleWindowAction(windowCtrl, droppableCls1);
+    self.handleWindowAction(windowCtrl);
 }
 
 /**
@@ -131,15 +131,17 @@ SkyApp.prototype.handlePanelSlide = function(){
  * 控制屏幕区缩放
  * @param droppableCls
  */
-SkyApp.prototype.handleDroppablePanelScale = function(droppableCls){
+SkyApp.prototype.handleDroppablePanelScale = function(){
     var self = this,
-        $droppable = $(droppableCls)
+        droppableCls = '.right .tab-pane.active .droppable'
+
     //$droppable.pep({
     //});
 
     $('.sky-btn.dropdown').off(self.evStar).on(self.evStar,'li', function(){
-        var $this = $(this);
-        var val = $this.find('a').html();
+        var $this = $(this),
+            val = $this.find('a').html(),
+            $droppable = $(droppableCls);
 
         $this.parent().siblings('a.dropdown-toggle').html(val+' <span class="caret"></span>');
         var scale = parseInt(val)*0.01;
@@ -157,24 +159,24 @@ SkyApp.prototype.handleDroppablePanelScale = function(droppableCls){
 /**
  * 编辑区操作
  * @param windowCtrl
- * @param droppableCls
  */
-SkyApp.prototype.handleWindowAction = function(windowCtrl, droppableCls){
+SkyApp.prototype.handleWindowAction = function(windowCtrl){
     var self = this,
-        $contaner = $(droppableCls);
+        droppableCls = '.right .tab-pane.active .droppable',
+        $contaner = null;
 
-    $('.new-win').on(self.evStar,function(){
-
+    $('#sky-wrapper .right .new-win').on(self.evStar,function(){
+        $contaner = $(droppableCls)
         $contaner.append(windowCtrl);
 
         self.handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
     });
 
-    $('.close-win').on(self.evStar,function(){
+    $('#sky-wrapper .right .close-win').on(self.evStar,function(){
         self.handleCloseWindow(droppableCls, '.pep.active')
     });
 
-    $('.clear-win').on(self.evStar,function(){
+    $('#sky-wrapper .right .clear-win').on(self.evStar,function(){
         self.handleCloseWindow(droppableCls, '.pep')
     });
 }
@@ -275,14 +277,13 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls, x, y) {
 /**
  * 拖拽生成window控件
  * @param $drag 按钮对象
- * @param droppableCls 拖拽区class
  * @param type 控件类型
  * @param genCtrl 控件字符串
  */
-SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
+SkyApp.prototype.handleDragBtn = function($drag, type, genCtrl){
 
     var self = this,
-        $droppable = $(droppableCls)
+        droppableCls = '.right .tab-pane.active .droppable';
 
     $drag.pep({
         droppable: droppableCls,
