@@ -940,10 +940,24 @@ SkyApp.prototype.handleWinfo = function(win){
 
     var resultArr = demo.split('\r\n');
 
-
-
     for(var i = 1; i < resultArr.length - 1; i++){
         console.log(resultArr[i])
 
+        var arr = resultArr[i].split(','),
+            id = arr[0],
+            level_num = arr[1],
+            src_Ch = arr[2],
+            src_hstart = arr[3],
+            src_vstart = arr[4],
+            src_hsize = arr[5],
+            src_vsize = arr[6],
+            win_x0 = arr[7],
+            win_y0 = arr[8],
+            win_width = arr[9],
+            win_height = arr[10];
+
+
+        // 向指定屏幕墙添加窗口
+        self.handleWindowCtrl()
     }
 }
