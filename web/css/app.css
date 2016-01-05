@@ -63,9 +63,10 @@ a, a:link, a:visited, a:hover, a:active {
     border: 1px solid #ccc;
     cursor: move;
     z-index: 9;
+    overflow: hidden;
 }
 .window.active{
-    z-index: 99;
+    z-index: 10;
     border: 1px solid red;
 }
 .window .title {

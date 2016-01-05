@@ -72,7 +72,7 @@
     $.ajax({
       url: indexFileUrl,
       async: false,
-      cache: false,
+      cache: settings.cache, // 强制修改cache，解决某些服务器不解释ajax时间戳url参数问题
       success: function (data, status) {
           languages = data.languages;
       }

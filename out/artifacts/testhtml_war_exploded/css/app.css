@@ -63,9 +63,10 @@ a, a:link, a:visited, a:hover, a:active {
     border: 1px solid #ccc;
     cursor: move;
     z-index: 9;
+    overflow: hidden;
 }
 .window.active{
-    z-index: 99;
+    z-index: 10;
     border: 1px solid red;
 }
 .window .title {
@@ -410,10 +411,10 @@ a, a:link, a:visited, a:hover, a:active {
     background-color: rgba(0,0,0,0.5);
 }
 
-#sky-wrapper .left > .panel-body {
+#sky-wrapper .left .panel-body {
     padding: 0;
 }
-#sky-wrapper .right > .panel-body {
+#sky-wrapper .right .panel-body {
     overflow: auto;
 }
 

@@ -12,7 +12,9 @@
     <title data-localize="index.title"></title>
 
     <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="lib/font-awesome-4.4.0/css/font-awesome.min.css">
+    <link href="lib/messenger/css/messenger.css" rel="stylesheet">
+    <link href="lib/messenger/css/messenger-theme-flat.css" rel="stylesheet">
+    <link href="lib/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -92,7 +94,7 @@
 
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane " id="input">
+                        <div role="tabpanel" class="tab-pane active" id="input">
                             <ul id="input-list" class="input">
                                 <li class="sky-btn item">
                                     <i class="fa fa-desktop fa-lg"></i>
@@ -122,7 +124,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div role="tabpanel" class="tab-pane active" id="setting">
+                        <div role="tabpanel" class="tab-pane" id="setting">
                             <div id="setting-info">
                                 <div class="title">通讯配置</div>
                                 <form class="form">
@@ -186,119 +188,84 @@
             </div>
         </div>
         <div class="col right">
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="screen-wall-one">
-                    <div class="panel panel-inverse">
-                        <div class="panel-heading">
 
-                            <ul class="action-btn-group left">
-                                <li class="sky-btn item"><a class="new-win" data-localize="index.right.action.btnname1" data-replace="right"><i class="fa fa-plus"></i> </a></li>
-                                <li class="sky-btn item"><a class="close-win" data-localize="index.right.action.btnname2" data-replace="right"><i class="fa fa-close"></i> </a></li>
-                                <li class="sky-btn item"><a class="clear-win" data-localize="index.right.action.btnname3" data-replace="right"><i class="fa fa-trash-o"></i> </a></li>
-                            </ul>
-                            <ul class="action-btn-group right">
-                                <li class="sky-btn item dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">100% <span class="caret"></span></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">25%</a></li>
-                                        <li><a href="#">50%</a></li>
-                                        <li><a href="#">75%</a></li>
-                                        <li><a href="#">100%</a></li>
-                                        <li><a href="#">125%</a></li>
-                                        <li><a href="#">150%</a></li>
-                                        <li><a href="#">175%</a></li>
-                                        <li><a href="#">200%</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
 
-                        </div>
-                        <div class="panel-body" >
-                            <div class="droppable" >
+                    <ul class="action-btn-group left">
+                        <li class="sky-btn item"><a class="new-win" data-localize="index.right.action.btnname1" data-replace="right"><i class="fa fa-plus"></i> </a></li>
+                        <li class="sky-btn item"><a class="close-win" data-localize="index.right.action.btnname2" data-replace="right"><i class="fa fa-close"></i> </a></li>
+                        <li class="sky-btn item"><a class="clear-win" data-localize="index.right.action.btnname3" data-replace="right"><i class="fa fa-trash-o"></i> </a></li>
+                    </ul>
+                    <ul class="action-btn-group right">
+                        <li class="sky-btn item dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">100% <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">25%</a></li>
+                                <li><a href="#">50%</a></li>
+                                <li><a href="#">75%</a></li>
+                                <li><a href="#">100%</a></li>
+                                <li><a href="#">125%</a></li>
+                                <li><a href="#">150%</a></li>
+                                <li><a href="#">175%</a></li>
+                                <li><a href="#">200%</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="panel-body" >
+                    <div class="tab-content">
+                        <div role="tabpanel" id="screen-wall-one" class="tab-pane active">
+                            <div class="droppable" data-cvs-grid="3_3">
                             </div>
                         </div>
-                        <div class="panel-footer">
-                            <!--<ul class="ellipsis-btn">-->
-                            <!--<li class="sky-btn item"><a>01</a></li>-->
-                            <!--<li class="sky-btn item"><a>02</a></li>-->
-                            <!--<li class="sky-btn item"><a>03</a></li>-->
-                            <!--<li class="sky-btn item"><a>04</a></li>-->
-                            <!--<li class="sky-btn item"><i class="fa fa-ellipsis-h"></i></li>-->
-                            <!--</ul>-->
-                            <ul class="nav nav-pills">
-                                <li role="presentation" class="active"><a href="#">01</a></li>
-                                <li role="presentation"><a href="#">02</a></li>
-                                <li role="presentation"><a href="#">03</a></li>
-                                <li role="presentation"><a href="#"><i class="fa fa-ellipsis-h"></i></a></li>
-                            </ul>
+                        <div role="tabpanel" id="screen-wall-two" class="tab-pane">
+                            <div class="droppable" data-cvs-grid="2_2">
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="screen-wall-two">
-                    <div class="panel panel-inverse">
-                        <div class="panel-heading">
-
-                            <ul class="action-btn-group left">
-                                <li class="sky-btn item"><a class="new-win" data-localize="index.right.action.btnname1" data-replace="right"><i class="fa fa-plus"></i> </a></li>
-                                <li class="sky-btn item"><a class="close-win" data-localize="index.right.action.btnname2" data-replace="right"><i class="fa fa-close"></i> </a></li>
-                                <li class="sky-btn item"><a class="clear-win" data-localize="index.right.action.btnname3" data-replace="right"><i class="fa fa-trash-o"></i> </a></li>
-                            </ul>
-                            <ul class="action-btn-group right">
-                                <li class="sky-btn item dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">100% <span class="caret"></span></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">25%</a></li>
-                                        <li><a href="#">50%</a></li>
-                                        <li><a href="#">75%</a></li>
-                                        <li><a href="#">100%</a></li>
-                                        <li><a href="#">125%</a></li>
-                                        <li><a href="#">150%</a></li>
-                                        <li><a href="#">175%</a></li>
-                                        <li><a href="#">200%</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-
-                        </div>
-                        <div class="panel-body" >
-                            <div class="droppable" >
-                            </div>
-                        </div>
-                        <div class="panel-footer">
-                            <ul class="nav nav-pills">
-                                <li role="presentation" class="active"><a href="#">01</a></li>
-                                <li role="presentation"><a href="#">02</a></li>
-                                <li role="presentation"><a href="#">03</a></li>
-                                <li role="presentation"><a href="#"><i class="fa fa-ellipsis-h"></i></a></li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="panel-footer">
+                    <!--<ul class="ellipsis-btn">-->
+                    <!--<li class="sky-btn item"><a>01</a></li>-->
+                    <!--<li class="sky-btn item"><a>02</a></li>-->
+                    <!--<li class="sky-btn item"><a>03</a></li>-->
+                    <!--<li class="sky-btn item"><a>04</a></li>-->
+                    <!--<li class="sky-btn item"><i class="fa fa-ellipsis-h"></i></li>-->
+                    <!--</ul>-->
+                    <ul class="nav nav-pills">
+                        <li role="presentation" class="active"><a href="#">01</a></li>
+                        <li role="presentation"><a href="#">02</a></li>
+                        <li role="presentation"><a href="#">03</a></li>
+                        <li role="presentation"><a href="#"><i class="fa fa-ellipsis-h"></i></a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="lib/jquery-1.11.3.min.js"></script>
+<script src="lib/jquery-2.1.4.js"></script>
+<script src="lib/modernizr.min.js" type="text/javascript"></script>
 
 <script src="lib/i18n/jquery.i18n.properties.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-
-<script src="lib/modernizr.min.js" type="text/javascript"></script>
+<script src="lib/messenger/js/messenger.js"></script>
+<script src="lib/messenger/js/messenger-theme-flat.js"></script>
 <!--<script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>-->
 <script src="lib/jquery-pep-js/jquery.pep.js" type="text/javascript"></script>
 <script src="lib/hammer-js/hammer.js" type="text/javascript"></script>
 <script src="lib/hammer-js/jquery.hammer.js" type="text/javascript"></script>
 <script src="lib/fullscreen.js" type="text/javascript"></script>
+<script src="lib/jquery-indexeddb/jquery.indexeddb.js" type="text/javascript"></script>
+
 <script src="js/main.js" type="text/javascript"></script>
+
 <script>
 $(function(){
 
-    var dragBtnCls = '#input-list .item .drag',
-            droppableCls = '#screen-wall-one .droppable,#screen-wall-two .droppable';
-
     var app = new SkyApp();
-    app.init(dragBtnCls, droppableCls);
 //    fitElement('.droppable img', '.droppable');
 })
 </script>
