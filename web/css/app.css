@@ -476,3 +476,26 @@ a, a:link, a:visited, a:hover, a:active {
 #setting-info .form-group select{
     color: #5a5a5a;
 }
+
+/*弹出菜单*/
+#hover-menu{
+    position: absolute;
+    top: 0;left: 0;right: 0;bottom: 0;
+    z-index: 999;
+    background: rgba(0,0,0,0.4);
+}
+#hover-menu ul{
+    list-style: none;
+    width: 90px;
+    height: 160px;
+    /*margin: calc(50% - (160px / 2)) calc(50% - (90px / 2));*/
+    margin: 50% 50%;
+    padding: 0;
+    color: #fff;
+    background: rgba(0,0,0,0.7);
+}
+#hover-menu li{
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+}

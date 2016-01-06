@@ -52,7 +52,7 @@ function SkyApp(){
     self.handlePanelSlide();
 
     // 默认查询1号墙体窗口信息
-    self.handleWall(1);
+    //self.handleWall(1);
 
     return self;
 }
@@ -547,6 +547,11 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
         $el = $obj.$el,
         $elParent = $obj.$el.parent(),
         grid;
+
+    // 长按呼出菜单
+    $el.find('.content').hammer().on('press',function(){
+        alert(0);
+    });
 
     // 移除控件
     $el.find('.close').hammer().on(self.evStar, function(){
