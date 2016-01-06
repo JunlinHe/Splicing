@@ -3,56 +3,56 @@
  */
 
 function SkyApp(){
-    var self = this,
-        dragBtnCls = '#input-list .item .drag',
-        droppableCls = '.right .tab-pane .droppable',
-        droppableClsActive = '.right .tab-pane.active .droppable',
-        $drag = $(dragBtnCls),
-        windowCtrl = '<div class="pep window">'+
-            '<div class="title">'+
-            '1.1-DVI'+
-            '<div class="button close"><i class="fa fa-close"></i></div>'+
-            '<div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>'+
-            '<div class="button full-single-screen"><i class="fa fa-expand"></i></div>'+
-            '</div>'+
-            '<div class="content"></div>'+
-            '<div class="coor"></div>'+
-            '</div>';
+    var self = this;
+
+    self.dragBtnCls = '#input-list .item .drag',
+    self.droppableCls = '.right .tab-pane .droppable',
+    self.droppableClsActive = '.right .tab-pane.active .droppable',
+    self.$drag = $(self.dragBtnCls),
+    self.windowCtrl = '<div class="pep window">'+
+        '<div class="title">'+
+        '1.1-DVI'+
+        '<div class="button close"><i class="fa fa-close"></i></div>'+
+        '<div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>'+
+        '<div class="button full-single-screen"><i class="fa fa-expand"></i></div>'+
+        '</div>'+
+        '<div class="content"></div>'+
+        '<div class="coor"></div>'+
+        '</div>';
 
     //self.serverUrl = 'http://172.16.1.72:8088/p';
     self.serverUrl = 'p';
     self.evStar = 'tap click';
     self.dbClick = 'doubletap dblclick';
     self.editPanelSize = {w:false, h:false};
-
-    // 加载本地化配置
-    self.loadProperties('Messages', 'assets/');
-    // 控制面板左右切换
-    self.handlePanelSlide();
+    self.scaleX = 1,
+    self.scaleY = 1;
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     self.$editPanel = $('.col.right .panel-body');
     self.editPanelSize = self.request16to9(self.$editPanel);
 
+    // 加载本地化配置
+    self.handleI18n('Messages', 'assets/');
 
     // 绘制canvas网格背景
-    self.handleDrawGrid(droppableCls);
-    $(droppableCls).on('resize', function(){
+    self.handleDrawGrid(self.droppableCls);
+    $(self.droppableCls).on('resize', function(){
 
-        self.handleDrawGrid(droppableCls);
+        self.handleDrawGrid(self.droppableCls);
     });
 
     // 初始化拖拽按钮
-    self.handleDragBtn($drag, droppableClsActive, 1, windowCtrl);
+    self.handleDragBtn(self.$drag, self.droppableClsActive, 1, self.windowCtrl);
     // 控制屏幕区缩放
-    self.handleDroppablePanelScale(droppableClsActive);
+    self.handleDroppablePanelScale(self.droppableClsActive);
     // 初始化窗口控制事件
-    self.handleWindowAction(droppableClsActive, windowCtrl);
-
-    self.log('正在同步显示墙信息！')
+    self.handleWindowAction(self.droppableClsActive, self.windowCtrl);
+    // 控制面板左右切换
+    self.handlePanelSlide();
 
     // 默认查询1号墙体窗口信息
-    self.handleWinfo(1);
+    self.handleWall(1);
 
     return self;
 }
@@ -89,7 +89,7 @@ SkyApp.prototype.log = function(msg, type){
  * @param path
  * @param lang
  */
-SkyApp.prototype.loadProperties = function(name, path, lang){
+SkyApp.prototype.handleI18n = function(name, path, lang){
     var lang = lang || navigator.language;
     $.i18n.properties({
         cache: true, // 缓存配置文件
@@ -187,11 +187,17 @@ SkyApp.prototype.handleWindowAction = function(droppableCls, windowCtrl){
     var self = this,
         $contaner = null;
 
+    // 同步当前屏幕墙
+    $('#synchronize').on(self.evStar,function(){
+        var activeWallIndex = $(droppableCls).parent().index()+1;
+        self.handleWall(activeWallIndex)
+    });
+
     $('#sky-wrapper .right .new-win').on(self.evStar,function(){
         $contaner = $(droppableCls)
         $contaner.append(windowCtrl);
 
-        self.handleWindowCtrl($contaner.find('.pep'), droppableCls, null);
+        self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, null);
     });
 
     $('#sky-wrapper .right .close-win').on(self.evStar,function(){
@@ -215,8 +221,35 @@ SkyApp.prototype.handleCloseWindow = function(droppableCls, pepCls){
     active.remove();
 }
 
+CanvasRenderingContext2D.prototype.dashedLineTo = function (fromX, fromY, toX, toY, pattern) {
+    // default interval distance -> 5px
+    if (typeof pattern === "undefined") {
+        pattern = 5;
+    }
+
+    // calculate the delta x and delta y
+    var dx = (toX - fromX);
+    var dy = (toY - fromY);
+    var distance = Math.floor(Math.sqrt(dx*dx + dy*dy));
+    var dashlineInteveral = (pattern <= 0) ? distance : (distance/pattern);
+    var deltay = (dy/distance) * pattern;
+    var deltax = (dx/distance) * pattern;
+
+    // draw dash line
+    this.beginPath();
+    for(var dl=0; dl<dashlineInteveral; dl++) {
+        if(dl%2) {
+            this.lineTo(fromX + dl*deltax, fromY + dl*deltay);
+        } else {
+            this.moveTo(fromX + dl*deltax, fromY + dl*deltay);
+        }
+    }
+    this.stroke();
+};
 /**
- * 绘制网格背景，需要在指定元素上添加属性“data-cvs-grid”，并以“_”分割网格x，y数值，绘制网格后将网格间距填写到“data-cvs-grid-step”中
+ * 绘制网格背景，需要在指定元素上添加属性“data-cvs-grid”，格式为x_y_x0_y0
+ * 网格由 水平方向上的x个 和 垂直方向的y个 实线网格组成，每个实线网格又由水平方向上的x0个 和 垂直方向的y0个 虚线网格组成
+ * 绘制网格后将网格间距填写到“data-cvs-grid-step”中
  * @param droppableCls
  */
 SkyApp.prototype.handleDrawGrid = function(droppableCls) {
@@ -224,12 +257,22 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
         $droppable = $(droppableCls),
         x = 0,
         y = 0,
+        x0 = 0,
+        y0 = 0,
         grid,// 网格横纵数值
-        gridArr;// 网格横纵间隔数值
+        gridArr,// 网格横纵间距数值
+        $el,
+        idObject,
+        canvas,
+        context,// canvas上下文
+        stepX,// 水平实线间距
+        stepY,// 垂直实线间距
+        dashedStepX,// 水平虚线间距
+        dashedStepY;// 垂直虚线间距
 
     $droppable.each(function(index,el){
 
-        var $el = $(el);
+        $el = $(el);
 
         grid = $el.attr('data-cvs-grid');
 
@@ -241,12 +284,14 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
 
         x = gridArr[0];
         y = gridArr[1];
+        x0 = gridArr[2];
+        y0 = gridArr[3];
 
-        var idObject = document.getElementById('cvs'+x+'-'+y);
+        idObject = document.getElementById('cvs'+x+'-'+y);
         if (idObject != null)
             idObject.parentNode.removeChild(idObject);
 
-        var canvas = document.createElement("canvas");
+        canvas = document.createElement("canvas");
         canvas.id = 'cvs'+x+'-'+y;
 
         // 由于jquery不能获取display:none元素的物理尺寸，故获取当前显示的第一个相近元素的尺寸
@@ -257,7 +302,7 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
 
         canvas.style.cssText = "margin:0 auto; position:absolute;";
         $el.append(canvas);
-        var context = canvas.getContext("2d");
+        context = canvas.getContext("2d");
 
         context.save();
 
@@ -265,38 +310,79 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
         context.fillStyle = "#ffffff";
         context.lineWidth = 0.6;
 
-        //画横虚线
-        var j = 0,stepX = canvas.width/x,stepY = canvas.height/y;
-        //10个像素位为单位,6个像素画线，4个像素空出来，成为虚线
-        for (var i = 1; i < y; i ++) {
+        stepX = canvas.width/x;
+        stepY = canvas.height/y;
+        dashedStepX = stepX/x0;
+        dashedStepY = stepY/y0;
+
+
+        // 画水平线
+        // 10个像素位为单位,6个像素画线，4个像素空出来，成为虚线
+        for (var a = 1; a < y*y0; a ++) {
+            // 实线
+            if(a % y0 === 0) {
+                context.beginPath();
+                context.moveTo(0, dashedStepY*a);
+                context.lineTo(canvas.width,  dashedStepY*a);
+                context.stroke();
+                continue;
+            }
+            // 水平虚线
             context.beginPath();
-            for(j = 0;j < stepX;j++){
-                context.moveTo(j*10, stepY*i);
-                context.lineTo(j*10 + 6,  stepY*i);
+            for(var b = 0;b < stepX; b++){
+                context.moveTo(b*10, dashedStepY*a);
+                context.lineTo(b*10 + 6,  dashedStepY*a);
             }
             context.stroke();
         }
-
-        //画竖虚线
-        for (var i = 1; i < x; i ++) {
+        // 此虚线画法存在兼容性问题
+        //for (var a = 1; a < y*y0; a ++) {
+        //    context.beginPath();
+        //    if(a % y0 != 0) {
+        //        // 虚线
+        //        context.setLineDash([5,2]);
+        //
+        //        //for(var b = 0;b < stepX; b++){
+        //        //    context.moveTo(b*10, dashedStepY*a);
+        //        //    context.lineTo(b*10 + 6,  dashedStepY*a);
+        //        //}
+        //    }
+        //    // 实线
+        //    context.moveTo(0, dashedStepY*a);
+        //    context.lineTo(canvas.width,  dashedStepY*a);
+        //
+        //    context.stroke();
+        //    context.setLineDash([]);
+        //}
+        // 画垂直线
+        for (var c = 1; c < x*x0; c ++) {
+            // 实线
+            if(c % x0 === 0) {
+                context.beginPath();
+                context.moveTo(dashedStepX*c, 0);
+                context.lineTo(dashedStepX*c,  canvas.height);
+                context.stroke();
+                continue;
+            }
+            // 垂直虚线
             context.beginPath();
-            for(j = 0;j < stepY;j++){
-                context.moveTo(stepX*i, j*10 );
-                context.lineTo(stepX*i, j*10+6);
+            for(var d = 0;d < stepY; d++){
+                context.moveTo(dashedStepX*c, d*10 );
+                context.lineTo(dashedStepX*c, d*10+6);
             }
             context.stroke();
         }
 
         // 画网格索引
-        var index = 0;
-        var posiX, posiY;
+        var index = 0,
+            posiX, posiY;
         context.font="20px Georgia";
 
         // 逐行填充索引
-        for(var k = 0; k < y; k ++){
-            for(var l = 0; l < x; l ++){
-                posiX = canvas.width * ((2*l+1)/(2*x));
-                posiY = canvas.height * ((2*k+1)/(2*y));
+        for(var e = 0; e < y; e ++){
+            for(var f = 0; f < x; f ++){
+                posiX = canvas.width * ((2*f+1)/(2*x));
+                posiY = canvas.height * ((2*e+1)/(2*y));
                 context.fillText( ++index + '', posiX-5, posiY+5);
             }
         }
@@ -304,10 +390,8 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
         context.restore();
 
         // 记录canvas网格间距
-        $el.attr('data-cvs-grid-step', stepX+'_'+stepY);
+        $el.attr('data-cvs-grid-step', dashedStepX+'_'+dashedStepY);
     });
-
-
 
 
     // 计算线条交叉点
@@ -319,6 +403,8 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
     //}
     //return [x, y, stepX, stepY];
 }
+
+
 /**
  * 拖拽生成window控件
  * @param $drag 按钮对象
@@ -348,10 +434,7 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
             ev = obj.normalizeEvent(ev);
             //记录鼠标或触目点的移动位置，写到全局中
             if(obj.activeDropRegions.length !== 0 ){
-                //var $relative = $droppable.parents().filter(function() {
-                //    var $this = $(this);
-                //    return $this.is('body') || $this.css('position') === 'relative'|| $this.css('position') === 'absolute';
-                //})
+
                 var $relative = obj.activeDropRegions[0].parents().filter(function() {
                     var $this = $(this);
                     return $this.is('body') || $this.css('position') === 'relative'|| $this.css('position') === 'absolute';
@@ -378,7 +461,7 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
                 var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
                 switch (type){
                     case 1:
-                        self.handleWindowCtrl($contaner.find('.pep'), droppableCls, startPos);
+                        self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, startPos);
                         break;
                     case 2:
                         break;
@@ -400,10 +483,17 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
  * 生成window控件
  * @param $pep 控件对象
  * @param droppableCls 拖拽区class
- * @param startPos 起始位置
+ * @param startPos {left,top} 起始位置
+ * @param defaultSize {w,h} 初始大小
  */
-SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos ){
+SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defaultSize){
     if(!startPos) startPos = { left: null, top: null };
+
+    if(defaultSize)
+        $pep.css({
+            width:defaultSize.w,
+            height:defaultSize.h
+        });
 
     var self = this;
     $pep.pep({
@@ -459,7 +549,7 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
         grid;
 
     // 移除控件
-    $el.find('.close').hammer().off(self.evStar).on(self.evStar, function(){
+    $el.find('.close').hammer().on(self.evStar, function(){
         //$el.find('.content').html('');
         //$obj.revert();
         $.pep.unbind($el);
@@ -468,10 +558,10 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     });
 
     // 按钮 单屏最大化
-    $el.find('.full-single-screen').hammer().off(self.evStar).on(self.evStar, function(){
+    $el.find('.full-single-screen').hammer().on(self.evStar, function(){
         var x_y = $elParent.attr('data-cvs-grid').split('_'),
             stepXY = $elParent.attr('data-cvs-grid-step').split('_');
-        grid = [x_y[0], x_y[1], stepXY[0], stepXY[1]];
+        grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, true);
     });
@@ -479,18 +569,18 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     //$el.off(self.dbClick,'.content').on(self.dbClick,'.content', function(){
     //    requestFullSingleScreen($obj, true)
     //});
-    $el.find('.content').hammer().off(self.dbClick).on(self.dbClick, function(){
+    $el.find('.content').hammer().on(self.dbClick, function(){
         var x_y = $elParent.attr('data-cvs-grid').split('_'),
             stepXY = $elParent.attr('data-cvs-grid-step').split('_');
-        grid = [x_y[0], x_y[1], stepXY[0], stepXY[1]];
+        grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, true)
     });
     // 按钮 全屏最大化
-    $el.find('.fullscreen').hammer().off(self.evStar).on(self.evStar, function(){
+    $el.find('.fullscreen').hammer().on(self.evStar, function(){
         var x_y = $elParent.attr('data-cvs-grid').split('_'),
             stepXY = $elParent.attr('data-cvs-grid-step').split('_');
-        grid = [x_y[0], x_y[1], stepXY[0], stepXY[1]];
+        grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, false)
     });
@@ -700,19 +790,20 @@ SkyApp.prototype.centerWithin = function(obj) {
  * @param obj
  */
 SkyApp.prototype.insideWithin = function(obj) {
-    var $parent = obj.activeDropRegions[0];
+    var self = this,
+        $parent = obj.activeDropRegions[0],
 
-    var pTop = $parent.position().top;
-    var pLeft = $parent.position().left;
-    var pHeight = $parent.height();
-    var pWidth = $parent.width();
+        pTop = $parent.position().top,
+        pLeft = $parent.position().left,
+        pHeight = $parent.height(),
+        pWidth = $parent.width(),
 
-    var oTop = obj.$el.position().top;
-    var oLeft = obj.$el.position().left;
-    var oHeight = obj.$el.outerHeight();
-    var oWidth = obj.$el.outerWidth();
+        oTop = obj.$el.position().top,
+        oLeft = obj.$el.position().left,
+        oHeight = obj.$el.outerHeight(),
+        oWidth = obj.$el.outerWidth(),
 
-    var moveTop = oTop,moveLeft = oLeft;
+        moveTop = oTop,moveLeft = oLeft;
 
     if (!obj.shouldUseCSSTranslation()) {
 
@@ -753,7 +844,13 @@ SkyApp.prototype.insideWithin = function(obj) {
     fBottom = pHeight - fTop - oHeight;
 
     //var pis = [fLeft.toFixed(2), fTop.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];//x y h w
-    var pis = [parseInt(fLeft), parseInt(fTop),  parseInt(oHeight),  parseInt(oWidth)];//x y h w
+    // 根据编辑区尺寸比例转换显示数值
+    var pis = [
+        parseInt(fLeft*self.scaleX),
+        parseInt(fTop*self.scaleY),
+        parseInt(oHeight*self.scaleY),
+        parseInt(oWidth*self.scaleX)
+    ];//x y h w
     return pis;
 }
 
@@ -883,7 +980,8 @@ SkyApp.prototype.fitElement = function(inner, container) {
  */
 SkyApp.prototype.request16to9 = function($element){
 
-    var oW, oH, padding;
+    var self = this,
+        oW, oH, padding;
 
     oW = $element.innerWidth();
     oH = $element.innerHeight();
@@ -910,6 +1008,13 @@ SkyApp.prototype.request16to9 = function($element){
         })
     }
 
+    // 计算编辑区尺寸比例
+    var grid = $element.find('.tab-pane.active .droppable').attr('data-cvs-grid').split('_'),
+        gridX = grid[0],
+        gridY = grid[1];
+    self.scaleX = 1920*gridX / $element.width();
+    self.scaleY = 1080*gridY / $element.height();
+
     return {
         w:$element.width(),
         h:$element.height()
@@ -920,8 +1025,11 @@ SkyApp.prototype.request16to9 = function($element){
  * 查询窗口信息指令
  * @param win number 获取指定屏幕墙的窗口信息
  */
-SkyApp.prototype.handleWinfo = function(win){
-    var self = this;
+SkyApp.prototype.handleWall = function(win){
+    var self = this,
+        $droppable = $(self.droppableCls).eq(win-1);
+
+    self.log($.i18n.prop('index.msg.synchronizing'))
 
     //self.cmd('<winf,'+win+'>', function(data){
     //
@@ -940,24 +1048,34 @@ SkyApp.prototype.handleWinfo = function(win){
 
     var resultArr = demo.split('\r\n');
 
+    $droppable.find('.pep').remove();
+
     for(var i = 1; i < resultArr.length - 1; i++){
-        console.log(resultArr[i])
 
         var arr = resultArr[i].split(','),
-            id = arr[0],
-            level_num = arr[1],
-            src_Ch = arr[2],
-            src_hstart = arr[3],
-            src_vstart = arr[4],
-            src_hsize = arr[5],
-            src_vsize = arr[6],
-            win_x0 = arr[7],
-            win_y0 = arr[8],
-            win_width = arr[9],
-            win_height = arr[10];
-
+            id = parseInt(arr[0]),
+            level_num = parseInt(arr[1]),
+            src_Ch = parseInt(arr[2]),
+            src_hstart = parseInt(arr[3]),
+            src_vstart = parseInt(arr[4]),
+            src_hsize = parseInt(arr[5]),
+            src_vsize = parseInt(arr[6]),
+            win_x0 = parseInt(arr[7]/self.scaleX),
+            win_y0 = parseInt(arr[8]/self.scaleY),
+            win_width = parseInt(arr[9]/self.scaleX),
+            win_height = parseInt(arr[10]/self.scaleY);
 
         // 向指定屏幕墙添加窗口
-        self.handleWindowCtrl()
+
+        $droppable.append(self.windowCtrl);
+
+        self.handleWindowCtrl(
+            $droppable.find('.pep').eq(i-1),
+            self.droppableClsActive,
+            {left: win_x0, top: win_y0},
+            {w: win_width, h: win_height}
+        )
     }
+
+    self.log($.i18n.prop('index.msg.synchronized'))
 }

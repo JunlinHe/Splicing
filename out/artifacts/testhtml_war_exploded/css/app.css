@@ -274,6 +274,7 @@ a, a:link, a:visited, a:hover, a:active {
     border-color: #222;
 }
 #sky-wrapper .right .tab-content, #sky-wrapper .right .tab-content .tab-pane{
+    position: relative;
     height: 100%;
 }
 #sky-wrapper .panel-inverse > .panel-heading {
