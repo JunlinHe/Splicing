@@ -623,7 +623,9 @@ SkyApp.prototype.handlePopMenuAction = function ($obj){
                 grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
                 self.requestFullSingleScreen($obj, grid, true);
-                self.handleCentering(null, $obj);
+                setTimeout(function(){
+                    self.handleCentering(null, $obj);
+                },300)
                 break;
             case 'full-screen':
                 x_y = $elParent.attr(self.gridAttr).split('_');
@@ -631,7 +633,9 @@ SkyApp.prototype.handlePopMenuAction = function ($obj){
                 grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
                 self.requestFullSingleScreen($obj, grid, false);
-                self.handleCentering(null, $obj);
+                setTimeout(function(){
+                    self.handleCentering(null, $obj);
+                },300)
                 break;
             case 'up-level':
 
@@ -648,12 +652,17 @@ SkyApp.prototype.handlePopMenuAction = function ($obj){
             case 'go-bottom':
                 break;
             case 'win-lock':
+                $obj.toggle(false)
+                $popMenu.find("a:not(.win-unlock,.win-info)").addClass('disable')
                 break;
             case 'win-unlock':
+                $obj.toggle(true)
+                $popMenu.find("a").removeClass('disable')
                 break;
             case 'win-restore':
                 break;
             case 'win-info':
+                $('#modal-win-info').modal('show');
                 break;
             default:
                 break;
@@ -720,26 +729,26 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
         }
 
     }else{//单屏最大化
-        for(var i = 0; i <= x; i ++){
+        for(var i = 0; i < x; i ++){
             if(stepX*i <= oLeft && oLeft < stepX*(i+1)){
                 dLeft = Math.round(stepX*i);
                 break;
             }
         }
-        for(var j = 0; j <= y; j ++){
+        for(var j = 0; j < y; j ++){
             if(stepY*j <= oTop && oTop < stepY*(j+1)){
                 dTop = Math.round(stepY*j);
                 break;
             }
         }
-        for(var k = 0; k <= x; k ++){
+        for(var k = 0; k < x; k ++){
             var w = oLeft+oWidth;
             if(stepX*k < w && w <= stepX*(k+1)){
                 dWidth = Math.round(stepX*(k+1) - dLeft);
                 break;
             }
         }
-        for(var l = 0; l <= y; l ++){
+        for(var l = 0; l < y; l ++){
             var h = oTop+oHeight;
             if(stepY*l < h && h <= stepY*(l+1)){
                 dHeight = Math.round(stepY*(l+1) - dTop);
@@ -773,7 +782,6 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
             };
         }
     }
-
 
 }
 
@@ -846,7 +854,7 @@ SkyApp.prototype.centerWithin = function(obj) {
             obj.noCenter = true;
 
             //将移动块约束在编辑区内 [top, right, bottom, left]
-            obj.$el.data('plugin_pep').options.constrainTo = [pTop,pLeft+pWidth-oWidth,pTop+pHeight-oHeight,pLeft];
+            obj.options.constrainTo = [pTop,pLeft+pWidth-oWidth,pTop+pHeight-oHeight,pLeft];
             return;
         }
 
@@ -863,6 +871,7 @@ SkyApp.prototype.centerWithin = function(obj) {
  */
 SkyApp.prototype.insideWithin = function(obj) {
     var self = this,
+        $el = obj.$el,
         $parent = obj.activeDropRegions[0],
 
         pTop = $parent.position().top,
@@ -870,10 +879,10 @@ SkyApp.prototype.insideWithin = function(obj) {
         pHeight = $parent.height(),
         pWidth = $parent.width(),
 
-        oTop = obj.$el.position().top,
-        oLeft = obj.$el.position().left,
-        oHeight = obj.$el.outerHeight(),
-        oWidth = obj.$el.outerWidth(),
+        oTop = $el.position().top,
+        oLeft = $el.position().left,
+        oHeight = $el.outerHeight(),
+        oWidth = $el.outerWidth(),
 
         moveTop = oTop,moveLeft = oLeft;
 
@@ -889,7 +898,7 @@ SkyApp.prototype.insideWithin = function(obj) {
         }else if(pLeft+pWidth-oWidth < oLeft){
             moveLeft = pLeft + pWidth - oWidth;
         }
-        obj.$el.animate({top: moveTop, left: moveLeft}, 0);
+        $el.animate({top: moveTop, left: moveLeft}, 0);
     } else {
 
         if(pTop > oTop){
@@ -906,7 +915,7 @@ SkyApp.prototype.insideWithin = function(obj) {
     }
 
     //将移动块约束在编辑区内 [top, right, bottom, left]
-    obj.$el.data('plugin_pep').options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
+    obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
 
     //计算滑块相对编辑区的位置
     var fTop,fRight,fBottom,fLeft;
