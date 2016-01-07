@@ -1,6 +1,11 @@
 a, a:link, a:visited, a:hover, a:active {
     text-decoration:none;
     color: inherit;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
 }
 .main-html, .main-body{
     width: 100%;
@@ -141,6 +146,9 @@ a, a:link, a:visited, a:hover, a:active {
 .sky-btn{
     cursor: pointer;
     color: #9d9d9d;
+}
+.sky-btn a{
+    display: block;
 }
 .sky-btn:active{
      color: #9d899c !important;
@@ -476,26 +484,87 @@ a, a:link, a:visited, a:hover, a:active {
 #setting-info .form-group select{
     color: #5a5a5a;
 }
+/*fadeIn 动画*/
+@keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-webkit-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-moz-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-ms-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-o-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+/*fadeOut 动画*/
+@keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-webkit-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-moz-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-ms-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-o-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+/*动画名称 持续时间 次数 延迟*/
+/*animation: fadeIn 0.5s 1 0s;*/
+/*-webkit-animation: fadeIn 0.5s 1 0s;*/
+/*-moz-animation: fadeIn 0.5s 1 0s;*/
+/*-ms-animation: fadeIn 0.5s 1 0s;*/
+/*-o-animation: fadeIn 0.5s 1 0s;*/
 
 /*弹出菜单*/
-#hover-menu{
+#pop-menu{
+    display: none;
     position: absolute;
     top: 0;left: 0;right: 0;bottom: 0;
     z-index: 999;
     background: rgba(0,0,0,0.4);
 }
-#hover-menu ul{
+#pop-menu ul{
+    position: absolute;
+    top:calc(50% - 330px / 2);
+    left: calc(50% - 120px /2);
     list-style: none;
-    width: 90px;
-    height: 160px;
-    /*margin: calc(50% - (160px / 2)) calc(50% - (90px / 2));*/
-    margin: 50% 50%;
+    width: 120px;
+    height: 330px;
     padding: 0;
-    color: #fff;
-    background: rgba(0,0,0,0.7);
+    margin: 0;
+    overflow: hidden;
+    border-radius: 5px 0 0 5px;
+    border-left: 1px solid #fff;
 }
-#hover-menu li{
-    height: 40px;
-    line-height: 40px;
-    padding: 0 10px;
+#pop-menu li{
+    height: 30px;
+    line-height: 30px;
+}
+#pop-menu li a{
+    padding: 0 5px;
+    background: rgba(0,0,0,0.7);
+    display: block;
+    color: #fff;
+    cursor: pointer;
+}
+#pop-menu li a:active{
+    color: #000;
+    background: rgba(255, 255, 255, 0.61);
+}
+#pop-menu li a.disable{
+    color: #fff;
+    background: rgba(138, 138, 138, 0.45);
+}
+#pop-menu li i{
+    width: 20px;
+    padding-right: 5px;
+    text-align: center;
 }

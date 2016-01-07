@@ -22,11 +22,14 @@ function SkyApp(){
 
     //self.serverUrl = 'http://172.16.1.72:8088/p';
     self.serverUrl = 'p';
-    self.evStar = 'tap click';
-    self.dbClick = 'doubletap dblclick';
+    self.evStar = 'click';
+    self.evDbClick = 'doubletap';
+    self.evPress = 'press';
     self.editPanelSize = {w:false, h:false};
-    self.scaleX = 1,
+    self.scaleX = 1;
     self.scaleY = 1;
+    self.gridAttr = 'data-cvs-grid';
+    self.gridStepAttr = 'data-cvs-grid-step'
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     self.$editPanel = $('.col.right .panel-body');
@@ -274,7 +277,7 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
 
         $el = $(el);
 
-        grid = $el.attr('data-cvs-grid');
+        grid = $el.attr(self.gridAttr);
 
         if(!grid){return false;}
 
@@ -390,7 +393,7 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
         context.restore();
 
         // 记录canvas网格间距
-        $el.attr('data-cvs-grid-step', dashedStepX+'_'+dashedStepY);
+        $el.attr(self.gridStepAttr, dashedStepX+'_'+dashedStepY);
     });
 
 
@@ -456,6 +459,7 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
             if(this.activeDropRegions.length !== 0){
 
                 var $contaner = this.activeDropRegions[0];
+                //var $contaner = $(droppableCls);
                 $contaner.append(genCtrl);
 
                 var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
@@ -535,6 +539,7 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defau
 
     });
 
+    //self.handleInitWinCtrlAction($(droppableCls).find('.pep:last').data('plugin_pep'));
     self.handleInitWinCtrlAction($pep.data('plugin_pep'));
 }
 
@@ -545,50 +550,115 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defau
 SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     var self = this,
         $el = $obj.$el,
-        $elParent = $obj.$el.parent(),
-        grid;
+        $elParent = $el.parent();
 
     // 长按呼出菜单
-    $el.find('.content').hammer().on('press',function(){
-        alert(0);
+    $el.find('.content').hammer().on(self.evPress,function(){
+        self.handlePopMenuAction($obj);
     });
 
     // 移除控件
-    $el.find('.close').hammer().on(self.evStar, function(){
+    $el.find('.close').on(self.evStar, function(){
         //$el.find('.content').html('');
         //$obj.revert();
-        $.pep.unbind($el);
-        $el.remove();
-        $obj.options.constrainTo = 'window';
+        $el.fadeOut(500, function(){
+            $.pep.unbind($el);
+            $el.remove();
+            $obj.options.constrainTo = 'window';
+        });
+    });
+
+    // 双击 单屏最大化
+    $el.find('.content').hammer().on(self.evDbClick, function(){
+        var x_y = $elParent.attr(self.gridAttr).split('_'),
+            stepXY = $elParent.attr(self.gridStepAttr).split('_'),
+            grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+
+        self.requestFullSingleScreen($obj, grid, true)
+
     });
 
     // 按钮 单屏最大化
-    $el.find('.full-single-screen').hammer().on(self.evStar, function(){
-        var x_y = $elParent.attr('data-cvs-grid').split('_'),
-            stepXY = $elParent.attr('data-cvs-grid-step').split('_');
-        grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+    $el.find('.full-single-screen').on(self.evStar, function(ev){
+        var x_y = $elParent.attr(self.gridAttr).split('_'),
+            stepXY = $elParent.attr(self.gridStepAttr).split('_'),
+            grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, true);
     });
-    // 双击 单屏最大化
-    //$el.off(self.dbClick,'.content').on(self.dbClick,'.content', function(){
-    //    requestFullSingleScreen($obj, true)
-    //});
-    $el.find('.content').hammer().on(self.dbClick, function(){
-        var x_y = $elParent.attr('data-cvs-grid').split('_'),
-            stepXY = $elParent.attr('data-cvs-grid-step').split('_');
-        grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
-
-        self.requestFullSingleScreen($obj, grid, true)
-    });
     // 按钮 全屏最大化
-    $el.find('.fullscreen').hammer().on(self.evStar, function(){
-        var x_y = $elParent.attr('data-cvs-grid').split('_'),
-            stepXY = $elParent.attr('data-cvs-grid-step').split('_');
-        grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+    $el.find('.fullscreen').on(self.evStar, function(){
+        var x_y = $elParent.attr(self.gridAttr).split('_'),
+            stepXY = $elParent.attr(self.gridStepAttr).split('_'),
+            grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, false)
     });
+}
+
+/**
+ * 弹出菜单点击事件
+ * @param $obj
+ */
+SkyApp.prototype.handlePopMenuAction = function ($obj){
+    var self = this,
+        $el = $obj.$el,
+        $elParent = $el.parent(),
+        $popMenu = $('#pop-menu');
+
+    $popMenu.fadeIn(500);
+    $popMenu.on(self.evStar,function(){
+        $(this).fadeOut(500);
+    })
+
+    $popMenu.off(self.evStar, 'a').on(self.evStar, 'a',function(ev){
+        ev.stopPropagation();// 阻止冒泡触发父元素事件
+        var $this = $(this),
+            x_y, stepXY, grid;
+
+        switch ($this.attr('class')){
+            case 'single-screen':
+                x_y = $elParent.attr(self.gridAttr).split('_');
+                stepXY = $elParent.attr(self.gridStepAttr).split('_');
+                grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+
+                self.requestFullSingleScreen($obj, grid, true);
+                self.handleCentering(null, $obj);
+                break;
+            case 'full-screen':
+                x_y = $elParent.attr(self.gridAttr).split('_');
+                stepXY = $elParent.attr(self.gridStepAttr).split('_');
+                grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+
+                self.requestFullSingleScreen($obj, grid, false);
+                self.handleCentering(null, $obj);
+                break;
+            case 'up-level':
+
+                break;
+            case 'down-level':
+                break;
+            case 'win-close':
+                $popMenu.fadeOut(300,function(){
+                    $el.find('.close').trigger(self.evStar);
+                });
+                break;
+            case 'go-top':
+                break;
+            case 'go-bottom':
+                break;
+            case 'win-lock':
+                break;
+            case 'win-unlock':
+                break;
+            case 'win-restore':
+                break;
+            case 'win-info':
+                break;
+            default:
+                break;
+        }
+    })
 }
 
 /**
@@ -737,12 +807,9 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         var info = 'x,y:'+pis[0]+','+pis[1]+'<br>'+
             'h,w:'+pis[2]+','+pis[3];
         obj.$el.find('.content').html(info);
-
         //发送位置信息
         //self.cmd(pis);
     }
-
-
 }
 
 /**
@@ -1014,7 +1081,7 @@ SkyApp.prototype.request16to9 = function($element){
     }
 
     // 计算编辑区尺寸比例
-    var grid = $element.find('.tab-pane.active .droppable').attr('data-cvs-grid').split('_'),
+    var grid = $element.find('.tab-pane.active .droppable').attr(self.gridAttr).split('_'),
         gridX = grid[0],
         gridY = grid[1];
     self.scaleX = 1920*gridX / $element.width();
@@ -1084,3 +1151,4 @@ SkyApp.prototype.handleWall = function(win){
 
     self.log($.i18n.prop('index.msg.synchronized'))
 }
+
