@@ -5,7 +5,7 @@
 function SkyApp(){
     var self = this;
 
-    self.dragBtnCls = '#input-list .item .drag',
+    self.dragBtnCls = '#input .item .drag',
     self.droppableCls = '.right .tab-pane .droppable',
     self.droppableClsActive = '.right .tab-pane.active .droppable',
     self.$drag = $(self.dragBtnCls),
@@ -56,6 +56,21 @@ function SkyApp(){
 
     // 默认查询1号墙体窗口信息
     //self.handleWall(1);
+
+    $('.navbar-brand.toc.item').on(self.evStar, function(){
+        html2canvas($(self.droppableClsActive).get(0), {
+            allowTaint: true,
+            taintTest: false,
+            onrendered: function (canvas) {
+                canvas.id = "html-shoot";
+                //document.body.appendChild(canvas);
+                //生成base64图片数据
+                var dataUrl = canvas.toDataURL();
+                console.log(dataUrl)
+                $('#profiles').find('img.grid3x3').attr('src',dataUrl);
+            }
+        });
+    })
 
     return self;
 }
@@ -152,7 +167,21 @@ SkyApp.prototype.handlePanelSlide = function(){
             $dropable.trigger("resize")
         },700);
     });
+
+    // 在窗体大小改变后重绘
+    var rt;
+    $(window).on('resize', function(){
+
+        clearTimeout(rt);
+        rt = setTimeout(function(){
+            // 将编辑区宽高比置为16:9
+            self.editPanelSize = self.request16to9($editPanel);
+
+            $dropable.trigger("resize")
+        },500);
+    })
 }
+
 
 /**
  * 控制屏幕区缩放
@@ -379,14 +408,14 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
         // 画网格索引
         var index = 0,
             posiX, posiY;
-        context.font="20px Georgia";
-
+        context.font='bold 60px/100% "微软雅黑", "Lucida Grande", "Lucida Sans", Helvetica, Arial, Sans';
+        context.strokeStyle="#fff";
         // 逐行填充索引
         for(var e = 0; e < y; e ++){
             for(var f = 0; f < x; f ++){
                 posiX = canvas.width * ((2*f+1)/(2*x));
                 posiY = canvas.height * ((2*e+1)/(2*y));
-                context.fillText( ++index + '', posiX-5, posiY+5);
+                context.strokeText( ++index + '', posiX-20, posiY+20);
             }
         }
 
@@ -815,6 +844,21 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         var info = 'x,y:'+pis[0]+','+pis[1]+'<br>'+
             'h,w:'+pis[2]+','+pis[3];
         obj.$el.find('.content').html(info);
+
+        var winInfo = {
+            id: 0,
+            level: l,
+            src_ch: 0,
+            src_hstart: 1,
+            src_vstart: 1,
+            src_hsize: 1,
+            src_vsize:1,
+            win_x0:1,
+            win_y0:1,
+            win_width:1,
+            win_height:1
+        };
+
         //发送位置信息
         //self.cmd(pis);
     }
@@ -1004,7 +1048,7 @@ SkyApp.prototype.cmd = function(param, success, fail){
     });
 }
 /**
- * 全屏显示网页
+ * 网页全屏显示
  */
 SkyApp.prototype.requestDocFullScreen = function() {
     var de = document.documentElement;
@@ -1017,7 +1061,7 @@ SkyApp.prototype.requestDocFullScreen = function() {
     }
 }
 /**
- * 退出全屏
+ * 网页退出全屏
  */
 SkyApp.prototype.exitDocFullscreen = function() {
     var de = document;
@@ -1161,3 +1205,22 @@ SkyApp.prototype.handleWall = function(win){
     self.log($.i18n.prop('index.msg.synchronized'))
 }
 
+/**
+ * 查询本地数据
+ * @param key string
+ * @param isJson boolean
+ * @returns {*}
+ */
+SkyApp.prototype.getCache = function(key, isJson){
+    return isJson ? JSON.parse(localStorage.getItem(key)) : localStorage.getItem(key);
+}
+
+/**
+ * 保存字符串或json到本地
+ * @param key string
+ * @param val string or json
+ * @param isJson boolean
+ */
+SkyApp.prototype.setCache = function(key, val, isJson){
+    localStorage.setItem(key, isJson ? JSON.stringify(val) : val);
+}

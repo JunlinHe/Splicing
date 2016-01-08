@@ -439,19 +439,25 @@ a, a:link, a:visited, a:hover, a:active {
     line-height: 30px;
     overflow: hidden;
 }
-#sky-wrapper .input .item > :nth-child(2n+1){
+#profiles .input .item{
+    height: inherit;
+    border: 1px solid #f9f9f9;
+}
+#sky-wrapper .input .item > :nth-child(1){
     float: left;
     height: 100%;
     margin-left: 10px;
     line-height: inherit;
 }
-#sky-wrapper .input .item > :nth-child(2n){
+#sky-wrapper .input .item > :nth-child(2){
     text-align: center;
     display: block;
     width: 100%;
     z-index: 8;
 }
-
+#sky-wrapper .input .item > :nth-child(3){
+    width: 100%;
+}
 #sky-wrapper .right .panel-footer{
     line-height: inherit;
 }
@@ -555,6 +561,10 @@ a, a:link, a:visited, a:hover, a:active {
     display: block;
     color: #fff;
     cursor: pointer;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 #pop-menu li a:active{
     color: #000;
