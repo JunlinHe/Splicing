@@ -557,6 +557,7 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defau
         dragIcon: '.coor',//添加的拖拽缩放功能
         selectFloat: true,//选中元素上浮
         allowDragEventPropagation: false,//禁止DOM冒泡
+        ignoreRightClick: false,// 允许右键移动
         minSize:{'w':100,'h':80},
         maxSize:null,
         constrainTo: 'window',
@@ -1294,7 +1295,8 @@ SkyApp.prototype.handleWall = function(win){
         '5,6,3,0,0,0,0,300,200,480,270\r\n'+
         '>';
 
-    var resultArr = demo.split('\r\n');
+    var resultArr = demo.split('\r\n'),
+        winInfoArr = {};
 
     // 清除现有窗口
     $droppable.find('.pep').remove();
@@ -1304,7 +1306,7 @@ SkyApp.prototype.handleWall = function(win){
         var arr = resultArr[i].split(','),
             id = parseInt(arr[0]),
             level_num = parseInt(arr[1]),
-            src_Ch = parseInt(arr[2]),
+            src_ch = parseInt(arr[2]),
             src_hstart = parseInt(arr[3]),
             src_vstart = parseInt(arr[4]),
             src_hsize = parseInt(arr[5]),
@@ -1315,16 +1317,16 @@ SkyApp.prototype.handleWall = function(win){
             win_height = parseInt(arr[10]/self.scaleY);
 
         // 向指定屏幕墙添加窗口
-
         $droppable.append(self.windowCtrl);
-
+        var $pep = $droppable.find('.pep').eq(i-1);
         self.handleWindowCtrl(
-            $droppable.find('.pep').eq(i-1),
+            $pep,
             self.droppableClsActive,
             {left: win_x0, top: win_y0},
             {w: win_width, h: win_height},
             false
-        )
+        );
+        $pep.attr('data-id',id);
     }
 
     self.log($.i18n.prop('index.msg.synchronized'))
