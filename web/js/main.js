@@ -5,6 +5,16 @@
 function SkyApp(){
     var self = this;
 
+    //self.serverUrl = 'http://172.16.1.72:8088/p';
+    self.serverUrl = 'p';
+    self.evStar = 'click';
+    self.evDbClick = 'doubletap';
+    self.evPressOrRightClick = 'press contextmenu';// 长按或邮件呼出菜单
+    self.editPanelSize = {w:false, h:false};
+    self.scaleX = 1;
+    self.scaleY = 1;
+    self.gridAttr = 'data-cvs-grid';
+    self.gridStepAttr = 'data-cvs-grid-step'
     self.dragBtnCls = '#input .item .drag',
     self.droppableCls = '.right .tab-pane .droppable',
     self.droppableClsActive = '.right .tab-pane.active .droppable',
@@ -19,21 +29,24 @@ function SkyApp(){
         '<div class="content"></div>'+
         '<div class="coor"></div>'+
         '</div>';
-
-    //self.serverUrl = 'http://172.16.1.72:8088/p';
-    self.serverUrl = 'p';
-    self.evStar = 'click';
-    self.evDbClick = 'doubletap';
-    self.evPress = 'press';
-    self.editPanelSize = {w:false, h:false};
-    self.scaleX = 1;
-    self.scaleY = 1;
-    self.gridAttr = 'data-cvs-grid';
-    self.gridStepAttr = 'data-cvs-grid-step'
+    self.winInfo = {
+        id: 0,
+        level: 0,
+        src_ch: 0,
+        src_hstart: 0,
+        src_vstart: 0,
+        src_hsize: 0,
+        src_vsize: 0,
+        win_x0: 0,
+        win_y0: 0,
+        win_width: 0,
+        win_height: 0
+    };// 窗体信息
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     self.$editPanel = $('.col.right .panel-body');
     self.editPanelSize = self.request16to9(self.$editPanel);
+
 
     // 加载本地化配置
     self.handleI18n('Messages', 'assets/');
@@ -53,8 +66,11 @@ function SkyApp(){
     self.handleWindowAction(self.droppableClsActive, self.windowCtrl);
     // 控制面板左右切换
     self.handlePanelSlide();
+    // 鼠标绘制窗体
+    self.handleMouseDraw();
 
-    // 默认查询1号墙体窗口信息
+
+    // 默认同步1号墙体窗口信息
     //self.handleWall(1);
 
     $('.navbar-brand.toc.item').on(self.evStar, function(){
@@ -229,7 +245,7 @@ SkyApp.prototype.handleWindowAction = function(droppableCls, windowCtrl){
         $contaner = $(droppableCls)
         $contaner.append(windowCtrl);
 
-        self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, null);
+        self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, null, false, true);
     });
 
     $('#sky-wrapper .right .close-win').on(self.evStar,function(){
@@ -332,7 +348,7 @@ SkyApp.prototype.handleDrawGrid = function(droppableCls) {
         //canvas.width = $droppable.innerWidth();
         //canvas.height = $droppable.innerHeight();
 
-        canvas.style.cssText = "margin:0 auto; position:absolute;";
+        canvas.style.cssText = "margin:0 auto; position:absolute;background: #000;";
         $el.append(canvas);
         context = canvas.getContext("2d");
 
@@ -494,7 +510,7 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
                 var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
                 switch (type){
                     case 1:
-                        self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, startPos);
+                        self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, startPos, false, true);
                         break;
                     case 2:
                         break;
@@ -518,17 +534,23 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
  * @param droppableCls 拖拽区class
  * @param startPos {left,top} 起始位置
  * @param defaultSize {w,h} 初始大小
+ * @param fullSingleScreen boolean 是否触发单屏最大化
  */
-SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defaultSize){
+SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defaultSize, fullSingleScreen){
+
+    var self = this;
+
     if(!startPos) startPos = { left: null, top: null };
 
     if(defaultSize)
         $pep.css({
             width:defaultSize.w,
-            height:defaultSize.h
+            height:defaultSize.h,
         });
+    $pep.css({
+        background:self.getRandomColor()
+    });
 
-    var self = this;
     $pep.pep({
         //debug: true,
         droppable: droppableCls,
@@ -569,7 +591,28 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defau
     });
 
     //self.handleInitWinCtrlAction($(droppableCls).find('.pep:last').data('plugin_pep'));
-    self.handleInitWinCtrlAction($pep.data('plugin_pep'));
+    var $obj = $pep.data('plugin_pep');
+    self.handleInitWinCtrlAction($obj);
+
+    // 开窗后单屏最大化
+    if(fullSingleScreen){
+        setTimeout(function(){
+            var $elParent = $obj.$el.parent(),
+                x_y = $elParent.attr(self.gridAttr).split('_'),
+                stepXY = $elParent.attr(self.gridStepAttr).split('_'),
+                grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+
+            self.requestFullSingleScreen($obj, grid, true)
+        },300)
+    }
+}
+
+/**
+ * 生成随机16进制颜色代码
+ * @returns {string}
+ */
+SkyApp.prototype.getRandomColor = function(){
+    return '#'+('00000'+(Math.random()*0x1000000<<0).toString(16)).substr(-6);
 }
 
 /**
@@ -581,8 +624,10 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
         $el = $obj.$el,
         $elParent = $el.parent();
 
-    // 长按呼出菜单
-    $el.find('.content').hammer().on(self.evPress,function(){
+    // 长按或右键呼出菜单
+    $el.find('.content').hammer().on(self.evPressOrRightClick,function(ev){
+        ev.preventDefault();
+
         self.handlePopMenuAction($obj);
     });
 
@@ -641,7 +686,7 @@ SkyApp.prototype.handlePopMenuAction = function ($obj){
     })
 
     $popMenu.off(self.evStar, 'a').on(self.evStar, 'a',function(ev){
-        ev.stopPropagation();// 阻止冒泡触发父元素事件
+        //ev.stopPropagation();// 阻止冒泡触发父元素事件
         var $this = $(this),
             x_y, stepXY, grid;
 
@@ -691,6 +736,7 @@ SkyApp.prototype.handlePopMenuAction = function ($obj){
             case 'win-restore':
                 break;
             case 'win-info':
+                //todo
                 $('#modal-win-info').modal('show');
                 break;
             default:
@@ -836,7 +882,7 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
  */
 SkyApp.prototype.handleCentering = function(ev, obj) {
     var self = this;
-
+    console.log(obj.activeDropRegions)
     if (obj.activeDropRegions.length > 0) {
         //centerWithin(obj);
         var pis = self.insideWithin(obj);
@@ -844,20 +890,6 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         var info = 'x,y:'+pis[0]+','+pis[1]+'<br>'+
             'h,w:'+pis[2]+','+pis[3];
         obj.$el.find('.content').html(info);
-
-        var winInfo = {
-            id: 0,
-            level: l,
-            src_ch: 0,
-            src_hstart: 1,
-            src_vstart: 1,
-            src_hsize: 1,
-            src_vsize:1,
-            win_x0:1,
-            win_y0:1,
-            win_width:1,
-            win_height:1
-        };
 
         //发送位置信息
         //self.cmd(pis);
@@ -1147,6 +1179,97 @@ SkyApp.prototype.request16to9 = function($element){
 }
 
 /**
+ * 鼠标绘制窗口
+ */
+SkyApp.prototype.handleMouseDraw = function(){
+    var self = this,
+        $droppable = $(self.droppableClsActive),
+        $canvas = $droppable.find('canvas');
+
+    // startX, startY 为鼠标点击时初始坐标
+    var startX, startY, dX, dY;
+
+    // 鼠标按下
+    $canvas.on('mousedown',function(e) {
+
+        if(e.target.className === "pep"){
+            return false;
+        }
+
+        startX = e.pageX;
+        startY = e.pageY;
+        var $this = $(this),
+            pTop = $this.offset().top,
+            pLeft = $this.offset().left;
+
+        // 在页面创建 box
+        var active_box = document.createElement("div");
+        active_box.id = "active-box";
+        active_box.className = "draw-box";
+        active_box.style.top = startY - pTop + 'px';
+        active_box.style.left = startX - pLeft + 'px';
+        $droppable.append(active_box);
+
+    });
+
+    // 鼠标移动
+    $droppable.on('mousemove',function(e) {
+        // 更新 box 尺寸
+        var $active_box = $('#active-box')
+        if(typeof $active_box !== 'undefined') {
+            $active_box.width(e.pageX - startX);
+            $active_box.height(e.pageY - startY);
+        }
+
+        var $this = $(this),
+            pTop = $this.offset().top,
+            pLeft = $this.offset().left;
+
+        dX = parseInt((e.pageX - pLeft)*self.scaleX);
+        dY = parseInt((e.pageY - pTop)*self.scaleY);
+
+        $('#mouse-pos').html('x:'+ dX +',y:'+ dY);
+    });
+
+    // 鼠标抬起
+    $droppable.on('mouseup',function(e) {
+
+        var $active_box = $('#active-box')
+        if($active_box.size() !== 0) {
+            $active_box.removeAttr("id");
+            if($active_box.width() > 10 && $active_box.height() > 10) {
+
+                var $this = $(this),
+                    pTop = $this.offset().top,
+                    pLeft = $this.offset().left;
+
+                dX = parseInt(startX - pLeft);
+                dY = parseInt(startY - pTop);
+
+                $droppable.append(self.windowCtrl)
+
+                self.handleWindowCtrl(
+                    $droppable.find('.pep:last'),
+                    $droppable,
+                    {left: dX, top: dY},
+                    {w: $active_box.width(), h: $active_box.height()},
+                    true
+                )
+
+            }
+            $active_box.remove();
+        }
+
+    });
+
+    // 鼠标离开
+    $droppable.on('mouseout',function(e) {
+
+        $('#mouse-pos').html('x:'+ 0 +',y:'+ 0);
+    });
+}
+
+/**
  * 查询窗口信息指令
  * @param win number 获取指定屏幕墙的窗口信息
  */
@@ -1173,6 +1296,7 @@ SkyApp.prototype.handleWall = function(win){
 
     var resultArr = demo.split('\r\n');
 
+    // 清除现有窗口
     $droppable.find('.pep').remove();
 
     for(var i = 1; i < resultArr.length - 1; i++){
@@ -1198,7 +1322,8 @@ SkyApp.prototype.handleWall = function(win){
             $droppable.find('.pep').eq(i-1),
             self.droppableClsActive,
             {left: win_x0, top: win_y0},
-            {w: win_width, h: win_height}
+            {w: win_width, h: win_height},
+            false
         )
     }
 
