@@ -15,6 +15,8 @@ function SkyApp(){
     self.scaleY = 1;
     self.gridAttr = 'data-cvs-grid';
     self.gridStepAttr = 'data-cvs-grid-step'
+    self.winIdAttr = 'data-id';
+    self.winSIdAttr = 'data-sid'
     self.dragBtnCls = '#input .item .drag',
     self.droppableCls = '.right .tab-pane .droppable',
     self.droppableClsActive = '.right .tab-pane.active .droppable',
@@ -71,7 +73,7 @@ function SkyApp(){
 
 
     // 默认同步1号墙体窗口信息
-    //self.handleWall(1);
+    //self.handleWall(0);
 
     $('.navbar-brand.toc.item').on(self.evStar, function(){
         html2canvas($(self.droppableClsActive).get(0), {
@@ -237,7 +239,7 @@ SkyApp.prototype.handleWindowAction = function(droppableCls, windowCtrl){
 
     // 同步当前屏幕墙
     $('#synchronize').on(self.evStar,function(){
-        var activeWallIndex = $(droppableCls).parent().index()+1;
+        var activeWallIndex = $(droppableCls).parent().index();
         self.handleWall(activeWallIndex)
     });
 
@@ -538,7 +540,8 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
  */
 SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defaultSize, fullSingleScreen){
 
-    var self = this;
+    var self = this,
+        $droppable = $(droppableCls);
 
     if(!startPos) startPos = { left: null, top: null };
 
@@ -547,8 +550,9 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defau
             width:defaultSize.w,
             height:defaultSize.h,
         });
+    // 随机背景颜色
     $pep.css({
-        background:self.getRandomColor()
+        background: self.getRandomColor()
     });
 
     $pep.pep({
@@ -597,15 +601,69 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, startPos, defau
 
     // 开窗后单屏最大化
     if(fullSingleScreen){
-        setTimeout(function(){
-            var $elParent = $obj.$el.parent(),
-                x_y = $elParent.attr(self.gridAttr).split('_'),
-                stepXY = $elParent.attr(self.gridStepAttr).split('_'),
-                grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
+        var $elParent = $obj.$el.parent(),
+            x_y = $elParent.attr(self.gridAttr).split('_'),
+            stepXY = $elParent.attr(self.gridStepAttr).split('_'),
+            grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
-            self.requestFullSingleScreen($obj, grid, true)
-        },300)
+        self.requestFullSingleScreen($obj, grid, true)
     }
+
+    // 保存窗口信息到本地
+    var winInfo = {
+        id: parseInt($pep.attr(self.winIdAttr)),
+        level: $pep.css('z-index'),
+        src_ch: parseInt($pep.attr(self.winSIdAttr)),
+        src_hstart: 0,
+        src_vstart: 0,
+        src_hsize: 0,
+        src_vsize: 0,
+        win_x0: parseInt(($pep.position().left - $droppable.position().left)*self.scaleX),
+        win_y0: parseInt(($pep.position().top - $droppable.position().top)*self.scaleY),
+        win_width: parseInt($pep.width()*self.scaleX),
+        win_height: parseInt($pep.height()*self.scaleY)
+    },
+        index = $(self.droppableCls).index($droppable);
+
+    //console.log(winInfo)
+    //console.log(index)
+    self.setWinInfo(index, winInfo);
+}
+
+/**
+ * 获取窗口信息并保存
+ * @param $pep
+ * @param $droppable
+ */
+SkyApp.prototype.handleSetWinInfo = function($pep, $droppable){
+    var self = this,
+        winInfo = {},
+        index = $(self.droppableCls).index($droppable),
+        winID = $pep.attr(self.winIdAttr),
+        winSID = $pep.attr(self.winSIdAttr);
+
+    if(winID == 'undefined'){
+
+    }
+    if(winSID == 'undefined'){
+
+    }
+    winInfo = {
+        id: parseInt(winID),
+        level: $pep.css('z-index'),
+        src_ch: parseInt(winSID),
+        src_hstart: 0,
+        src_vstart: 0,
+        src_hsize: 0,
+        src_vsize: 0,
+        win_x0: parseInt(($pep.position().left - $droppable.position().left)*self.scaleX),
+        win_y0: parseInt(($pep.position().top - $droppable.position().top)*self.scaleY),
+        win_width: parseInt($pep.width()*self.scaleX),
+        win_height: parseInt($pep.height()*self.scaleY)
+    }
+    //console.log(winInfo)
+    //console.log(index)
+    self.setWinInfo(index, winInfo);
 }
 
 /**
@@ -738,6 +796,8 @@ SkyApp.prototype.handlePopMenuAction = function ($obj){
                 break;
             case 'win-info':
                 //todo
+                var id = $('#win-id').val(),
+                    sid = $('#win-sid').val();
                 $('#modal-win-info').modal('show');
                 break;
             default:
@@ -892,6 +952,8 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
             'h,w:'+pis[2]+','+pis[3];
         obj.$el.find('.content').html(info);
 
+        // 保存窗口信息到本地
+        //self.setWinInfo();
         //发送位置信息
         //self.cmd(pis);
     }
@@ -1272,11 +1334,11 @@ SkyApp.prototype.handleMouseDraw = function(){
 
 /**
  * 查询窗口信息指令
- * @param win number 获取指定屏幕墙的窗口信息
+ * @param win number 获取指定屏幕墙的窗口信息，下标从0开始
  */
 SkyApp.prototype.handleWall = function(win){
     var self = this,
-        $droppable = $(self.droppableCls).eq(win-1);
+        $droppable = $(self.droppableCls).eq(win);
 
     self.log($.i18n.prop('index.msg.synchronizing'))
 
@@ -1287,16 +1349,17 @@ SkyApp.prototype.handleWall = function(win){
     //});
 
     var demo = '<The valid window ID is : id levelnum Src_Ch src_hstart src_vstart src_hsize src_vsize win_x0 win_y0 win_width win_height\r\n'+
-    '0,1,2,0,0,0,0,0,0,1919,1079\r\n'+
+        '0,1,2,0,0,0,0,0,0,1919,1079\r\n'+
         '1,2,3,0,0,0,0,300,200,480,270\r\n'+
         '2,3,2,0,0,0,0,200,200,1919,1079\r\n'+
         '3,4,3,0,0,0,0,700,600,480,270\r\n'+
         '4,5,2,0,0,0,0,1000,1500,1919,1079\r\n'+
         '5,6,3,0,0,0,0,300,200,480,270\r\n'+
+        '7,6,3,0,0,0,0,400,200,480,700\r\n'+
         '>';
 
     var resultArr = demo.split('\r\n'),
-        winInfoArr = {};
+        winInfoArr = [];
 
     // 清除现有窗口
     $droppable.find('.pep').remove();
@@ -1306,7 +1369,7 @@ SkyApp.prototype.handleWall = function(win){
         var arr = resultArr[i].split(','),
             id = parseInt(arr[0]),
             level_num = parseInt(arr[1]),
-            src_ch = parseInt(arr[2]),
+            src_ch = arr[2],
             src_hstart = parseInt(arr[3]),
             src_vstart = parseInt(arr[4]),
             src_hsize = parseInt(arr[5]),
@@ -1318,7 +1381,11 @@ SkyApp.prototype.handleWall = function(win){
 
         // 向指定屏幕墙添加窗口
         $droppable.append(self.windowCtrl);
-        var $pep = $droppable.find('.pep').eq(i-1);
+        var $pep = $droppable.find('.pep:last');
+
+        $pep.attr(self.winIdAttr, id);
+        $pep.attr(self.winSIdAttr, src_ch);
+
         self.handleWindowCtrl(
             $pep,
             self.droppableClsActive,
@@ -1326,8 +1393,27 @@ SkyApp.prototype.handleWall = function(win){
             {w: win_width, h: win_height},
             false
         );
-        $pep.attr('data-id',id);
+
+
+        //winInfoArr.push({
+        //    id: id,
+        //    level: level_num,
+        //    src_ch: src_ch,
+        //    src_hstart: src_hstart,
+        //    src_vstart: src_vstart,
+        //    src_hsize: src_hsize,
+        //    src_vsize: src_vsize,
+        //    win_x0: win_x0,
+        //    win_y0: win_y0,
+        //    win_width: win_width,
+        //    win_height: win_height
+        //});
     }
+
+    // 保存窗口信息到本地(弃用，将保存方法放到添加窗口时)
+    //self.setWinInfoBatch(win, winInfoArr)
+
+    //console.log(self.getWinInfoById(win, 4))
 
     self.log($.i18n.prop('index.msg.synchronized'))
 }
@@ -1350,4 +1436,79 @@ SkyApp.prototype.getCache = function(key, isJson){
  */
 SkyApp.prototype.setCache = function(key, val, isJson){
     localStorage.setItem(key, isJson ? JSON.stringify(val) : val);
+}
+
+/**
+ * 保存窗口信息
+ * @param wallID
+ * @param winInfo
+ */
+SkyApp.prototype.setWinInfo = function(wallID, winInfo){
+    var self = this,
+        tbl = 'tbl_wininfo_wall' + wallID,
+        resultHandle = self.getCache(tbl, true),
+        flag = false;
+
+    if(resultHandle !== null){
+        for(var i = 0; i < resultHandle.length; i ++){
+            if(resultHandle[i].id === winInfo.id){
+                resultHandle[i] = winInfo;
+                flag = true;
+            }
+        }
+        if(!flag)
+            resultHandle.push(winInfo);
+    }else{
+        resultHandle = [winInfo];
+    }
+
+    self.setCache(tbl, resultHandle, true)
+}
+/**
+ * 批量保存窗口信息
+ * @param wallID
+ * @param winInfoArr
+ */
+SkyApp.prototype.setWinInfoBatch = function(wallID, winInfoArr){
+    var self = this,
+        tbl = 'tbl_wininfo_wall' + wallID,
+        resultHandle = self.getCache(tbl, true);
+
+    if(resultHandle !== null){
+        for(var i = 0; i < resultHandle.length; i ++){
+
+            for(var j = 0; j < winInfoArr.length; j++){
+                //console.log(resultHandle[i].id +"_"+ winInfoArr[j].id)
+                if(resultHandle[i].id === winInfoArr[j].id){
+                    resultHandle[i] = winInfoArr[j];
+                    winInfoArr.splice(j,1);
+                }
+            }
+        }
+        resultHandle = resultHandle.concat(winInfoArr)
+    }else{
+        resultHandle = winInfoArr;
+    }
+
+    self.setCache(tbl, resultHandle, true)
+}
+/**
+ * 通过id获取窗口信息
+ * @param wallID
+ * @param winID
+ */
+SkyApp.prototype.getWinInfoById = function(wallID, winID){
+
+    var self = this,
+        tbl = 'tbl_wininfo_wall' + wallID,
+        resultHandle = self.getCache(tbl, true);
+    if(resultHandle !== null){
+        for(var i = 0; i < resultHandle.length; i ++){
+            if(resultHandle[i].id === winID)
+                return resultHandle[i];
+        }
+    }else{
+        return null;
+    }
+
 }
