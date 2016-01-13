@@ -88,9 +88,10 @@ a, a:link, a:visited, a:hover, a:active {
     width: 100%;
     height: 30px;
     line-height: 30px;
-    background: #ccc;
+    background: rgba(0, 0, 0, 0.5);
     font-size: 12px;
     font-weight: bold;
+    color: #f9f9f9;
 }
 .window .title .button {
     float: right;
@@ -107,10 +108,7 @@ a, a:link, a:visited, a:hover, a:active {
     filter: alpha(opacity=100);
     opacity: 1;
 }
-.window .title .button.fullscreen {
-    color: #000000;
-    background: #fff546;
-}
+
 .window .title .button.close {
     color: #ffffff;
     background: #2b81af;
@@ -364,7 +362,9 @@ a, a:link, a:visited, a:hover, a:active {
     width: 33.33333%;
     height: 100%;
 }
-
+#sky-wrapper .panel-inverse .left-footer-btn .item.active{
+    color: #fff !important;
+}
 #sky-wrapper.off .panel-inverse .left-footer-btn .item{
     list-style: none;
     /* float: left; */
@@ -432,35 +432,39 @@ a, a:link, a:visited, a:hover, a:active {
     overflow: auto;
 }
 
-#sky-wrapper .input{
+#input ul,#profiles ul{
     list-style: none;
     color: #fff;
     padding: 0;
     margin: 0;
 }
-#sky-wrapper .input .item{
+#input ul .item, #profiles ul .item{
     margin: 10px 0;
     height: 30px;
     line-height: 30px;
     overflow: hidden;
 }
-#profiles .input .item{
+
+#profiles ul .item{
     height: inherit;
     border: 1px solid #f9f9f9;
 }
-#sky-wrapper .input .item > :nth-child(1){
+#input ul .item.active, #profiles ul .item.active{
+    color: #fff;
+}
+#input ul .item > :nth-child(1),#profiles ul .item > :nth-child(1){
     float: left;
     height: 100%;
     margin-left: 10px;
     line-height: inherit;
 }
-#sky-wrapper .input .item > :nth-child(2){
+#input ul .item > :nth-child(2),#profiles ul .item > :nth-child(2){
     text-align: center;
     display: block;
     width: 100%;
     z-index: 8;
 }
-#sky-wrapper .input .item > :nth-child(3){
+#profiles ul .item > :nth-child(3){
     width: 100%;
 }
 #sky-wrapper .right .panel-footer{
