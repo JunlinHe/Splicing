@@ -62,7 +62,7 @@
                     <ul class="nav navbar-nav navbar-center">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-localize="index.select.screen" data-replace="left"> <i class="fa fa-caret-down"></i></a>
-                            <ul class="dropdown-menu">
+                            <ul id="wall-toggle" class="dropdown-menu">
                                 <li><a href="#screen-wall-one" role="tab" data-toggle="tab">1</a></li>
                                 <li><a href="#screen-wall-two" role="tab" data-toggle="tab">2</a></li>
                             </ul>
@@ -112,17 +112,29 @@
                                 </li>
                             </ul>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="profiles">
-                            <ul>
+                        <div role="tabpanel" class="tab-pane" id="scene">
+                            <ul class="active">
                                 <li class="sky-btn item">
                                     <i class="fa fa-desktop fa-lg"></i>
                                     <span>情景模式一</span>
-                                    <img class="grid3x3" src="img/3_3.png">
+                                    <img class="grid3x3">
                                 </li>
                                 <li class="sky-btn item">
                                     <i class="fa fa-desktop fa-lg"></i>
                                     <span>情景模式二</span>
-                                    <img class="grid2x2" src="img/2_2.png">
+                                    <img class="grid3x3">
+                                </li>
+                            </ul>
+                            <ul>
+                                <li class="sky-btn item">
+                                    <i class="fa fa-desktop fa-lg"></i>
+                                    <span>情景模式一</span>
+                                    <img class="grid2x2">
+                                </li>
+                                <li class="sky-btn item">
+                                    <i class="fa fa-desktop fa-lg"></i>
+                                    <span>情景模式二</span>
+                                    <img class="grid2x2">
                                 </li>
                             </ul>
                         </div>
@@ -174,7 +186,7 @@
                             </a>
                         </li>
                         <li role="presentation" class="sky-btn item">
-                            <a href="#profiles" aria-controls="profiles" role="tab" data-toggle="tab">
+                            <a href="#scene" aria-controls="scene" role="tab" data-toggle="tab">
                                 <i class="fa fa-th-large fa-lg"></i>
                                 <span data-localize="index.left.action.btnname2"></span>
                             </a>

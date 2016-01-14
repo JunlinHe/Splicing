@@ -70,7 +70,6 @@ a, a:link, a:visited, a:hover, a:active {
     border: 1px solid #ccc;
     cursor: move;
     z-index: 9;
-    overflow: hidden;
     filter: alpha(opacity=800);
     opacity: 0.8;
 }
@@ -100,7 +99,7 @@ a, a:link, a:visited, a:hover, a:active {
     line-height: 25px;
     text-align: center;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 20px;
     border-radius: inherit;
     margin: 2px 2px;
     cursor: pointer;
@@ -118,6 +117,7 @@ a, a:link, a:visited, a:hover, a:active {
     /*background: rgba(3, 103, 132, 0.7);*/
     padding-top: 30px;
     color: #fff;
+    overflow: hidden;
 }
 
 /*.grid{*/
@@ -144,7 +144,50 @@ a, a:link, a:visited, a:hover, a:active {
 
 #box { width: 200px; height: 100px; cursor: move; position: absolute; top: 30px; left: 30px; background-color: #FFF; border: 1px solid #CCCCCC;  -webkit-box-shadow: 10px 10px 25px #ccc;-moz-box-shadow: 10px 10px 25px #ccc;box-shadow: 10px 10px 25px #ccc;}
 
-.coor { width: 20px; height: 20px; overflow: hidden; cursor: se-resize; position: absolute; right: 0; bottom: 0; background-color: #09C; }
+.coor { display:none; width: 20px; height: 20px; overflow: hidden; position: absolute;  background-color: #09C; border-radius: 20px;}
+
+.coor.ne{
+    cursor: ne-resize;
+    top: -10px;right: -10px;
+}
+.coor.n{
+    cursor: n-resize;
+    top: -10px; left: calc(50% - 10px);
+}
+.coor.nw{
+    cursor: nw-resize;
+    top: -10px; left: -10px;
+}
+.coor.e{
+    cursor: e-resize;
+    top:calc(50% - 10px); right: -10px;
+}
+.coor.w{
+    cursor: w-resize;
+    top:calc(50% - 10px); left: -10px;
+}
+.coor.sw{
+    cursor: sw-resize;
+    bottom: -10px; left: -10px;
+}
+.coor.s{
+    cursor: s-resize;
+    bottom: -10px; left: calc(50% - 10px);
+}
+.coor.se{
+    cursor: se-resize;
+    right: -10px; bottom: -10px;
+}
+
+.pep:hover .coor{
+    display: block;
+}
+.pep.active .coor{
+    display: block;
+}
+.pep.active.pep-active .coor:not(:active){
+    display: none;
+}
 
 .sky-btn{
     cursor: pointer;
@@ -432,41 +475,60 @@ a, a:link, a:visited, a:hover, a:active {
     overflow: auto;
 }
 
-#input ul,#profiles ul{
+#input ul,#scene ul{
     list-style: none;
     color: #fff;
     padding: 0;
     margin: 0;
 }
-#input ul .item, #profiles ul .item{
+#scene ul{
+    display: none;
+}
+#scene ul.active{
+    display: block;
+}
+
+#input ul .item, #scene ul .item{
     margin: 10px 0;
     height: 30px;
     line-height: 30px;
     overflow: hidden;
 }
 
-#profiles ul .item{
+#scene ul .item{
     height: inherit;
     border: 1px solid #f9f9f9;
 }
-#input ul .item.active, #profiles ul .item.active{
+#input ul .item.active, #scene ul .item.active{
     color: #fff;
 }
-#input ul .item > :nth-child(1),#profiles ul .item > :nth-child(1){
+#input ul .item > :nth-child(1),#scene ul .item > :nth-child(1){
     float: left;
     height: 100%;
     margin-left: 10px;
     line-height: inherit;
 }
-#input ul .item > :nth-child(2),#profiles ul .item > :nth-child(2){
+#input ul .item > :nth-child(2),#scene ul .item > :nth-child(2){
     text-align: center;
     display: block;
     width: 100%;
     z-index: 8;
 }
-#profiles ul .item > :nth-child(3){
+#scene ul .item > :nth-child(3){
     width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
 }
+
+#scene ul .item .grid3x3{
+    background: url(../img/3_3.png) no-repeat;
+    background-size: 100%;
+}
+#scene ul .item .grid2x2{
+    background: url(../img/2_2.png) no-repeat;
+    background-size: 100%;
+}
+
 #sky-wrapper .right .panel-footer{
     line-height: inherit;
 }
