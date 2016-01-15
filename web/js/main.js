@@ -70,12 +70,17 @@ function SkyApp(){
 
     // 读取信号源
     self.handleGetSignalList();
+    // 读取情景模式
+    self.handleGetSceneList();
+    //todo 读取上次退出时的编辑状态
+    self.handleLoadWall(0, $(self.droppableClsActive));
+
     // 初始化拖拽按钮
     //self.handleDragBtn($(self.dragBtnCls), self.droppableClsActive, 1, self.windowCtrl);
     // 控制屏幕区缩放
-    self.handleDroppablePanelScale(self.droppableClsActive);
+    self.handleDroppablePanelScale();
     // 初始化窗口控制事件
-    self.handleWindowAction(self.droppableClsActive);
+    self.handleWindowAction();
     // 控制面板左右切换
     self.handlePanelSlide();
     // 初始化屏幕墙切换
@@ -83,29 +88,17 @@ function SkyApp(){
     // 鼠标绘制窗体
     self.handleMouseDraw();
 
-    //todo 读取上次退出时的编辑状态
-    self.handleLoadWall(0, $(self.droppableClsActive));
+
 
     // 默认同步1号墙体窗口信息
     //self.handleSynchronizeWall(0);
 
-    //todo 保存情景模式
-    $('.navbar-brand.toc.item').on(self.evStar, function(){
-        html2canvas($(self.droppableClsActive).get(0), {
-            allowTaint: true,
-            taintTest: false,
-            onrendered: function (canvas) {
-                canvas.id = "html-shoot";
-                //document.body.appendChild(canvas);
-                //生成base64图片数据
-                var dataUrl = canvas.toDataURL();
-                console.log(dataUrl)
-                $('#scene').find('img.grid3x3').attr('src',dataUrl);
-            }
-        });
+    // 初始化情景模式事件
+    self.handleSceneAction();
+
+    $('.loader').fadeOut(300, function(){
+
     })
-
-
     return self;
 }
 
@@ -236,14 +229,14 @@ SkyApp.prototype.getSceneCtrl = function(id, title, grid, src){
 
     var self = this;
     id = typeof id === 'undefined' ? '' : id;
-    title = typeof title === 'undefined' ? '' : title;
+    title = typeof title === 'undefined' ? '' : title+id;
     grid = typeof grid === 'undefined' ? '3x3' : grid;
-    src = typeof src === 'undefined' ? '' : src;
+    src = typeof src === 'undefined' ? '' : 'style="background-image: url('+src+');"';
 
     return '<li class="sky-btn item" '+self.sceneIdAttr+'="'+id+'">'+
                 '<i class="fa fa-bookmark-o fa-lg"></i>'+
                 '<span>'+title+'</span>'+
-                '<img class="grid'+grid+'" src="'+src+'">'+
+                '<img class="grid'+grid+'" '+src+'>'+
             '</li>';
 }
 /**
@@ -307,7 +300,9 @@ SkyApp.prototype.handleWallToggle = function(){
             wallID = $toggleBtn.index($this),
             $sceneList = $('#scene ul');
         $this.tab('show');
-        console.log(wallID)
+        // 加载本地缓存
+        self.handleLoadWall(wallID, $(self.droppableClsActive));
+
         $sceneList.removeClass('active')
         $sceneList.eq(wallID).addClass('active')
     });
@@ -316,9 +311,9 @@ SkyApp.prototype.handleWallToggle = function(){
  * 控制屏幕区缩放
  * @param droppableCls
  */
-SkyApp.prototype.handleDroppablePanelScale = function(droppableCls){
-    var self = this;
-
+SkyApp.prototype.handleDroppablePanelScale = function(){
+    var self = this,
+        droppableCls = self.droppableClsActive;
     //$droppable.pep({
     //});
 
@@ -397,14 +392,18 @@ SkyApp.prototype.handleGetSignalList = function(){
 SkyApp.prototype.handleGetSceneList = function(){
 
     var self = this,
-        sceneList,resultArr, title, src;
+        $sceneList = $('#scene ul'),
+        sceneList,resultArr, title, sceneInfo,
+        flag = false;
 
     var sceneType = ['3x3', '2x2'];
 
-    for (var a = 0; a < sceneType.length; a++){
+    title = $.i18n.prop('index.left.scene.title');
+
+    for (var wallID = 0; wallID < sceneType.length; wallID++){
         //todo 向服务器查询情景模式列表
         sceneList = '< The valid Scene ID is :\r\n'+
-            '1,2,3,4,5\r\n'+
+            '1,2,3,4\r\n'+
             '>';
 
         resultArr = sceneList.split('\r\n');
@@ -413,15 +412,22 @@ SkyApp.prototype.handleGetSceneList = function(){
 
             var arr = resultArr[i].split(',');// 生效的预设模式
             for(var j = 1; j < 33; j++){
-                title = '预设模式'+ j
+
+                flag = false;
                 for(var k = 0; k < arr.length; k++){
-                    if(arr[k] === j){
-                        //todo 读取本地保存的预设模式缩略图
-                        self.getSceneCtrl(arr[k], title, sceneType[a], src);
-                    }else {
-                        self.getSceneCtrl(arr[k], title, sceneType[a]);
+                    if(parseInt(arr[k]) === j){
+                        // 读取本地保存的预设模式缩略图
+                        sceneInfo = self.getSceneInfoById(wallID, j);
+
+                        if(sceneInfo){
+                            $sceneList.eq(wallID).append(self.getSceneCtrl(arr[k], title, sceneType[wallID], sceneInfo.screenshot));
+                            flag = true;
+                            break;
+                        }
                     }
                 }
+                if(flag) continue;
+                $sceneList.eq(wallID).append(self.getSceneCtrl(j, title, sceneType[wallID]));
             }
         }
     }
@@ -430,10 +436,11 @@ SkyApp.prototype.handleGetSceneList = function(){
 /**
  * 编辑区操作
  */
-SkyApp.prototype.handleWindowAction = function(droppableCls){
+SkyApp.prototype.handleWindowAction = function(){
     var self = this,
         $contaner = null,
-        winInfo;
+        winInfo, $pep,
+        droppableCls = self.droppableClsActive;
 
     // 同步当前屏幕墙
     $('#synchronize').on(self.evStar,function(){
@@ -465,33 +472,35 @@ SkyApp.prototype.handleWindowAction = function(droppableCls){
     });
 
     $('#sky-wrapper .right .close-win').on(self.evStar,function(){
-        self.handleCloseWindow(droppableCls, '.pep.active')
+        $pep = $(self.droppableClsActive).find('.pep.active')
+        self.handleCloseWindow($pep, true)
     });
 
     $('#sky-wrapper .right .clear-win').on(self.evStar,function(){
-        self.handleCloseWindow(droppableCls, '.pep')
+        $pep = $(self.droppableClsActive).find('.pep')
+        self.handleCloseWindow($pep, true)
     });
 }
 
 /**
  * 关闭窗口控件
- * @param droppableCls
- * @param pepCls
+ * @param $pep
+ * @param cleanCache {boolean} 是否清除缓存
  */
-SkyApp.prototype.handleCloseWindow = function(droppableCls, pepCls){
+SkyApp.prototype.handleCloseWindow = function($pep, cleanCache){
     var self = this,
-        $contaner = $(droppableCls),
-        active = $contaner.find(pepCls),
         wallID, winID;
 
-    active.each(function(){
+    $pep.each(function(){
         var $this = $(this);
 
-        //todo 发送删除窗口指令
-        // 删除本地数据
-        wallID = $(self.droppableCls).index($contaner)
-        winID = $this.attr(self.winIdAttr)
-        self.delWinInfoById(wallID, winID);
+        if(cleanCache){
+            //todo 发送删除窗口指令
+            // 删除本地数据
+            wallID = $(self.droppableCls).index($(self.droppableClsActive))
+            winID = $this.attr(self.winIdAttr)
+            self.delWinInfoById(wallID, winID);
+        }
 
         // 移除控件
         $.pep.unbind($this);
@@ -944,24 +953,27 @@ SkyApp.prototype.getRandomColor = function(){
 SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     var self = this,
         $el = $obj.$el,
-        $elParent = $el.parent();
+        $elParent = $el.parent(),
+        $popMenu = $('#content-pop-menu');
 
     // 长按或右键呼出菜单
     $el.find('.content').hammer().on(self.evPressOrRightClick,function(ev){
         ev.preventDefault();
 
-        self.handlePopMenuAction($obj);
+        $popMenu.fadeIn(300);
+        $popMenu.on(self.evStar,function(){
+            $(this).fadeOut(300);
+        })
     });
+    // 绑定菜单事件
+    self.handleContentPopMenuAction($obj, $popMenu);
 
     // 移除控件
     $el.find('.close').on(self.evStar, function(){
-        //$el.find('.content').html('');
-        //$obj.revert();
-        $el.fadeOut(300, function(){
-            $.pep.unbind($el);
-            $el.remove();
-            $obj.options.constrainTo = 'window';
-        });
+
+        self.handleCloseWindow($el, true)
+
+        $obj.options.constrainTo = 'window';
     });
 
     // 双击 单屏最大化
@@ -993,19 +1005,19 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
 }
 
 /**
- * 弹出菜单点击事件
+ * 编辑区弹出菜单点击事件
  * @param $obj
+ * @param $popMenu
  */
-SkyApp.prototype.handlePopMenuAction = function ($obj){
+SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu){
     var self = this,
         $el = $obj.$el,
-        $elParent = $el.parent(),
-        $popMenu = $('#pop-menu');
+        $elParent = $el.parent();
 
-    $popMenu.fadeIn(300);
-    $popMenu.on(self.evStar,function(){
-        $(this).fadeOut(300);
-    })
+    //$popMenu.fadeIn(300);
+    //$popMenu.on(self.evStar,function(){
+    //    $(this).fadeOut(300);
+    //})
 
     $popMenu.off(self.evStar, 'a').on(self.evStar, 'a',function(ev){
         //ev.stopPropagation();// 阻止冒泡触发父元素事件
@@ -1536,7 +1548,7 @@ SkyApp.prototype.request16to9 = function($element){
  */
 SkyApp.prototype.handleMouseDraw = function(){
     var self = this,
-        $droppable = $(self.droppableClsActive),
+        $droppable = $(self.droppableCls),
         $canvas = $droppable.find('canvas'),
         winInfo = {};
 
@@ -1544,7 +1556,7 @@ SkyApp.prototype.handleMouseDraw = function(){
     var startX, startY, dX, dY;
 
     // 鼠标按下
-    $canvas.on('mousedown',function(e) {
+    $droppable.on('mousedown',function(e) {
 
         if(e.target.className === "pep"){
             return false;
@@ -1562,7 +1574,7 @@ SkyApp.prototype.handleMouseDraw = function(){
         active_box.className = "draw-box";
         active_box.style.top = startY - pTop + 'px';
         active_box.style.left = startX - pLeft + 'px';
-        $droppable.append(active_box);
+        $this.append(active_box);
 
     });
 
@@ -1662,7 +1674,7 @@ SkyApp.prototype.handleSynchronizeWall = function (win){
 
     // 清除现有窗口
     //$droppable.find('.pep').remove();
-    self.handleCloseWindow(self.droppableClsActive, '.pep')
+    self.handleCloseWindow($(self.droppableClsActive).find('.pep'), true)
 
     for(var i = 1; i < resultArr.length - 1; i++){
 
@@ -1877,6 +1889,42 @@ SkyApp.prototype.insertOrUpdateSceneInfo = function(wallID, sceneInfo){
 
     self.setCache(tbl, resultHandle, true)
 }
+
+/**
+ * 通过预设模式ID获取信息
+ * @param wallID
+ * @param id
+ * @returns {*}
+ */
+SkyApp.prototype.getSceneInfoById = function(wallID, id){
+    var self = this,
+        tbl = self.tblSceneInfo + wallID,
+        resultHandle = self.getCache(tbl, true);
+    if(resultHandle !== null){
+        for(var i = 0; i < resultHandle.length; i ++){
+            if(resultHandle[i].id === id)
+                return resultHandle[i];
+        }
+    }else{
+        return null;
+    }
+}
+
+/**
+ * 通过屏幕墙ID获取预设模式列表
+ * @param wallID
+ * @returns {*}
+ */
+SkyApp.prototype.getSceneInfoByWallId = function(wallID){
+    var self = this,
+        tbl = self.tblSceneInfo + wallID,
+        resultHandle = self.getCache(tbl, true);
+    if(resultHandle !== null){
+        return resultHandle;
+    }else{
+        return null;
+    }
+}
 /**
  * 加载上次退出时的编辑状态
  * @param wallID
@@ -1886,6 +1934,10 @@ SkyApp.prototype.handleLoadWall = function (wallID, $droppable){
     var self = this,
         resultHandle = self.getWinInfoByWallID(wallID),
         winInfo;
+
+    if($droppable.find('.pep').length > 0){
+        return false;
+    }
 
     if(resultHandle !== null){
         for(var i = 0; i < resultHandle.length; i ++){
@@ -1915,31 +1967,153 @@ SkyApp.prototype.handleLoadWall = function (wallID, $droppable){
 /**
  * 初始化保存情景模式事件
  */
-SkyApp.prototype.handleSaveScene = function(){
+SkyApp.prototype.handleSceneAction = function (){
 
     var self = this,
-        $droppable,wallID,
-        winInfo, sceneInfo, screenshot;
+        $popMenu = $('#scene-pop-menu');
 
+    // 绑定菜单事件
+    self.handleScenePopMenuAction($popMenu);
+
+    // 长按或右键呼出菜单
+    $('#scene .item').hammer().on(self.evPressOrRightClick, function(ev){
+        ev.preventDefault();
+
+        var $this = $(this),
+            $activeList = $('#scene ul.active .item');
+
+        $activeList.removeClass('active')
+        $this.addClass('active')
+
+        $popMenu.fadeIn(300);
+        $popMenu.on(self.evStar,function(){
+            $(this).fadeOut(300);
+        })
+    });
+
+    // 双击保存当前屏幕情景模式
     $('#scene .item').hammer().on(self.evDbClick, function(){
 
         var $this = $(this),
-            index = $('#scene .item').index($this) + 1;
+            $activeList = $('#scene ul.active .item');
 
-        $droppable = $(self.droppableClsActive);
-        wallID = $(self.droppableCls).index($droppable);
+        $activeList.removeClass('active')
+        $this.addClass('active')
 
-        //TODO 发送命令保存情景模式
-        //TODO 获取编辑区中的窗口信息
-        winInfo = {};
-        //TODO 获取编辑区截图
-        screenshot = '';
-
-        sceneInfo = {
-            id: index,
-            screenshot: screenshot,
-            winInfo: winInfo
-        };
-        self.insertOrUpdateSceneInfo(wallID, sceneInfo)
+        self.handleSaveScene($this);
     });
+}
+
+/**
+ * 情景模式编辑菜单事件
+ */
+SkyApp.prototype.handleScenePopMenuAction = function($popMenu){
+    var self = this;
+
+    $popMenu.off(self.evStar, 'a').on(self.evStar, 'a',function(){
+        var $this = $(this);
+
+        switch ($this.attr('class')) {
+            case 'sce-open':
+                var $activeItem = $('#scene ul.active .item.active');
+                self.handleLoadScene($activeItem);
+                break;
+            case 'sce-save':
+                var $activeItem = $('#scene ul.active .item.active');
+                self.handleSaveScene($activeItem);
+                break;
+            case 'sce-edit':
+                break;
+            case 'sce-close':
+                break;
+            case 'sce-clear':
+                break;
+            default:
+                break;
+        }
+    });
+}
+
+/**
+ * 保存情景模式
+ * @param $item
+ */
+SkyApp.prototype.handleSaveScene = function($item){
+
+    var self = this,
+        $activeList = $('#scene ul.active .item'),
+        index = $activeList.index($item) + 1,
+        $droppable,wallID,
+        winInfo, sceneInfo, screenshot;
+
+    $droppable = $(self.droppableClsActive);
+    wallID = $(self.droppableCls).index($droppable);
+
+    //TODO 发送命令保存情景模式
+    //...
+
+    // 获取编辑区中的窗口信息
+    winInfo = self.getWinInfoByWallID(wallID);
+    console.log(winInfo)
+    // 获取编辑区截图 保存情景模式
+    html2canvas($droppable.get(0), {
+        allowTaint: true,
+        taintTest: false,
+        onrendered: function (canvas) {
+            $('#html-shoot').remove();
+            canvas.id = "html-shoot";
+            //document.body.appendChild(canvas);
+            //生成base64图片数据
+            screenshot = canvas.toDataURL();
+            //console.log(screenshot)
+            //$this.find('img').attr('src',screenshot);
+            $item.find('img').css('background-image', 'url('+screenshot+')');
+            sceneInfo = {
+                id: index,
+                screenshot: screenshot,
+                winInfo: winInfo
+            };
+            // 将情景模式保存到本地
+            self.insertOrUpdateSceneInfo(wallID, sceneInfo)
+        }
+    });
+}
+
+/**
+ * 加载当前情景模式
+ * @param $item
+ */
+SkyApp.prototype.handleLoadScene = function($item){
+
+    var self = this,
+        $activeList = $('#scene ul.active .item'),
+        index = $activeList.index($item) + 1,
+        $droppable,wallID,
+        winInfo, sceneInfo;
+
+    $droppable = $(self.droppableClsActive);
+    wallID = $(self.droppableCls).index($droppable);
+
+    //TODO 发送命令获取情景模式信息
+    //<syncsc,Wall_ID, Scene_id>
+
+    // 清除现有窗口
+    self.handleCloseWindow($droppable.find('.pep'), true)
+    // 获取编辑区中的窗口信息
+    sceneInfo = self.getSceneInfoById(wallID, index);
+
+    if(sceneInfo){
+        winInfo = sceneInfo.winInfo;
+
+        for (var i = 0; i < winInfo.length; i++){
+
+            winInfo[i].win_x0 = parseInt(winInfo[i].win_x0/self.scaleX);
+            winInfo[i].win_y0 = parseInt(winInfo[i].win_y0/self.scaleY);
+            winInfo[i].win_width = parseInt(winInfo[i].win_width/self.scaleX);
+            winInfo[i].win_height = parseInt(winInfo[i].win_height/self.scaleY);
+            // 向指定屏幕墙添加窗口
+            self.handleInitWindow($droppable, winInfo[i], false, true);
+        }
+
+    }
 }

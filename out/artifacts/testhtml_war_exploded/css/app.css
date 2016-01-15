@@ -516,6 +516,8 @@ a, a:link, a:visited, a:hover, a:active {
 @-o-keyframes fadeOut {
     0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
 }
+
+
 /*动画名称 持续时间 次数 延迟*/
 /*animation: fadeIn 0.5s 1 0s;*/
 /*-webkit-animation: fadeIn 0.5s 1 0s;*/

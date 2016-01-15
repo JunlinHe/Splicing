@@ -26,6 +26,10 @@
 </head>
 <body class="main-body">
 
+<div class="loader">
+    <i class="fa fa-spinner fa-pulse"></i>
+</div>
+
 <!--导航条-->
 <div class="navbar-wrapper">
     <div class="container">
@@ -96,46 +100,15 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="input">
                             <ul class="input">
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <div class="drag" data-signal="1">
-                                        <a>1.1-DVI</a>
-                                        <div class="content"></div>
-                                    </div>
-                                </li>
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <div class="drag" data-signal="2">
-                                        <a>1.2-DVI</a>
-                                        <div class="content"></div>
-                                    </div>
-                                </li>
+
                             </ul>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="scene">
                             <ul class="active">
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <span>情景模式一</span>
-                                    <img class="grid3x3">
-                                </li>
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <span>情景模式二</span>
-                                    <img class="grid3x3">
-                                </li>
+
                             </ul>
                             <ul>
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <span>情景模式一</span>
-                                    <img class="grid2x2">
-                                </li>
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <span>情景模式二</span>
-                                    <img class="grid2x2">
-                                </li>
+
                             </ul>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="setting">
@@ -261,21 +234,32 @@
     </div>
 </div>
 
-<!--弹出菜单-->
-<div id="pop-menu">
+<!--编辑区弹出菜单-->
+<div id="content-pop-menu" class="pop-menu">
     <ul>
-        <li><a class="single-screen" class="disable"><i class="fa fa-expand"></i><span data-localize="index.pop_menu.full_sgl_src">单屏最大化</span></a></li>
-        <li><a class="full-screen"><i class="fa fa-arrows-alt"></i><span data-localize="index.pop_menu.fullscreen">全屏最大化</span></a></li>
-        <li><a class="up-level"><i class="fa fa-level-up"></i><span data-localize="index.pop_menu.up_level">上移一层</span></a></li>
-        <li><a class="down-level"><i class="fa fa-level-down"></i><span data-localize="index.pop_menu.down_level">下移一层</span></a></li>
-        <li><a class="win-close"><i class="fa fa-close"></i><span data-localize="index.pop_menu.close">关闭</span></a></li>
+        <li><a class="single-screen"><i class="fa fa-expand"></i><span data-localize="index.pop_menu.full_sgl_src"></span></a></li>
+        <li><a class="full-screen"><i class="fa fa-arrows-alt"></i><span data-localize="index.pop_menu.fullscreen"></span></a></li>
+        <li><a class="up-level"><i class="fa fa-level-up"></i><span data-localize="index.pop_menu.up_level"></span></a></li>
+        <li><a class="down-level"><i class="fa fa-level-down"></i><span data-localize="index.pop_menu.down_level"></span></a></li>
+        <li><a class="win-close"><i class="fa fa-close"></i><span data-localize="index.pop_menu.close"></span></a></li>
 
-        <li><a class="go-top"><i class="fa fa-angle-double-up"></i><span data-localize="index.pop_menu.top_level">置顶</span></a></li>
-        <li><a class="go-bottom"><i class="fa fa-angle-double-down"></i><span data-localize="index.pop_menu.bottom_level">置底</span></a></li>
-        <li><a class="win-lock"><i class="fa fa-lock"></i><span data-localize="index.pop_menu.lock">锁定</span></a></li>
-        <li><a class="win-unlock"><i class="fa fa-unlock-alt"></i><span data-localize="index.pop_menu.unlock">解锁</span></a></li>
-        <li><a class="win-restore"><i class="fa fa-share-square-o"></i><span data-localize="index.pop_menu.restore">还原</span></a></li>
-        <li><a class="win-info"><i class="fa fa-info-circle"></i><span data-localize="index.pop_menu.info">属性</span></a></li>
+        <li><a class="go-top"><i class="fa fa-angle-double-up"></i><span data-localize="index.pop_menu.top_level"></span></a></li>
+        <li><a class="go-bottom"><i class="fa fa-angle-double-down"></i><span data-localize="index.pop_menu.bottom_level"></span></a></li>
+        <li><a class="win-lock"><i class="fa fa-lock"></i><span data-localize="index.pop_menu.lock"></span></a></li>
+        <li><a class="win-unlock"><i class="fa fa-unlock-alt"></i><span data-localize="index.pop_menu.unlock"></span></a></li>
+        <li><a class="win-restore"><i class="fa fa-share-square-o"></i><span data-localize="index.pop_menu.restore"></span></a></li>
+        <li><a class="win-info"><i class="fa fa-info-circle"></i><span data-localize="index.pop_menu.info"></span></a></li>
+    </ul>
+</div>
+
+<!--情景模式弹出菜单-->
+<div id="scene-pop-menu" class="pop-menu">
+    <ul>
+        <li><a class="sce-open"><i class="fa fa-play"></i><span data-localize="index.pop_menu.open"></span></a></li>
+        <li><a class="sce-save"><i class="fa fa-save"></i><span data-localize="index.pop_menu.save"></span></a></li>
+        <li><a class="sce-edit"><i class="fa fa-pencil"></i><span data-localize="index.pop_menu.edit"></span></a></li>
+        <li><a class="sce-close"><i class="fa fa-close"></i><span data-localize="index.pop_menu.close"></span></a></li>
+        <li><a class="sce-clear"><i class="fa fa-trash-o"></i><span data-localize="index.pop_menu.clear"></span></a></li>
     </ul>
 </div>
 
@@ -347,7 +331,6 @@ $(function(){
 
     var app = new SkyApp();
 
-//    console.log([0,1,2,2,7,4,5,6,7,7].queue())
 })
 </script>
 </body>

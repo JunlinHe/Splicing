@@ -18,7 +18,55 @@ a, a:link, a:visited, a:hover, a:active {
 #tag-list {
     height: 200px;
 }
+/*fadeIn 动画*/
+@keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-webkit-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-moz-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-ms-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+@-o-keyframes fadeIn {
+    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
+}
+/*fadeOut 动画*/
+@keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-webkit-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-moz-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-ms-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
+@-o-keyframes fadeOut {
+    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
+}
 
+/*动画名称 持续时间 次数 延迟*/
+/*animation: fadeIn 0.5s 1 0s;*/
+/*-webkit-animation: fadeIn 0.5s 1 0s;*/
+/*-moz-animation: fadeIn 0.5s 1 0s;*/
+/*-ms-animation: fadeIn 0.5s 1 0s;*/
+/*-o-animation: fadeIn 0.5s 1 0s;*/
+.loader{
+    position: absolute;
+    top:0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    text-align: center;
+    color: #fff;
+    font-size: 10vw;
+    line-height: 100vh;
+}
 /*.droppable {*/
     /*border: 1px solid #fff546;*/
     /*min-height: 300px;*/
@@ -108,6 +156,10 @@ a, a:link, a:visited, a:hover, a:active {
     opacity: 1;
 }
 
+.window .title .button:hover i{
+    -webkit-animation: fa-spin 1s ease-in-out;
+    animation: fa-spin 1s ease-in-out;
+}
 .window .title .button.close {
     color: #ffffff;
     background: #2b81af;
@@ -202,6 +254,8 @@ a, a:link, a:visited, a:hover, a:active {
 .sky-btn:hover{
     color: #fff;
 }
+
+
 .sky-btn.dropdown > .dropdown-toggle{
     display: block;
 }
@@ -340,6 +394,12 @@ a, a:link, a:visited, a:hover, a:active {
     padding: 0;
     list-style: none;
 }
+
+#sky-wrapper .panel-inverse > .panel-heading .action-btn-group .sky-btn:hover i{
+    -webkit-animation: fa-spin 1s ease-in-out;
+    animation: fa-spin 1s ease-in-out;
+}
+
 #sky-wrapper .panel-inverse > .panel-heading .action-btn-group.right{
     float: right;
 }
@@ -502,6 +562,15 @@ a, a:link, a:visited, a:hover, a:active {
 #input ul .item.active, #scene ul .item.active{
     color: #fff;
 }
+#scene ul .item.active{
+    color: #fff;
+    border: 1px solid red;
+}
+#scene ul .item:hover{
+    color: #fff;
+    border: 1px solid red;
+}
+
 #input ul .item > :nth-child(1),#scene ul .item > :nth-child(1){
     float: left;
     height: 100%;
@@ -561,72 +630,45 @@ a, a:link, a:visited, a:hover, a:active {
 #setting-info .form-group select{
     color: #5a5a5a;
 }
-/*fadeIn 动画*/
-@keyframes fadeIn {
-    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
-}
-@-webkit-keyframes fadeIn {
-    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
-}
-@-moz-keyframes fadeIn {
-    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
-}
-@-ms-keyframes fadeIn {
-    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
-}
-@-o-keyframes fadeIn {
-    0% {opacity: 0;}50% {opacity: 0.5;}100% {opacity: 1;}
-}
-/*fadeOut 动画*/
-@keyframes fadeOut {
-    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
-}
-@-webkit-keyframes fadeOut {
-    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
-}
-@-moz-keyframes fadeOut {
-    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
-}
-@-ms-keyframes fadeOut {
-    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
-}
-@-o-keyframes fadeOut {
-    0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 0;}
-}
-/*动画名称 持续时间 次数 延迟*/
-/*animation: fadeIn 0.5s 1 0s;*/
-/*-webkit-animation: fadeIn 0.5s 1 0s;*/
-/*-moz-animation: fadeIn 0.5s 1 0s;*/
-/*-ms-animation: fadeIn 0.5s 1 0s;*/
-/*-o-animation: fadeIn 0.5s 1 0s;*/
+
 
 /*弹出菜单*/
-#pop-menu{
+.pop-menu{
     display: none;
     position: absolute;
     top: 0;left: 0;right: 0;bottom: 0;
     z-index: 999;
     background: rgba(0,0,0,0.4);
 }
-#pop-menu ul{
+.pop-menu ul{
     position: absolute;
-    top:calc(50% - 330px / 2);
-    left: calc(50% - 120px /2);
     list-style: none;
     width: 120px;
-    height: 330px;
     padding: 0;
     margin: 0;
     overflow: hidden;
     border-radius: 5px 0 0 5px;
     border-left: 3px solid #fff;
 }
-#pop-menu li{
+#content-pop-menu ul{
+    top:calc(50% - 330px / 2);
+    left: calc(50% - 120px /2);
+
+    height: 330px;
+}
+#scene-pop-menu ul{
+    top:calc(50% - 150px / 2);
+    left: calc(50% - 120px /2);
+
+    height: 150px;
+}
+
+.pop-menu li{
     height: 30px;
     line-height: 30px;
     border-bottom: 1px solid #fff;
 }
-#pop-menu li a{
+.pop-menu li a{
     padding: 0 5px;
     background: rgba(0,0,0,0.7);
     display: block;
@@ -637,15 +679,19 @@ a, a:link, a:visited, a:hover, a:active {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-#pop-menu li a:active{
+.pop-menu li a:active{
     color: #000;
     background: rgba(255, 255, 255, 0.61);
 }
-#pop-menu li a.disable{
+.pop-menu li a:hover{
+    color: #000;
+    background: rgba(255, 255, 255, 0.61);
+}
+.pop-menu li a.disable{
     color: #fff;
     background: rgba(138, 138, 138, 0.45);
 }
-#pop-menu li i{
+.pop-menu li i{
     width: 20px;
     padding-right: 5px;
     text-align: center;
