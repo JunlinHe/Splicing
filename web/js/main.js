@@ -2176,5 +2176,5 @@ SkyApp.prototype.handleDelScene = function($item){
     self.handleCloseWindow($droppable.find('.pep'), true)
 
     // 清除本地数据
-    //self.
+
 }
