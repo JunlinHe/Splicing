@@ -1925,6 +1925,43 @@ SkyApp.prototype.getSceneInfoByWallId = function(wallID){
         return null;
     }
 }
+
+/**
+ * 根据屏幕墙ID删除本地预设模式
+ * @param wallID
+ */
+SkyApp.prototype.delSceneInfoByWallId = function(wallID){
+    var self = this,
+        tbl = self.tblSceneInfo + wallID;
+
+    self.delCache(tbl);
+}
+
+/**
+ * 根据id删除指定预设模式
+ * @param wallID
+ * @param sceneID
+ * @returns {*}
+ */
+SkyApp.prototype.delWinInfoById = function(wallID, sceneID){
+    var self = this,
+        tbl = self.tblSceneInfo + wallID,
+        resultHandle = self.getCache(tbl, true);
+
+    if(resultHandle !== null){
+        for(var i = 0; i < resultHandle.length; i ++){
+            if(resultHandle[i].id === Number(sceneID)){
+                resultHandle.splice(i, 1);//删除一行
+
+                self.setCache(tbl, resultHandle, true);// 保存原有数据
+                return true;
+            }
+        }
+    }else{
+        return false;
+    }
+}
+
 /**
  * 加载上次退出时的编辑状态
  * @param wallID
@@ -2013,18 +2050,19 @@ SkyApp.prototype.handleScenePopMenuAction = function($popMenu){
     $popMenu.off(self.evStar, 'a').on(self.evStar, 'a',function(){
         var $this = $(this);
 
+        var $activeItem = $('#scene ul.active .item.active');
+
         switch ($this.attr('class')) {
             case 'sce-open':
-                var $activeItem = $('#scene ul.active .item.active');
                 self.handleLoadScene($activeItem);
                 break;
             case 'sce-save':
-                var $activeItem = $('#scene ul.active .item.active');
                 self.handleSaveScene($activeItem);
                 break;
             case 'sce-edit':
                 break;
             case 'sce-close':
+                self.handleDelScene($activeItem)
                 break;
             case 'sce-clear':
                 break;
@@ -2116,4 +2154,27 @@ SkyApp.prototype.handleLoadScene = function($item){
         }
 
     }
+}
+
+SkyApp.prototype.handleDelScene = function($item){
+
+    var self = this,
+        $activeList = $('#scene ul.active .item'),
+        index = $activeList.index($item) + 1,
+        $droppable,wallID,
+        winInfo, sceneInfo;
+
+    $droppable = $(self.droppableClsActive);
+    wallID = $(self.droppableCls).index($droppable);
+
+    //todo 发送删除情景模式指令
+    //<delete,Wall_ID,Scene_id>
+    $activeList.removeClass('active');
+    $activeList.find('img').css({'background-image':''})
+
+    // 清除现有窗口
+    self.handleCloseWindow($droppable.find('.pep'), true)
+
+    // 清除本地数据
+    //self.
 }
