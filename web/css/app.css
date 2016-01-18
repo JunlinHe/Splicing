@@ -196,39 +196,39 @@ a, a:link, a:visited, a:hover, a:active {
 
 #box { width: 200px; height: 100px; cursor: move; position: absolute; top: 30px; left: 30px; background-color: #FFF; border: 1px solid #CCCCCC;  -webkit-box-shadow: 10px 10px 25px #ccc;-moz-box-shadow: 10px 10px 25px #ccc;box-shadow: 10px 10px 25px #ccc;}
 
-.coor { display:none; width: 20px; height: 20px; overflow: hidden; position: absolute;  background-color: #09C; border-radius: 20px;}
+.coor { display:none; width: 10px; height: 10px; overflow: hidden; position: absolute;  background-color: #fff; border-radius: 20px;}
 
 .coor.ne{
     cursor: ne-resize;
-    top: -10px;right: -10px;
+    top: -5px;right: -5px;
 }
 .coor.n{
     cursor: n-resize;
-    top: -10px; left: calc(50% - 10px);
+    top: -5px; left: calc(50% - 5px);
 }
 .coor.nw{
     cursor: nw-resize;
-    top: -10px; left: -10px;
+    top: -5px; left: -5px;
 }
 .coor.e{
     cursor: e-resize;
-    top:calc(50% - 10px); right: -10px;
+    top:calc(50% - 5px); right: -5px;
 }
 .coor.w{
     cursor: w-resize;
-    top:calc(50% - 10px); left: -10px;
+    top:calc(50% - 5px); left: -5px;
 }
 .coor.sw{
     cursor: sw-resize;
-    bottom: -10px; left: -10px;
+    bottom: -5px; left: -5px;
 }
 .coor.s{
     cursor: s-resize;
-    bottom: -10px; left: calc(50% - 10px);
+    bottom: -5px; left: calc(50% - 5px);
 }
 .coor.se{
     cursor: se-resize;
-    right: -10px; bottom: -10px;
+    right: -5px; bottom: -5px;
 }
 
 .pep:hover .coor{
@@ -558,6 +558,7 @@ a, a:link, a:visited, a:hover, a:active {
 #scene ul .item{
     height: inherit;
     border: 1px solid #f9f9f9;
+    margin: 5px;
 }
 #input ul .item.active, #scene ul .item.active{
     color: #fff;

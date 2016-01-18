@@ -258,19 +258,19 @@
         <li><a class="sce-open"><i class="fa fa-play"></i><span data-localize="index.pop_menu.open"></span></a></li>
         <li><a class="sce-save"><i class="fa fa-save"></i><span data-localize="index.pop_menu.save"></span></a></li>
         <li><a class="sce-edit"><i class="fa fa-pencil"></i><span data-localize="index.pop_menu.edit"></span></a></li>
-        <li><a class="sce-close"><i class="fa fa-close"></i><span data-localize="index.pop_menu.close"></span></a></li>
+        <li><a class="sce-del"><i class="fa fa-close"></i><span data-localize="index.pop_menu.del"></span></a></li>
         <li><a class="sce-clear"><i class="fa fa-trash-o"></i><span data-localize="index.pop_menu.clear"></span></a></li>
     </ul>
 </div>
 
-<!--弹出消息框-->
+<!--修改窗口信息弹出框-->
 <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>-->
 <div id="modal-win-info" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" data-localize="index.modal.title"></h4>
+                <h4 class="modal-title" data-localize="index.modal.title.attribute"></h4>
             </div>
             <div class="modal-body">
                 <form>
@@ -303,6 +303,43 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.modal.btn.close"></button>
                 <button type="button" id="win-save" class="btn btn-primary" data-dismiss="modal" data-localize="index.modal.btn.save"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--操作确认框-->
+<div id="modal-confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.modal.title.attribute"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="no btn btn-default" data-dismiss="modal"></button>
+                <button type="button" class="yes btn btn-primary" data-dismiss="modal"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改预设模式弹出框-->
+<div id="modal-scene-info" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.modal.title.attribute"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.modal.btn.cancel"></button>
+                <button type="button" id="op-save" class="btn btn-primary" data-dismiss="modal" data-localize="index.modal.btn.save"></button>
             </div>
         </div>
     </div>

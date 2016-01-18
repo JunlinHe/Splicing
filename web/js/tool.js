@@ -210,3 +210,63 @@ CanvasRenderingContext2D.prototype.dashedLineTo = function (fromX, fromY, toX, t
     }
     this.stroke();
 };
+
+(function($){
+
+    /**
+     * 表单数据序列化为json
+     */
+    $.fn.serializeJson = function(){
+        var serializeObj={};
+        $(this.serializeArray()).each(function(){
+            serializeObj[this.name]=this.value;
+        });
+        return serializeObj;
+    };
+
+    /**
+     * bootstrap确认提示框
+     * @param option
+     * @returns {*|HTMLElement}
+     */
+    $.extend({
+        confirm:function(option){
+            var _option = $.extend({
+                event: 'click',
+                title: 'Confirm',
+                message: 'Are you sure?',
+                btn: ['no','yes'],
+                onCancel: null,
+                onSuccess: null
+            },option);
+
+            var $model = $('#modal-confirm'),
+                $title = $model.find('.modal-header h4'),
+                $message = $model.find('.modal-body'),
+                $btnCancel = $model.find('.modal-footer .no'),
+                $btnConfirm = $model.find('.modal-footer .yes');
+
+            $title.html(_option.title);
+            $message.html(_option.message);
+            $btnCancel.html(_option.btn[0]);
+            $btnConfirm.html(_option.btn[1]);
+
+            $model.modal('show');
+
+            $btnCancel.off(_option.event).on(_option.event, function() {
+                if(_option.onCancel)
+                    _option.onCancel();
+            });
+            $btnConfirm.off(_option.event).on(_option.event, function() {
+                if(_option.onSuccess)
+                    _option.onSuccess();
+                $model.modal('hide')
+            });
+
+            return $model;
+        }
+    });
+    //$.fn.confirm = function(option){
+    //
+    //};
+})(jQuery);
