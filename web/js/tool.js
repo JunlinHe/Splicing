@@ -40,15 +40,15 @@ Array.prototype.queue = function() {
     // 对当前队列去重排序
     arr = arr.unique();
     arr.sort();
-    console.log(arr)
+    //console.log(arr)
     // 生成从0开始的顺序队列
     for(var i = 0; i <= arr[arr.length-1]; i++){
         queue.push(i);
     }
-    console.log(queue)
+    //console.log(queue)
     // 取差集首个插入
     tmp = Array.minus(queue, arr);
-    console.log(tmp)
+    //console.log(tmp)
     if(tmp.length > 0){
         index = tmp[0];
     }else{
