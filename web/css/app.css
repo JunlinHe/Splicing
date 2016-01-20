@@ -1,4 +1,4 @@
-a, a:link, a:visited, a:hover, a:active {
+a, a:link, a:visited, a:hover, a:active ,ul{
     text-decoration:none;
     color: inherit;
 
@@ -231,9 +231,9 @@ a, a:link, a:visited, a:hover, a:active {
     right: -5px; bottom: -5px;
 }
 
-.pep:hover .coor{
-    display: block;
-}
+/*.pep:hover .coor{*/
+    /*display: block;*/
+/*}*/
 .pep.active .coor{
     display: block;
 }

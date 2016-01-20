@@ -27,6 +27,7 @@ function SkyApp(){
     self.droppableCls = '.right .tab-pane .droppable';
     self.droppableClsActive = '.right .tab-pane.active .droppable';
     // 存储表名
+    self.dbName = 'skyDB';
     self.tblWinInfo = 'tbl_win_wall';
     self.tblSceneInfo = 'tbl_scene_wall';
     // 其他
@@ -332,9 +333,13 @@ SkyApp.prototype.handleDroppablePanelScale = function(){
             'transform': 'scale(' + self.scale + ')'
         });
 
-        //var $pepOoj = $droppable.data('plugin_pep')
-        //$pepOoj.setScale(scale);
-        //$pepOoj.setMultiplier(scale);
+        $droppable.find('.pep').each(function(){
+            var $this = $(this),
+                $pep = $this.data('plugin_pep');
+            $pep.setScale(self.scale);
+            //$pep.setMultiplier(self.scale);
+        })
+
     });
 }
 
@@ -1948,6 +1953,7 @@ SkyApp.prototype.handleSynchronizeWall = function (win){
 SkyApp.prototype.getCache = function(key, isJson){
     return isJson ? JSON.parse(localStorage.getItem(key)) : localStorage.getItem(key);
 }
+
 
 /**
  * 保存字符串或json到本地
