@@ -79,13 +79,11 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     /*background-size: 80px 80px;*/
 /*}*/
 .droppable {
-    /*border: 1px solid #fff546;*/
-    /*background: rgba(0,0,0,0.7);*/
     height: 100%;
     width: 100%;
-    transform-origin: 0 0;
     z-index: -1;
 
+    transition: all 300ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .refresh,.fullscreen{
@@ -262,10 +260,14 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 
 #sky-wrapper{
     position: absolute;
-    top: 70px;left: 10px;right:10px;bottom:10px;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 10px 10px;
 }
 #sky-wrapper>.row{
-    position: relative;
+    position: absolute;
     margin: 0;
     height:100%;
     width: 100%;
@@ -273,7 +275,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 #sky-wrapper>.row>.col{
     float: left;
     height:100%;
-    padding: 0 3px;
+    /*padding: 0 3px;*/
 }
 #sky-wrapper>.row>.col.left{
     position: absolute;
@@ -287,7 +289,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 }
 #sky-wrapper>.row>.col.right{
     position: absolute;
-    left: 200px;right: 0;
+    left: 203px;right: 0;
     color: #fff;
     transition: left 500ms;
     -moz-transition: left 500ms;
@@ -302,7 +304,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 }
 #sky-wrapper.off>.row>.col.right{
     position: absolute;
-    left: 50px; right: 0;
+    left: 53px; right: 0;
 
 }
 
@@ -362,10 +364,11 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 
 /*主页面板*/
 #sky-wrapper .panel-inverse {
-    position: relative;
+    position: absolute;
     background: none;
     border-color: #222;
     height: 100%;
+    width: 100%;
     margin: 0;
 }
 #sky-wrapper .panel-inverse > * {
@@ -382,8 +385,9 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     border-color: #222;
 }
 #sky-wrapper .right .tab-content, #sky-wrapper .right .tab-content .tab-pane{
-    position: relative;
+    position: absolute;
     height: 100%;
+    width: 100%;
 }
 #sky-wrapper .panel-inverse > .panel-heading {
     top:0;
@@ -451,12 +455,20 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     height: 120px;
 }
 
-#sky-wrapper .panel-inverse .left-footer-btn,#sky-wrapper .panel-inverse .ellipsis-btn{
-    width: 100%;
+#sky-wrapper .panel-inverse .left-footer-bt{
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+#sky-wrapper .panel-inverse .ellipsis-btn{
+    width: calc(100% - 105px);
     height: 100%;
     padding: 0;
     margin: 0;
     border: none;
+}
+#sky-wrapper .panel-inverse .left-footer-btn{
+    border: 0;
 }
 #sky-wrapper .panel-inverse .left-footer-btn .item{
     list-style: none;
@@ -533,6 +545,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 }
 #sky-wrapper .right .panel-body {
     overflow: auto;
+    padding: 0;
 }
 
 #input ul,#scene ul{
@@ -597,10 +610,6 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 #scene ul .item .grid2x2{
     background: url(../img/2_2.png) no-repeat;
     background-size: 100%;
-}
-
-#sky-wrapper .right .panel-footer{
-    line-height: inherit;
 }
 
 #sky-wrapper .panel-inverse > .panel-heading + .panel-collapse > .panel-body {
@@ -709,9 +718,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     border:1px dashed #fff;
 }
 #mouse-pos{
-    position: absolute;
-    left: 0;
-    bottom:0;
+    float: right;
     color: #fff;
     padding: 0 5px;
 }
