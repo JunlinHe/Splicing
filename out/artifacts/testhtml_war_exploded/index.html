@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="main-html">
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- HTTP 1.1 -->
+    <meta http-equiv="pragma" content="no-cache">
+    <!-- HTTP 1.0 -->
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- Prevent caching at the proxy server -->
+    <meta http-equiv="expires" content="0">
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
@@ -11,7 +18,7 @@
     <!--<link rel="icon" href="favicon.ico">-->
     <title data-localize="index.title"></title>
 
-    <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger-theme-flat.css" rel="stylesheet">
     <link href="lib/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet">
@@ -25,6 +32,10 @@
     <![endif]-->
 </head>
 <body class="main-body">
+
+<div class="loader">
+    <i class="fa fa-spinner fa-pulse"></i>
+</div>
 
 <!--导航条-->
 <div class="navbar-wrapper">
@@ -62,7 +73,7 @@
                     <ul class="nav navbar-nav navbar-center">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-localize="index.select.screen" data-replace="left"> <i class="fa fa-caret-down"></i></a>
-                            <ul class="dropdown-menu">
+                            <ul id="wall-toggle" class="dropdown-menu">
                                 <li><a href="#screen-wall-one" role="tab" data-toggle="tab">1</a></li>
                                 <li><a href="#screen-wall-two" role="tab" data-toggle="tab">2</a></li>
                             </ul>
@@ -95,33 +106,16 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="input">
-                            <ul id="input-list" class="input">
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <div class="drag">
-                                        <a>1.1-DVI</a>
-                                        <div class="content"></div>
-                                    </div>
-                                </li>
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <div class="drag">
-                                        <a>1.2-DVI</a>
-                                        <div class="content"></div>
-                                    </div>
-                                </li>
+                            <ul class="input">
+
                             </ul>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="profiles">
-                            <ul class="input">
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <span>情景模式一</span>
-                                </li>
-                                <li class="sky-btn item">
-                                    <i class="fa fa-desktop fa-lg"></i>
-                                    <span>情景模式二</span>
-                                </li>
+                        <div role="tabpanel" class="tab-pane" id="scene">
+                            <ul class="active">
+
+                            </ul>
+                            <ul>
+
                             </ul>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="setting">
@@ -172,7 +166,7 @@
                             </a>
                         </li>
                         <li role="presentation" class="sky-btn item">
-                            <a href="#profiles" aria-controls="profiles" role="tab" data-toggle="tab">
+                            <a href="#scene" aria-controls="scene" role="tab" data-toggle="tab">
                                 <i class="fa fa-th-large fa-lg"></i>
                                 <span data-localize="index.left.action.btnname2"></span>
                             </a>
@@ -227,63 +221,178 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <!--<ul class="ellipsis-btn">-->
-                    <!--<li class="sky-btn item"><a>01</a></li>-->
-                    <!--<li class="sky-btn item"><a>02</a></li>-->
-                    <!--<li class="sky-btn item"><a>03</a></li>-->
-                    <!--<li class="sky-btn item"><a>04</a></li>-->
-                    <!--<li class="sky-btn item"><i class="fa fa-ellipsis-h"></i></li>-->
-                    <!--</ul>-->
-                    <ul class="nav nav-pills">
-                        <li role="presentation" class="active"><a href="#">01</a></li>
-                        <li role="presentation"><a href="#">02</a></li>
-                        <li role="presentation"><a href="#">03</a></li>
-                        <li role="presentation"><a href="#"><i class="fa fa-ellipsis-h"></i></a></li>
+                    <div id="mouse-pos">x:0,y:0</div>
+
+                    <ul class="ellipsis-btn">
+                        <li class="sky-btn item"><a>01</a></li>
+                        <li class="sky-btn item"><a>02</a></li>
+                        <li class="sky-btn item"><a>03</a></li>
+                        <li class="sky-btn item"><a>04</a></li>
+                        <li class="sky-btn item"><i class="fa fa-ellipsis-h"></i></li>
                     </ul>
+                    <!--<ul class="nav nav-pills">-->
+                        <!--<li role="presentation" class="active"><a href="#">01</a></li>-->
+                        <!--<li role="presentation"><a href="#">02</a></li>-->
+                        <!--<li role="presentation"><a href="#">03</a></li>-->
+                        <!--<li role="presentation"><a href="#"><i class="fa fa-ellipsis-h"></i></a></li>-->
+                    <!--</ul>-->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="pop-menu">
+<!--编辑区弹出菜单-->
+<div id="content-pop-menu" class="pop-menu">
     <ul>
-        <li><a class="single-screen" class="disable"><i class="fa fa-expand"></i><span data-localize="index.pop_menu.full_sgl_src">单屏最大化</span></a></li>
-        <li><a class="full-screen"><i class="fa fa-arrows-alt"></i><span data-localize="index.pop_menu.fullscreen">全屏最大化</span></a></li>
-        <li><a class="up-level"><i class="fa fa-level-up"></i><span data-localize="index.pop_menu.up_level">上移一层</span></a></li>
-        <li><a class="down-level"><i class="fa fa-level-down"></i><span data-localize="index.pop_menu.down_level">下移一层</span></a></li>
-        <li><a class="win-close"><i class="fa fa-close"></i><span data-localize="index.pop_menu.close">关闭</span></a></li>
+        <li><a class="single-screen"><i class="fa fa-expand"></i><span data-localize="index.pop_menu.full_sgl_src"></span></a></li>
+        <li><a class="full-screen"><i class="fa fa-arrows-alt"></i><span data-localize="index.pop_menu.fullscreen"></span></a></li>
+        <li><a class="up-level"><i class="fa fa-level-up"></i><span data-localize="index.pop_menu.up_level"></span></a></li>
+        <li><a class="down-level"><i class="fa fa-level-down"></i><span data-localize="index.pop_menu.down_level"></span></a></li>
+        <li><a class="win-close"><i class="fa fa-close"></i><span data-localize="index.pop_menu.close"></span></a></li>
 
-        <li><a class="go-top"><i class="fa fa-angle-double-up"></i><span data-localize="index.pop_menu.top_level">置顶</span></a></li>
-        <li><a class="go-bottom"><i class="fa fa-angle-double-down"></i><span data-localize="index.pop_menu.bottom_level">置底</span></a></li>
-        <li><a class="win-lock"><i class="fa fa-lock"></i><span data-localize="index.pop_menu.lock">锁定</span></a></li>
-        <li><a class="win-unlock"><i class="fa fa-unlock-alt"></i><span data-localize="index.pop_menu.unlock">解锁</span></a></li>
-        <li><a class="win-restore"><i class="fa fa-share-square-o"></i><span data-localize="index.pop_menu.restore">还原</span></a></li>
-        <li><a class="win-info"><i class="fa fa-info-circle"></i><span data-localize="index.pop_menu.info">属性</span></a></li>
+        <li><a class="go-top"><i class="fa fa-angle-double-up"></i><span data-localize="index.pop_menu.top_level"></span></a></li>
+        <li><a class="go-bottom"><i class="fa fa-angle-double-down"></i><span data-localize="index.pop_menu.bottom_level"></span></a></li>
+        <li><a class="win-lock"><i class="fa fa-lock"></i><span data-localize="index.pop_menu.lock"></span></a></li>
+        <li><a class="win-unlock"><i class="fa fa-unlock-alt"></i><span data-localize="index.pop_menu.unlock"></span></a></li>
+        <li><a class="win-restore"><i class="fa fa-share-square-o"></i><span data-localize="index.pop_menu.restore"></span></a></li>
+        <li><a class="win-info"><i class="fa fa-info-circle"></i><span data-localize="index.pop_menu.info"></span></a></li>
     </ul>
 </div>
 
-<script src="lib/jquery-2.1.4.js"></script>
+<!--情景模式弹出菜单-->
+<div id="scene-pop-menu" class="pop-menu">
+    <ul>
+        <li><a class="sce-open"><i class="fa fa-play"></i><span data-localize="index.pop_menu.open"></span></a></li>
+        <li><a class="sce-save"><i class="fa fa-save"></i><span data-localize="index.pop_menu.save"></span></a></li>
+        <li><a class="sce-edit"><i class="fa fa-pencil"></i><span data-localize="index.pop_menu.edit"></span></a></li>
+        <li><a class="sce-del"><i class="fa fa-close"></i><span data-localize="index.pop_menu.del"></span></a></li>
+        <li><a class="sce-clear"><i class="fa fa-trash-o"></i><span data-localize="index.pop_menu.clear"></span></a></li>
+    </ul>
+</div>
+
+<!--修改窗口信息弹出框-->
+<!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>-->
+<div id="modal-win-info" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.modal.title.attribute"></h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="lable-id" data-localize="index.modal.lable.id"></span>
+                            <input type="text" id="win-id" class="form-control" aria-describedby="lable-id" placeholder="id" disabled>
+                            <span class="input-group-addon" id="lable-sid" data-localize="index.modal.lable.sid"></span>
+                            <input type="text" id="win-sid" class="form-control" aria-describedby="lable-sid" placeholder="sid" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="lable-x" data-localize="index.modal.lable.x"></span>
+                            <input type="text" id="win-x" class="form-control" aria-describedby="lable-x" placeholder="x">
+                            <span class="input-group-addon" id="lable-y" data-localize="index.modal.lable.y"></span>
+                            <input type="text" id="win-y" class="form-control" aria-describedby="lable-y" placeholder="y">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="lable-w" data-localize="index.modal.lable.w"></span>
+                            <input type="text" id="win-w" class="form-control" aria-describedby="lable-w" placeholder="w">
+                            <span class="input-group-addon" id="lable-h" data-localize="index.modal.lable.h"></span>
+                            <input type="text" id="win-h" class="form-control" aria-describedby="lable-h" placeholder="h">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.modal.btn.close"></button>
+                <button type="button" id="win-save" class="btn btn-primary" data-dismiss="modal" data-localize="index.modal.btn.save"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--操作确认框-->
+<div id="modal-confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.modal.title.attribute"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="no btn btn-default" data-dismiss="modal"></button>
+                <button type="button" class="yes btn btn-primary" data-dismiss="modal"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改预设模式弹出框-->
+<div id="modal-scene-info" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.modal.title.attribute"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.modal.btn.cancel"></button>
+                <button type="button" id="op-save" class="btn btn-primary" data-dismiss="modal" data-localize="index.modal.btn.save"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="lib/modernizr.min.js" type="text/javascript"></script>
+<script src="lib/jquery-2.1.4.min.js"></script>
 
 <script src="lib/i18n/jquery.i18n.properties.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-<script src="lib/messenger/js/messenger.js"></script>
+<script src="lib/messenger/js/messenger.min.js"></script>
 <script src="lib/messenger/js/messenger-theme-flat.js"></script>
-<!--<script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>-->
+<script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>
 <script src="lib/jquery-pep-js/jquery.pep.js" type="text/javascript"></script>
 <script src="lib/hammer-js/hammer.js" type="text/javascript"></script>
 <script src="lib/hammer-js/jquery.hammer.js" type="text/javascript"></script>
 <script src="lib/fullscreen.js" type="text/javascript"></script>
-<script src="lib/jquery-indexeddb/jquery.indexeddb.js" type="text/javascript"></script>
+<!--<script src="lib/jquery-indexeddb/jquery.indexeddb.min.js" type="text/javascript"></script>-->
+<script src="lib/html2canvas/html2canvas.min.js" type="text/javascript"></script>
 
+<script src="js/tool.js" type="text/javascript"></script>
 <script src="js/main.js" type="text/javascript"></script>
 
 <script>
-$(function(){
+$(function() {
 
     var app = new SkyApp();
-})
+
+
+//    var deletePromise = $.indexedDB("MyECommerceSite").deleteDatabase();
+//
+//    deletePromise.done(function (db, event) {
+//        /* Called when the delete is successful*/
+//        console.log('del done')
+//    });
+//    deletePromise.fail(function (error, event) {
+//        /* Called when the delete is successful*/
+//        console.log('del fail')
+//    });
+//    deletePromise.progress(function (db, event) {
+//        // Called when the deleting is blocked due to another transaction
+//        console.log('del progress')
+//    });
+
+});
 </script>
 </body>
 </html>

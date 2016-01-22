@@ -180,10 +180,13 @@
       // 当拖拽按钮被触发时，设置缩放标识，不移动元素，只控制其缩放
       this.onDragIcon = function(e){
           e = self.normalizeEvent(e);
+
+          var $el = self.$el;
           self.dragIconMove = true;
           self.dragPosix = {
-              'w': self.$el.width(),
-              'h': self.$el.height(),
+              '$dragIcon': $(this),
+              'w': $el.width(),
+              'h': $el.height(),
               'x': e.pep.x,
               'y': e.pep.y
           };
@@ -377,14 +380,56 @@
                 // 当拖拽按钮被触发时，不移动元素，只控制其缩放
                 if(this.dragIconMove === true){
 
+                    var $pep = this.$el;
                     // 获得鼠标移动阀值内的移动数值
                     var hash = this.handleDragIconMove(curX, curY);
+                    var $dragIcon = this.dragPosix.$dragIcon;
 
-                    var $pep = this.$el;
-                    $pep.css({
-                        'width': Math.max(this.options.minSize.w, hash.curX - this.dragPosix.x + this.dragPosix.w),
-                        'height': Math.max(this.options.minSize.h, hash.curY - this.dragPosix.y + this.dragPosix.h)
-                    });
+                    if($dragIcon.hasClass('nw')){
+                        this.doMoveTo(dx, dy);
+                        $pep.css({
+                            'width': Math.max(this.options.minSize.w, (this.dragPosix.x - hash.curX)/this.scale  + this.dragPosix.w),
+                            'height': Math.max(this.options.minSize.h, (this.dragPosix.y - hash.curY)/this.scale + this.dragPosix.h)
+                        });
+                    }else if($dragIcon.hasClass('n')){
+                        this.doMoveTo(0, dy);
+                        $pep.css({
+                            'height': Math.max(this.options.minSize.h, (this.dragPosix.y - hash.curY)/this.scale + this.dragPosix.h)
+                        });
+                    }else if($dragIcon.hasClass('ne')){
+                        this.doMoveTo(0, dy);
+                        $pep.css({
+                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPosix.x)/this.scale + this.dragPosix.w),
+                            'height': Math.max(this.options.minSize.h, (this.dragPosix.y - hash.curY)/this.scale + this.dragPosix.h)
+                        });
+                    }else if($dragIcon.hasClass('w')){
+                        this.doMoveTo(dx, 0);
+                        $pep.css({
+                            'width': Math.max(this.options.minSize.w, (this.dragPosix.x - hash.curX)/this.scale  + this.dragPosix.w)
+                        });
+                    }else if($dragIcon.hasClass('e')){
+                        this.doMoveTo(0, 0);
+                        $pep.css({
+                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPosix.x)/this.scale + this.dragPosix.w)
+                        });
+                    }else if($dragIcon.hasClass('sw')){
+                        this.doMoveTo(dx, 0);
+                        $pep.css({
+                            'width': Math.max(this.options.minSize.w, (this.dragPosix.x - hash.curX)/this.scale  + this.dragPosix.w),
+                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPosix.y)/this.scale + this.dragPosix.h)
+                        });
+                    }else if($dragIcon.hasClass('s')){
+                        this.doMoveTo(0, 0);
+                        $pep.css({
+                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPosix.y)/this.scale + this.dragPosix.h)
+                        });
+                    }else{
+                        $pep.css({
+                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPosix.x)/this.scale + this.dragPosix.w),
+                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPosix.y)/this.scale + this.dragPosix.h)
+                        });
+                    }
+
                 }else{
                     // Move before calculate position and fire events
                     this.doMoveTo(dx, dy);
@@ -491,6 +536,7 @@
               this.moveTo(xOp, yOp);
             }
             else {
+
 
               dx = (dx/this.scale)*this.options.multiplier;
               dy = (dy/this.scale)*this.options.multiplier;

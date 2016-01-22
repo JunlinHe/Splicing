@@ -269,13 +269,13 @@ SkyApp.prototype.handlePanelSlide = function(){
         }
 
         // 重绘canvas
-        setTimeout(function(){
-            // 将编辑区宽高比置为16:9
-            //self.editPanelSize = self.request16to9();
-
-            //self.handleDrawGrid();
-            //$dropable.trigger("myResize")
-        },700);
+        //setTimeout(function(){
+        //    // 将编辑区宽高比置为16:9
+        //    self.editPanelSize = self.request16to9();
+        //
+        //    self.handleDrawGrid();
+        //    //$dropable.trigger("myResize")
+        //},700);
     });
 
     // 在窗体大小改变后重绘
@@ -286,7 +286,11 @@ SkyApp.prototype.handlePanelSlide = function(){
             // 将编辑区宽高比置为16:9
             self.editPanelSize = self.request16to9();
 
-            //self.handleDrawGrid();
+            self.handleDrawGrid();
+
+            var $activeDroppable = $(self.droppableClsActive);
+            var wallID = $dropable.index($activeDroppable)
+            self.handleLoadWall(wallID, $activeDroppable);
             //$dropable.trigger("myResize")
         }, 700);
     });
@@ -1141,7 +1145,6 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
             stepXY = $elParent.attr(self.gridStepAttr).split('_'),
             grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
-        console.log(grid)
         self.requestFullSingleScreen($obj, grid, true);
     });
     // 按钮 全屏最大化
@@ -1257,15 +1260,15 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
     stepX = grid[2];
     stepY = grid[3];
 
-    pTop = Math.round($elParent.position().top);
-    pLeft = Math.round($elParent.position().left);
-    pWidth = Math.round($elParent.innerWidth());
-    pHeight = Math.round($elParent.innerHeight());
+    pTop = $elParent.position().top * self.scale;
+    pLeft = $elParent.position().left * self.scale;
+    pWidth = $elParent.innerWidth();
+    pHeight = $elParent.innerHeight();
 
-    oTop = Math.round($el.position().top - pTop);
-    oLeft = Math.round($el.position().left - pLeft);
-    oWidth = Math.round($el.outerWidth());
-    oHeight = Math.round($el.outerHeight());
+    oTop = ($el.position().top - pTop) * self.scale;
+    oLeft = ($el.position().left - pLeft) * self.scale;
+    oWidth = $el.outerWidth();
+    oHeight = $el.outerHeight();
     // 保存控件变化前的坐标尺寸
     //$obj.reverPosix = {
     //    x:oLeft,
@@ -1273,11 +1276,12 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
     //    w:oWidth,
     //    h:oHeight
     //};
-    //全屏最大化
+    //全屏最大化(允许1px误差)
     if(!single){
 
-        if(oTop+pTop === pTop && oLeft+pLeft === pLeft && oWidth === pWidth && oHeight === pHeight){
+        if(Math.abs(oTop+pTop - pTop) <= 1 && Math.abs(oLeft+pLeft - pLeft) <= 1 && Math.abs(oWidth - pWidth) <= 1 && Math.abs(oHeight - pHeight) <= 1){
 
+            console.log('全屏最大化还原', 11)
             if($obj.reverPosix){
                 $el.outerWidth($obj.reverPosix.w);
                 $el.outerHeight($obj.reverPosix.h);
@@ -1292,7 +1296,7 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
 
             $el.outerWidth(pWidth);
             $el.outerHeight(pHeight);
-            $obj.moveTo(pLeft, pTop);
+            $obj.moveTo(0, 0);
             // 保存控件变化前的坐标尺寸
             $obj.reverPosix = {
                 x:oLeft,
@@ -1305,39 +1309,39 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
     }else{//单屏最大化
         for(var i = 0; i < x; i ++){
             if(stepX*i <= oLeft && oLeft < stepX*(i+1)){
-                dLeft = Math.round(stepX*i);
+                dLeft = stepX*i * self.scale;
                 break;
             }
         }
         for(var j = 0; j < y; j ++){
             if(stepY*j <= oTop && oTop < stepY*(j+1)){
-                dTop = Math.round(stepY*j);
+                dTop = stepY*j * self.scale;
                 break;
             }
         }
         for(var k = 0; k < x; k ++){
             var w = oLeft+oWidth;
             if(stepX*k < w && w <= stepX*(k+1)){
-                dWidth = Math.round(stepX*(k+1) - dLeft);
+                dWidth = stepX*(k+1) - dLeft;
                 break;
             }
         }
         for(var l = 0; l < y; l ++){
             var h = oTop+oHeight;
             if(stepY*l < h && h <= stepY*(l+1)){
-                dHeight = Math.round(stepY*(l+1) - dTop);
+                dHeight = stepY*(l+1) - dTop;
                 break;
             }
         }
 
-        //console.log([oTop, oLeft, oWidth, oHeight])
-        //
-        //console.log([pTop, pLeft, pWidth, pHeight])
-        //console.log([dTop, dLeft, dWidth, dHeight])
-        //尺寸不变则缩小
-        if(oTop === dTop && oLeft === dLeft && oWidth === dWidth && oHeight === dHeight){
-            //console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
+        console.log(oTop, oLeft, oWidth, oHeight)
 
+        console.log(pTop, pLeft, pWidth, pHeight)
+        console.log(dTop, dLeft, dWidth, dHeight)
+        //尺寸不变则缩小(允许1px误差)
+        if(Math.abs(oTop - dTop) <= 1 && Math.abs(oLeft - dLeft) <= 1 && Math.abs(oWidth - dWidth) <= 1 && Math.abs(oHeight - dHeight) <= 1){
+            //console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
+            console.log('单屏最大化还原', 11)
             if($obj.reverPosix){
                 $el.outerWidth($obj.reverPosix.w);
                 $el.outerHeight($obj.reverPosix.h);
@@ -1397,10 +1401,10 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         $pep = obj.$el;
 
         var pos = self.insideWithin(obj),
-            dPosX = parseInt(pos[0]*self.scaleX/self.scale),
-            dPosY = parseInt(pos[1]*self.scaleY/self.scale),
-            dPosW = parseInt(pos[3]*self.scaleX),
-            dPosH = parseInt(pos[2]*self.scaleY);
+            dPosX = Math.round(pos[0]*self.scaleX).toFixed(0),
+            dPosY = Math.round(pos[1]*self.scaleY).toFixed(0),
+            dPosW = Math.round(pos[3]*self.scaleX).toFixed(0),
+            dPosH = Math.round(pos[2]*self.scaleY).toFixed(0);
 
         // 保存窗口信息到本地
         winInfo = {
@@ -1519,47 +1523,33 @@ SkyApp.prototype.insideWithin = function(obj) {
         pHeight = $parent.height(),
         pWidth = $parent.width(),
 
-        oTop = $el.position().top,
-        oLeft = $el.position().left,
+        oTop = $el.position().top - pTop,
+        oLeft = $el.position().left - pLeft,
         oHeight = $el.outerHeight(),
         oWidth = $el.outerWidth(),
-
         moveTop = oTop,moveLeft = oLeft;
 
     console.log(pTop, pLeft, pWidth, pHeight)
     console.log(oTop, oLeft, oWidth, oHeight)
 
-    if (!obj.shouldUseCSSTranslation()) {
-
-        if(pTop > oTop){
-            moveTop = pTop;
-        }else if(pTop+pHeight-oHeight < oTop){
-            moveTop = pTop + pHeight - oHeight;
-        }
-        if(pLeft > oLeft){
-            moveLeft = pLeft;
-        }else if(pLeft+pWidth-oWidth < oLeft){
-            moveLeft = pLeft + pWidth - oWidth;
-        }
-        //$el.animate({top: moveTop, left: moveLeft}, 0);
-    } else {
-
-        if(pTop > oTop){
-            moveTop = pTop;
-        }else if(pTop+pHeight-oHeight < oTop){
-            moveTop = pTop + pHeight - oHeight/2;
-        }
-        if(pLeft > oLeft){
-            moveLeft = pLeft;
-        }else if(pLeft+pWidth-oWidth < oLeft){
-            moveLeft = pLeft + pWidth - oWidth/2;
-        }
-        obj.moveToUsingTransforms(moveTop, moveLeft);
+    if(0 > oTop){
+        moveTop = pTop;
+    }else if(pHeight+oHeight < oTop){
+        moveTop = pHeight - oHeight;
     }
+    if(0 > oLeft){
+        moveLeft = pLeft;
+    }else if(pWidth-oWidth < oLeft){
+        moveLeft = pWidth - oWidth;
+    }
+
+    console.log(moveTop, moveLeft)
+    $el.animate({top: moveTop / self.scale, left: moveLeft / self.scale}, 0);
+
 
     //将移动块约束在编辑区内 [top, right, bottom, left]
     obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
-
+    console.log(obj.options.constrainTo)
     //计算滑块相对编辑区的位置
     var fTop,fRight,fBottom,fLeft;
     fTop = moveTop - pTop;
@@ -1808,7 +1798,6 @@ SkyApp.prototype.request16to9 = function(){
     pWidth = $element.parent().innerWidth();
     pHeight = $element.parent().innerHeight();
 
-    console.log(pWidth, pHeight)
     if(pWidth/pHeight >= 16/9){
         oW = pHeight*16/9;
         oH = pHeight - 20;
@@ -1816,7 +1805,7 @@ SkyApp.prototype.request16to9 = function(){
             'margin': '10px auto',
             'width': oW,
             'height': oH,
-            'top': 'calc((100% - '+oH+'px)/2)'
+            'left': 'calc((100% - '+oW+'px)/2)'
         })
     }else{
         margin = (pHeight - (pWidth)*9/16)/2;
@@ -1886,7 +1875,6 @@ SkyApp.prototype.handleMouseDraw = function(){
             oTop = $this.offset().top,
             oLeft = $this.offset().left;
 
-        console.log(oTop, oLeft)
         // 在页面创建 box
         var active_box = document.createElement("div");
         active_box.id = "active-box";
@@ -1982,9 +1970,9 @@ SkyApp.prototype.handleSynchronizeWall = function (win){
     var demo = '<The valid window ID is : id levelnum Src_Ch src_hstart src_vstart src_hsize src_vsize win_x0 win_y0 win_width win_height\r\n'+
         '0,1,2,0,0,0,0,0,0,1919,1079\r\n'+
         '1,2,3,0,0,0,0,300,200,480,270\r\n'+
-        '2,3,2,0,0,0,0,200,200,1919,1079\r\n'+
+        '2,3,2,0,0,0,0,200,200,1920,1080\r\n'+
         '3,4,3,0,0,0,0,700,600,480,270\r\n'+
-        '4,5,2,0,0,0,0,1000,1500,1919,1079\r\n'+
+        '4,5,2,0,0,0,0,960,1440,1920,1080\r\n'+
         '5,6,3,0,0,0,0,300,200,480,270\r\n'+
         '7,6,3,0,0,0,0,400,200,480,700\r\n'+
         '>';
@@ -2021,10 +2009,10 @@ SkyApp.prototype.handleSynchronizeWall = function (win){
             src_hsize: src_hsize,
             src_vsize: src_vsize,
             title: $('#input ['+self.signalIdAttr+'='+src_ch+'] a').html(),
-            win_x0: win_x0,
-            win_y0: win_y0,
-            win_width: win_width,
-            win_height: win_height
+            win_x0: win_x0/self.scaleX,
+            win_y0: win_y0/self.scaleY,
+            win_width: win_width/self.scaleX,
+            win_height: win_height/self.scaleY
         };
         // 向指定屏幕墙添加窗口
 
@@ -2304,9 +2292,10 @@ SkyApp.prototype.handleLoadWall = function (wallID, $droppable){
         resultHandle = self.getWinInfoByWallID(wallID),
         winInfo;
 
-    if($droppable.find('.pep').length > 0){
+    if($droppable.find('.pep').size() > 0){
         return false;
     }
+
 
     //TODO 查询窗口信息指令
     // <winf,Wall_ID>
@@ -2316,6 +2305,11 @@ SkyApp.prototype.handleLoadWall = function (wallID, $droppable){
     self.cmd(cmd, function(data){
 
         if(resultHandle !== null){
+
+            console.log(resultHandle)
+            //清除窗口
+            self.handleCloseWin($droppable.find('.pep'), false);
+
             for(var i = 0; i < resultHandle.length; i ++){
                 winInfo = resultHandle[i];
                 winInfo = {
