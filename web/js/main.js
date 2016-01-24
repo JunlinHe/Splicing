@@ -887,7 +887,7 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, winInfo, fullSi
     });
 
     $pep.pep({
-        //debug: true,
+        debug: true,
         droppable: droppableCls,
         dragIcon: '.coor',//添加的拖拽缩放功能
         selectFloat: true,//选中元素上浮
@@ -1401,8 +1401,8 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         $pep = obj.$el;
 
         var pos = self.insideWithin(obj),
-            dPosX = Math.round(pos[0]*self.scaleX).toFixed(0),
-            dPosY = Math.round(pos[1]*self.scaleY).toFixed(0),
+            dPosX = Math.round(pos[0] / self.scale*self.scaleX).toFixed(0),
+            dPosY = Math.round(pos[1] / self.scale*self.scaleY).toFixed(0),
             dPosW = Math.round(pos[3]*self.scaleX).toFixed(0),
             dPosH = Math.round(pos[2]*self.scaleY).toFixed(0);
 
@@ -1417,8 +1417,8 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
             src_vsize: 0,
             title: '',
             color: $pep.css('background-color'),
-            win_x0: pos[0]/self.scale,
-            win_y0: pos[1]/self.scale,
+            win_x0: pos[0] / self.scale,
+            win_y0: pos[1] / self.scale,
             win_width: pos[3],
             win_height: pos[2]
         };
@@ -1527,10 +1527,11 @@ SkyApp.prototype.insideWithin = function(obj) {
         oLeft = $el.position().left - pLeft,
         oHeight = $el.outerHeight(),
         oWidth = $el.outerWidth(),
+
         moveTop = oTop,moveLeft = oLeft;
 
-    console.log(pTop, pLeft, pWidth, pHeight)
-    console.log(oTop, oLeft, oWidth, oHeight)
+    //console.log(pTop, pLeft, pWidth, pHeight)
+    //console.log(oTop, oLeft, oWidth, oHeight)
 
     if(0 > oTop){
         moveTop = pTop;
@@ -1543,22 +1544,22 @@ SkyApp.prototype.insideWithin = function(obj) {
         moveLeft = pWidth - oWidth;
     }
 
-    console.log(moveTop, moveLeft)
     $el.animate({top: moveTop / self.scale, left: moveLeft / self.scale}, 0);
 
-
     //将移动块约束在编辑区内 [top, right, bottom, left]
-    obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
+    //obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
+    obj.options.constrainTo = [0, pWidth-oWidth, pHeight-oHeight, 0];
+    //obj.options.constrainTo = self.droppableClsActive;
     console.log(obj.options.constrainTo)
     //计算滑块相对编辑区的位置
-    var fTop,fRight,fBottom,fLeft;
-    fTop = moveTop - pTop;
-    fLeft = moveLeft - pLeft;
-    fRight = pWidth - fLeft - oWidth;
-    fBottom = pHeight - fTop - oHeight;
+    //var fTop,fRight,fBottom,fLeft;
+    //fTop = moveTop - pTop;
+    //fLeft = moveLeft - pLeft;
+    //fRight = pWidth - fLeft - oWidth;
+    //fBottom = pHeight - fTop - oHeight;
 
     //var pis = [fLeft.toFixed(2), fTop.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];//x y h w
-    var pis = [fLeft, fTop, oHeight, oWidth];
+    var pis = [oLeft, oTop, oHeight, oWidth];
     return pis;
 }
 
