@@ -18,7 +18,7 @@ function SkyApp(){
     self.gridStepAttr = 'data-cvs-grid-step'
     self.winIdAttr = 'data-win-id';
     self.winSIdAttr = 'data-win-sid';
-    self.winInfoAttr = 'data-win-info';
+    self.winInfoAttr = 'data-win-info';//用于存放窗口坐标尺寸运算信息的变量
     self.signalIdAttr = 'data-signal-id';
     self.signalValidAttr = 'data-signal-valid';
     self.sceneIdAttr = 'data-scene-id';
@@ -567,12 +567,12 @@ SkyApp.prototype.handleCloseWinAll = function($pep, cleanCache){
 SkyApp.prototype.handleUpdateWinAttr = function($obj){
     var self = this,
         $el = $obj.$el,
-        posi = $el.attr(self.winInfoAttr).split(','),
+        pos = $el.attr(self.winInfoAttr).split(','),
         $droppable = $(self.droppableClsActive),
-        dPosX = parseInt(posi[0]*self.scaleX/self.scale),
-        dPosY = parseInt(posi[1]*self.scaleY/self.scale),
-        dPosW = parseInt(posi[3]*self.scaleX),
-        dPosH = parseInt(posi[2]*self.scaleY);
+        dPosX = Math.round(pos[0]*self.scaleX/self.scale).toFixed(0),
+        dPosY = Math.round(pos[1]*self.scaleY/self.scale).toFixed(0),
+        dPosW = Math.round(pos[3]*self.scaleX).toFixed(0),
+        dPosH = Math.round(pos[2]*self.scaleY).toFixed(0);
 
     $('#win-id').val($el.attr(self.winIdAttr));
     $('#win-sid').val($el.attr(self.winSIdAttr));
@@ -584,16 +584,17 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
     $('#modal-win-info').modal('show');
 
     $('#win-save').off(self.evStar).on(self.evStar, function(){
-        var x0 = parseInt($('#win-x').val()/self.scale),
-            y0 = parseInt($('#win-y').val()/self.scale),
-            w0 = parseInt($('#win-w').val()),
-            h0 = parseInt($('#win-h').val()),
-            x = x0/self.scaleX*self.scale,
-            y = y0/self.scaleY*self.scale,
+        var x0 = Math.round($('#win-x').val()).toFixed(0),
+            y0 = Math.round($('#win-y').val()).toFixed(0),
+            w0 = Math.round($('#win-w').val()).toFixed(0),
+            h0 = Math.round($('#win-h').val()).toFixed(0),
+            x = x0/self.scaleX,
+            y = y0/self.scaleY,
             w = w0/self.scaleX,
             h = h0/self.scaleY;
 
         console.log(x+'_'+y+'_'+w+'_'+h)
+        console.log(x*self.scaleX, y*self.scaleY, w*self.scaleX, h*self.scaleY)
         $el.outerWidth(w);
         $el.outerHeight(h);
         $obj.moveTo(x, y);
@@ -615,7 +616,7 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
             win_height: h
         };
         // 将窗口信息存到控件上
-        $el.attr(self.winInfoAttr, posi)
+        $el.attr(self.winInfoAttr, [x, y, h, w])
         // 获取窗口静态信息
         winInfo = self.getStaticWinInfo($el, $droppable, winInfo);
 
@@ -628,7 +629,7 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
         var info = '窗口标识:'+winInfo.id+'<br>'+
             '窗口序号:'+winInfo.level+'<br>'+
             'x,y:'+x0+','+y0+'<br>'+
-            'h,w:'+h0+','+w0;
+            'w,h:'+w0+','+h0;
         $el.find('.content').html(info);
     });
 }
@@ -697,8 +698,8 @@ SkyApp.prototype.handleDrawGrid = function() {
         context.fillStyle = "#ffffff";
         context.lineWidth = 0.6;
 
-        stepX = canvas.width/x;
-        stepY = canvas.height/y;
+        stepX = self.editPanelSize.w/x;
+        stepY = self.editPanelSize.h/y;
         dashedStepX = stepX/x0;
         dashedStepY = stepY/y0;
 
@@ -919,9 +920,33 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, winInfo, fullSi
         },
         stop: function (ev, obj) {
             //rotate(obj.$el, 0);
+            var $el = obj.$el,
+                $parent = $el.parent(),
+
+                winInfo = $el.attr(self.winInfoAttr).split(','),
+
+                pTop = $parent.position().top,
+                pLeft = $parent.position().left,
+
+                oTop = $el.position().top - pTop,
+                oLeft = $el.position().left - pLeft;
+
+            $el.attr(self.winInfoAttr, [oLeft, oTop, winInfo[2], winInfo[3]]);
         },
         rest: function (ev, obj){
             self.handleCentering(ev, obj);
+        },
+        onResizeEnd: function(ev, obj){
+
+            var $el = obj.$el,
+                $parent = $el.parent(),
+
+                winInfo = $el.attr(self.winInfoAttr).split(','),
+
+                oHeight = $el.outerHeight(),
+                oWidth = $el.outerWidth();
+
+            $el.attr(self.winInfoAttr, [winInfo[0], winInfo[1], oHeight, oWidth]);
         }
 
     });
@@ -930,6 +955,9 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, winInfo, fullSi
     var $obj = $pep.data('plugin_pep');
 
     self.handleInitWinCtrlAction($obj);
+
+    // 将窗口信息存到控件上
+    $pep.attr(self.winInfoAttr, [winInfo.win_x0, winInfo.win_y0, winInfo.win_height, winInfo.win_width])
 
     // 开窗后单屏最大化
     if(fullSingleScreen){
@@ -994,17 +1022,36 @@ SkyApp.prototype.getDynamicWinInfo = function($pep, $droppable, winInfo){
     var self = this,
         level,
         oTop, oLeft, oWidth, oHeight,
-        pTop, pLeft, pWidth, pHeight;
+        pTop, pLeft, pWidth, pHeight,
+        x, y, w, h;
 
-    pTop = $droppable.position().top;
-    pLeft = $droppable.position().left;
-    pWidth = $droppable.innerWidth();
-    pHeight = $droppable.innerHeight();
+    if(typeof $pep.attr(self.winInfoAttr) != 'undefined'){
+        var pos = $pep.attr(self.winInfoAttr).split(',');
 
-    oTop = $pep.position().top - pTop;
-    oLeft = $pep.position().left - pLeft;
-    oWidth = $pep.outerWidth();
-    oHeight = $pep.outerHeight();
+        x = pos[0];
+        y = pos[1];
+        w = pos[3];
+        h = pos[2];
+    }else{
+        pTop = $droppable.position().top;
+        pLeft = $droppable.position().left;
+        pWidth = $droppable.innerWidth();
+        pHeight = $droppable.innerHeight();
+
+        oTop = $pep.position().top - pTop;
+        oLeft = $pep.position().left - pLeft;
+        oWidth = $pep.outerWidth();
+        oHeight = $pep.outerHeight();
+
+        x = oLeft-pLeft;
+        y = oTop-pTop;
+        w = oWidth;
+        h = oHeight;
+
+        // 将窗口信息存到控件上
+        $pep.attr(self.winInfoAttr, [x, y, h, w])
+    }
+
 
     //level = $pep.css('z-index');
 
@@ -1014,10 +1061,10 @@ SkyApp.prototype.getDynamicWinInfo = function($pep, $droppable, winInfo){
     //winInfo.win_y0 = (oTop-pTop)*self.scaleY;
     //winInfo.win_width = oWidth*self.scaleX;
     //winInfo.win_height = oHeight*self.scaleY;
-    winInfo.win_x0 = (oLeft-pLeft);
-    winInfo.win_y0 = (oTop-pTop);
-    winInfo.win_width = oWidth;
-    winInfo.win_height = oHeight;
+    winInfo.win_x0 = x;
+    winInfo.win_y0 = y;
+    winInfo.win_width = w;
+    winInfo.win_height = h;
 
     return winInfo;
 }
@@ -1075,10 +1122,10 @@ SkyApp.prototype.handleInitWindow = function($droppable, defaultInfo, fullSingle
             winInfo.src_vstart+','+
             winInfo.src_hsize+','+
             winInfo.src_vsize+','+
-            parseInt(winInfo.win_x0*self.scaleX)+','+
-            parseInt(winInfo.win_y0*self.scaleY)+','+
-            parseInt(winInfo.win_width*self.scaleX)+','+
-            parseInt(winInfo.win_height*self.scaleY)+
+            Math.round(winInfo.win_x0*self.scaleX).toFixed(0)+','+
+            Math.round(winInfo.win_y0*self.scaleY).toFixed(0)+','+
+            Math.round(winInfo.win_width*self.scaleX).toFixed(0)+','+
+            Math.round(winInfo.win_height*self.scaleY).toFixed(0)+
             '>';
         self.cmd(cmd, function(){
             // 保存窗口信息到本地
@@ -1215,7 +1262,7 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu){
                 break;
             case 'win-lock':
                 $obj.toggle(false)
-                $popMenu.find("a:not(.win-unlock,.win-info)").addClass('disable')
+                $popMenu.find("a:not(.win-unlock,.win-attr)").addClass('disable')
                 break;
             case 'win-unlock':
                 $obj.toggle(true)
@@ -1224,7 +1271,7 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu){
             case 'win-restore':
                 $obj.revert();
                 break;
-            case 'win-info':
+            case 'win-attr':
                 //todo
                 self.handleUpdateWinAttr($obj);
                 break;
@@ -1257,25 +1304,19 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
 
     x = grid[0];
     y = grid[1];
-    stepX = grid[2];
-    stepY = grid[3];
+    stepX = grid[2] * self.scale;
+    stepY = grid[3] * self.scale;
 
-    pTop = $elParent.position().top * self.scale;
-    pLeft = $elParent.position().left * self.scale;
+    pTop = $elParent.position().top;
+    pLeft = $elParent.position().left;
     pWidth = $elParent.innerWidth();
     pHeight = $elParent.innerHeight();
 
-    oTop = ($el.position().top - pTop) * self.scale;
-    oLeft = ($el.position().left - pLeft) * self.scale;
+    oTop = ($el.position().top - pTop);
+    oLeft = ($el.position().left - pLeft);
     oWidth = $el.outerWidth();
     oHeight = $el.outerHeight();
-    // 保存控件变化前的坐标尺寸
-    //$obj.reverPosix = {
-    //    x:oLeft,
-    //    y:oTop,
-    //    w:oWidth,
-    //    h:oHeight
-    //};
+
     //全屏最大化(允许1px误差)
     if(!single){
 
@@ -1285,11 +1326,15 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
             if($obj.reverPosix){
                 $el.outerWidth($obj.reverPosix.w);
                 $el.outerHeight($obj.reverPosix.h);
-                $obj.moveTo($obj.reverPosix.x + pLeft, $obj.reverPosix.y + pTop);
+                $obj.moveTo($obj.reverPosix.x / self.scale, $obj.reverPosix.y / self.scale);
+                // 将窗口信息存到控件上
+                $el.attr(self.winInfoAttr, [$obj.reverPosix.x, $obj.reverPosix.y, $obj.reverPosix.h, $obj.reverPosix.w])
             }else{
                 $el.outerWidth(oWidth);
                 $el.outerHeight(oHeight);
-                $obj.moveTo(oLeft, oTop);
+                $obj.moveTo(oLeft / self.scale, oTop / self.scale);
+                // 将窗口信息存到控件上
+                $el.attr(self.winInfoAttr, [oLeft, oTop, oHeight, oWidth])
             }
 
         }else{
@@ -1304,40 +1349,42 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
                 w:oWidth,
                 h:oHeight
             };
+            // 将窗口信息存到控件上
+            $el.attr(self.winInfoAttr, [0, 0, pHeight, pWidth])
         }
 
     }else{//单屏最大化
         for(var i = 0; i < x; i ++){
-            if(stepX*i <= oLeft && oLeft < stepX*(i+1)){
-                dLeft = stepX*i * self.scale;
+            if(stepX*i <= oLeft && oLeft <= stepX*(i+1)){
+                dLeft = stepX*i;
                 break;
             }
         }
         for(var j = 0; j < y; j ++){
-            if(stepY*j <= oTop && oTop < stepY*(j+1)){
-                dTop = stepY*j * self.scale;
+            if(stepY*j <= oTop && oTop <= stepY*(j+1)){
+                dTop = stepY*j;
                 break;
             }
         }
         for(var k = 0; k < x; k ++){
-            var w = oLeft+oWidth;
-            if(stepX*k < w && w <= stepX*(k+1)){
+            var horizon = oLeft * self.scale + oWidth;
+            if(stepX*k <= horizon && horizon <= stepX*(k+1)){
                 dWidth = stepX*(k+1) - dLeft;
                 break;
             }
         }
         for(var l = 0; l < y; l ++){
-            var h = oTop+oHeight;
-            if(stepY*l < h && h <= stepY*(l+1)){
+            var vertical = oTop * self.scale + oHeight;
+            if(stepY*l <= vertical && vertical <= stepY*(l+1)){
                 dHeight = stepY*(l+1) - dTop;
                 break;
             }
         }
 
         console.log(oTop, oLeft, oWidth, oHeight)
-
         console.log(pTop, pLeft, pWidth, pHeight)
         console.log(dTop, dLeft, dWidth, dHeight)
+
         //尺寸不变则缩小(允许1px误差)
         if(Math.abs(oTop - dTop) <= 1 && Math.abs(oLeft - dLeft) <= 1 && Math.abs(oWidth - dWidth) <= 1 && Math.abs(oHeight - dHeight) <= 1){
             //console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
@@ -1346,18 +1393,23 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
                 $el.outerWidth($obj.reverPosix.w);
                 $el.outerHeight($obj.reverPosix.h);
                 $obj.moveTo($obj.reverPosix.x + pLeft, $obj.reverPosix.y + pTop);
+                // 将窗口信息存到控件上
+                $el.attr(self.winInfoAttr, [$obj.reverPosix.x, $obj.reverPosix.y, $obj.reverPosix.h, $obj.reverPosix.w])
             }else{
                 $el.outerWidth(oWidth);
                 $el.outerHeight(oHeight);
                 $obj.moveTo(oLeft, oTop);
+                // 将窗口信息存到控件上
+                $el.attr(self.winInfoAttr, [oLeft, oTop, oHeight, oWidth])
             }
         }else{
 
-            $el.outerWidth(dWidth);
-            $el.outerHeight(dHeight);
-            $obj.moveTo(dLeft + pLeft, dTop + pTop)
-            //console.log([oTop, oLeft, oWidth, oHeight])
-            //console.log('-----------------------------')
+            $el.outerWidth(dWidth / self.scale);
+            $el.outerHeight(dHeight / self.scale);
+
+            $obj.moveTo(dLeft / self.scale, dTop / self.scale)
+            console.log(dLeft/self.scale * self.scaleX, dTop/self.scale*self.scaleY, dWidth*self.scaleX, dHeight*self.scaleY)
+
             // 保存控件变化前的坐标尺寸
             $obj.reverPosix = {
                 x:oLeft,
@@ -1365,6 +1417,8 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
                 w:oWidth,
                 h:oHeight
             };
+            // 将窗口信息存到控件上
+            $el.attr(self.winInfoAttr, [dLeft, dTop, dHeight / self.scale, dWidth / self.scale])
         }
     }
 
@@ -1401,10 +1455,10 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         $pep = obj.$el;
 
         var pos = self.insideWithin(obj),
-            dPosX = Math.round(pos[0] / self.scale*self.scaleX).toFixed(0),
-            dPosY = Math.round(pos[1] / self.scale*self.scaleY).toFixed(0),
-            dPosW = Math.round(pos[3]*self.scaleX).toFixed(0),
-            dPosH = Math.round(pos[2]*self.scaleY).toFixed(0);
+            dPosX = Math.round(pos[0] / self.scale * self.scaleX).toFixed(0),
+            dPosY = Math.round(pos[1] / self.scale * self.scaleY).toFixed(0),
+            dPosW = Math.round(pos[3] * self.scaleX).toFixed(0),
+            dPosH = Math.round(pos[2] * self.scaleY).toFixed(0);
 
         // 保存窗口信息到本地
         winInfo = {
@@ -1436,7 +1490,7 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
         var info = '窗口标识:'+winInfo.id+'<br>'+
             '窗口序号:'+winInfo.level+'<br>'+
             'x,y:'+dPosX+','+dPosY+'<br>'+
-            'h,w:'+dPosH+','+dPosW;
+            'w,h:'+dPosW+','+dPosH;
         $pep.find('.content').html(info);
 
         //TODO 发送移动窗口指令
@@ -1525,21 +1579,26 @@ SkyApp.prototype.insideWithin = function(obj) {
 
         oTop = $el.position().top - pTop,
         oLeft = $el.position().left - pLeft,
-        oHeight = $el.outerHeight(),
-        oWidth = $el.outerWidth(),
+        //oHeight = $el.outerHeight(),
+        //oWidth = $el.outerWidth(),
+        pos = $el.attr(self.winInfoAttr).split(','),
+        //oTop = pos[1],
+        //oLeft = pos[0],
+        oHeight = pos[2],
+        oWidth = pos[3],
 
         moveTop = oTop,moveLeft = oLeft;
 
-    //console.log(pTop, pLeft, pWidth, pHeight)
-    //console.log(oTop, oLeft, oWidth, oHeight)
+    console.log(pTop, pLeft, pWidth, pHeight)
+    console.log(oTop, oLeft, oWidth, oHeight)
 
     if(0 > oTop){
-        moveTop = pTop;
+        moveTop = 0;
     }else if(pHeight+oHeight < oTop){
         moveTop = pHeight - oHeight;
     }
     if(0 > oLeft){
-        moveLeft = pLeft;
+        moveLeft = 0;
     }else if(pWidth-oWidth < oLeft){
         moveLeft = pWidth - oWidth;
     }
@@ -1547,8 +1606,8 @@ SkyApp.prototype.insideWithin = function(obj) {
     $el.animate({top: moveTop / self.scale, left: moveLeft / self.scale}, 0);
 
     //将移动块约束在编辑区内 [top, right, bottom, left]
-    //obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
-    obj.options.constrainTo = [0, pWidth-oWidth, pHeight-oHeight, 0];
+    obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
+    //obj.options.constrainTo = [0, pWidth-oWidth, pHeight-oHeight, 0];
     //obj.options.constrainTo = self.droppableClsActive;
     console.log(obj.options.constrainTo)
     //计算滑块相对编辑区的位置
@@ -1559,8 +1618,7 @@ SkyApp.prototype.insideWithin = function(obj) {
     //fBottom = pHeight - fTop - oHeight;
 
     //var pis = [fLeft.toFixed(2), fTop.toFixed(2), oHeight.toFixed(2), oWidth.toFixed(2)];//x y h w
-    var pis = [oLeft, oTop, oHeight, oWidth];
-    return pis;
+    return [oLeft, oTop, oHeight, oWidth];
 }
 
 /**
@@ -1820,8 +1878,8 @@ SkyApp.prototype.request16to9 = function(){
         })
     }
 
-    oW = $element.width();
-    oH = $element.height();
+    //oW = $element.width();
+    //oH = $element.height();
 
     // 计算编辑区尺寸比例
     var grid = $element.find('.droppable').attr(self.gridAttr).split('_'),
@@ -2307,7 +2365,6 @@ SkyApp.prototype.handleLoadWall = function (wallID, $droppable){
 
         if(resultHandle !== null){
 
-            console.log(resultHandle)
             //清除窗口
             self.handleCloseWin($droppable.find('.pep'), false);
 

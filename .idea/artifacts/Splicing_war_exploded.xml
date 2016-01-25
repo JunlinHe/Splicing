@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Splicing:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Splicing_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Splicing" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="Splicing/web/Web2" />
+      <element id="javaee-facet-resources" facet="Splicing/web/Web" />
+    </root>
+  </artifact>
+</component>

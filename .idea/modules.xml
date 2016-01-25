@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/testhtml.iml" filepath="$PROJECT_DIR$/testhtml.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Splicing.iml" filepath="$PROJECT_DIR$/Splicing.iml" />
     </modules>
   </component>
 </project>
