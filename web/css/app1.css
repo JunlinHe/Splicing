@@ -266,18 +266,18 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     bottom: 0;
     margin: 0 10px 10px;
 }
-#sky-wrapper .row{
+#sky-wrapper>.row{
     position: absolute;
     margin: 0;
     height:100%;
     width: 100%;
 }
-#sky-wrapper .row>.col{
+#sky-wrapper>.row>.col{
     float: left;
     height:100%;
     /*padding: 0 3px;*/
 }
-#sky-wrapper .row>.col.left{
+#sky-wrapper>.row>.col.left{
     position: absolute;
     left: 0;width: 200px;
     color: #fff;
@@ -287,7 +287,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     -o-transition: width 500ms;
     -ms-transition: width 500ms;
 }
-#sky-wrapper .row>.col.right{
+#sky-wrapper>.row>.col.right{
     position: absolute;
     left: 203px;right: 0;
     color: #fff;
@@ -298,16 +298,14 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     -ms-transition: left 500ms;
 }
 
-#sky-wrapper .row.off>.col.left{
+#sky-wrapper.off>.row>.col.left{
     position: absolute;
-    left: 0; width: 40px;
+    left: 0; width: 50px;
 }
-#sky-wrapper .row.off>.col.right{
+#sky-wrapper.off>.row>.col.right{
     position: absolute;
-    left: 43px; right: 0;
-}
-#sky-wrapper .row.off>.col.left .panel-body>.tab-content{
-    overflow-y: hidden;
+    left: 53px; right: 0;
+
 }
 
 /* 导航条样式 */
@@ -386,7 +384,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     background-color: #222;
     border-color: #222;
 }
-#sky-wrapper .right .panel-body .placeholder{
+#sky-wrapper .right .tab-content, #sky-wrapper .right .tab-content .tab-pane{
     position: absolute;
     height: 100%;
     width: 100%;
@@ -431,21 +429,21 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 #sky-wrapper .panel-inverse > .panel-heading > span{
     display: initial;
 }
-#sky-wrapper .row.off .panel-inverse > .panel-heading > span{
+#sky-wrapper.off .panel-inverse > .panel-heading > span{
     display: none;
 }
 
 #sky-wrapper .panel-inverse > .panel-heading > .collapse-btn:nth-child(2n){
     visibility: visible;
 }
-#sky-wrapper .row.off .panel-inverse > .panel-heading > .collapse-btn:nth-child(2n){
+#sky-wrapper.off .panel-inverse > .panel-heading > .collapse-btn:nth-child(2n){
     visibility: hidden;
 }
 
 #sky-wrapper .panel-inverse > .panel-heading > .collapse-btn:nth-child(2n+1){
     visibility: hidden;
 }
-#sky-wrapper .row.off .panel-inverse > .panel-heading > .collapse-btn:nth-child(2n+1){
+#sky-wrapper.off .panel-inverse > .panel-heading > .collapse-btn:nth-child(2n+1){
     visibility: visible;
 }
 
@@ -453,7 +451,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     bottom:0;
     overflow: hidden;
 }
-#sky-wrapper .row.off .left > .panel-inverse > .panel-footer {
+#sky-wrapper.off .left > .panel-inverse > .panel-footer {
     height: 120px;
 }
 
@@ -482,7 +480,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 #sky-wrapper .panel-inverse .left-footer-btn .item.active{
     color: #fff !important;
 }
-#sky-wrapper .row.off .panel-inverse .left-footer-btn .item{
+#sky-wrapper.off .panel-inverse .left-footer-btn .item{
     list-style: none;
     /* float: left; */
     /* display: inline-block; */
@@ -520,11 +518,11 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     line-height: 25px;
     font-size: initial;
 }
-#sky-wrapper .row.off .panel-inverse .left-footer-btn .item  > a > :nth-child(2n+1){
+#sky-wrapper.off .panel-inverse .left-footer-btn .item  > a > :nth-child(2n+1){
     height: 40px;
     line-height: 40px;
 }
-#sky-wrapper .row.off .panel-inverse .left-footer-btn .item  > a > :nth-child(2n){
+#sky-wrapper.off .panel-inverse .left-footer-btn .item  > a > :nth-child(2n){
     display: none;
 }
 
@@ -550,60 +548,66 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     padding: 0;
 }
 
-.input ul,.scene ul{
+#input ul,#scene ul{
     list-style: none;
     color: #fff;
     padding: 0;
     margin: 0;
 }
+#scene ul{
+    display: none;
+}
+#scene ul.active{
+    display: block;
+}
 
-.input ul .item, .scene ul .item{
+#input ul .item, #scene ul .item{
     margin: 10px 0;
     height: 30px;
     line-height: 30px;
     overflow: hidden;
 }
 
-.scene ul .item{
+#scene ul .item{
     height: inherit;
     border: 1px solid #f9f9f9;
     margin: 5px;
 }
-.input ul .item.active, .scene ul .item.active{
+#input ul .item.active, #scene ul .item.active{
     color: #fff;
 }
-.scene ul .item.active{
+#scene ul .item.active{
     color: #fff;
     border: 1px solid red;
 }
-.scene ul .item:hover{
+#scene ul .item:hover{
     color: #fff;
     border: 1px solid red;
 }
 
-.input ul .item > :nth-child(1),.scene ul .item > :nth-child(1){
+#input ul .item > :nth-child(1),#scene ul .item > :nth-child(1){
     float: left;
     height: 100%;
-    margin-left: 9px;
+    margin-left: 10px;
     line-height: inherit;
 }
-.input ul .item > :nth-child(2),.scene ul .item > :nth-child(2){
+#input ul .item > :nth-child(2),#scene ul .item > :nth-child(2){
     text-align: center;
     display: block;
     width: 100%;
     z-index: 8;
 }
-.scene ul .item > :nth-child(3){
+#scene ul .item > :nth-child(3){
     width: 100%;
     height: 0;
     padding-bottom: 56.25%;
 }
 
-.scene ul .item .grid3x3{
+#scene ul .item .grid3x3{
     background: url(../img/3_3.png) no-repeat;
     background-size: 100%;
 }
-.scene ul .item .grid2x2{
+#scene ul .item .grid2x2{
     background: url(../img/2_2.png) no-repeat;
     background-size: 100%;
 }
@@ -620,7 +624,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 }
 
 
-#sky-wrapper .row.off #setting-info{
+#sky-wrapper.off #setting-info{
     display: none;
 }
 #setting-info .title, #setting-info .form{
@@ -713,7 +717,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 #active-box{
     border:1px dashed #fff;
 }
-.mouse-pos{
+#mouse-pos{
     float: right;
     color: #fff;
     padding: 0 5px;
