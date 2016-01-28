@@ -6,7 +6,7 @@ function SkyApp(){
     var self = this;
 
     // 选择离线模式不向服务器发送数据
-    self.offline = true;
+    self.offline = false;
     //self.serverUrl = 'http://172.16.1.72:8088/p';
     self.serverUrl = 'p';
     // 事件
@@ -49,6 +49,7 @@ function SkyApp(){
     self.scaleX = [];
     self.scaleY = [];
     self.fullSingleScreen = false;// 是否在新建窗口时单屏最大化
+    self.enableGesture = true; // 手势开窗
 
     self.sceneInfo = {
         id: 1,
@@ -76,7 +77,6 @@ function SkyApp(){
     self.handleI18n('Messages', 'assets/');
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
-
     self.editPanelSize = self.request16to9();
 
     // 绘制canvas网格背景
@@ -91,11 +91,11 @@ function SkyApp(){
     self.handleGetSignalList();
     // 读取预设模式
     self.handleGetSceneList();
-    // 读取上次退出时的编辑状态
+    // 读取上次退出时的编辑状态（同步）
     self.handleLoadWall(0, $(self.selActiveDroppable));
 
     // 初始化拖拽按钮
-    //self.handleDragBtn($(self.selDragBtn), self.selActiveDroppable, 1, self.windowCtrl);
+    //self.handleDragBtn();
     // 控制屏幕区缩放
     self.handleDroppablePanelScale();
     // 初始化窗口控制事件
@@ -106,7 +106,6 @@ function SkyApp(){
     self.handleWallToggle();
     // 鼠标绘制窗口
     self.handleMouseDraw();
-
 
     // 默认同步1号墙体窗口信息
     //self.handleSynchronizeWall(0);
@@ -256,7 +255,7 @@ SkyApp.prototype.getWinCtrl = function(title, dataId, dataSid){
 SkyApp.prototype.getSignalCtrl = function(id, name, valid){
 
     var self = this,
-        icon;
+        icon, disable = '', draggable = '';
     id = typeof id === 'undefined' ? '' : id;
     name = typeof name === 'undefined' ? '' : name;
     valid = typeof valid === 'undefined' ? '' : valid;
@@ -266,12 +265,14 @@ SkyApp.prototype.getSignalCtrl = function(id, name, valid){
             '<i class="fa fa-plug fa-rotate-270 fa-stack-1x"></i>'+
             '<i class="fa fa-ban fa-stack-2x text-danger"></i>'+
             '</span>';
+        disable = 'disable';
     }else {
         icon = '<i class="fa fa-plug fa-rotate-270 fa-lg"></i>';
+        draggable = 'draggable = "true"';
     }
-    return '<li class="sky-btn item">'+
+    return '<li class="sky-btn item '+disable+'" >'+
                 icon+
-                '<div class="drag" '+self.attrSignalId+'="'+id+'" '+self.attrSignalValid+'="'+valid+'">'+
+                '<div class="drag" '+self.attrSignalId+'="'+id+'" '+self.attrSignalValid+'="'+valid+'" '+draggable+'>'+
                     '<a>'+id+'-'+name+'</a>'+
                     '<div class="content"></div>'+
                 '</div>'+
@@ -443,12 +444,135 @@ SkyApp.prototype.handleGetSignalList = function(){
             }
         })
 
+        //TODO 拖拽信号生成窗口
+        self.handleSignalDrag();
     },function(){
 
     });
 
 }
 
+/**
+ * 拖拽信号生成窗口
+ */
+SkyApp.prototype.handleSignalDrag = function(){
+
+    var self = this,
+        $signal = $(self.selInputList).find('.item .drag'),
+        $droppable = $(self.selDroppable),
+        startX, startY;
+
+    $signal.on('dragstart', function(e) {
+
+        var $this = $(this),
+            id = $this.attr(self.attrSignalId),
+            valid = $this.attr(self.attrSignalValid),
+            title = $this.find('a').html(),
+            str = JSON.stringify({
+                id: id,
+                valid: valid,
+                title: title
+            });
+
+        e.originalEvent.dataTransfer.setData("Text", str);
+    });
+
+    $(document).on('dragover', function(e) {
+        e.preventDefault();
+    });
+
+    $droppable.on('dragover', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    $droppable.on('drop', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var $this = $(this),
+            className,
+            data = eval('('+ e.originalEvent.dataTransfer.getData("Text") +')');
+
+        className = e.target.className;
+
+        // 切换信号通道
+        if(className === 'content'){
+
+            var $pep = $(e.target).parent();
+
+            $pep.find('.title span').html(data.title);
+
+            // 保存窗口信息到本地
+            var wallID = $droppable.index($this),
+                winInfo = self.getWinInfoById(wallID, parseInt($pep.attr(self.attrWinId)));
+
+            winInfo.title = data.title;
+            winInfo.src_ch = data.id;
+
+            //TODO 发送移动窗口指令
+            //<switch,Wall_ID,Window_ID,Src_Ch,src_hstart,src_vstart,src_hsize,src_vsize>
+            var cmd = '<switch,'+
+                wallID+','+
+                winInfo.id+','+
+                winInfo.src_ch+','+
+                winInfo.src_hstart+','+
+                winInfo.src_vstart+','+
+                winInfo.src_hsize+','+
+                winInfo.src_vsize+','+
+                '>';
+            self.cmd(cmd, function(){
+
+                // 保存窗口信息到本地
+                self.insertOrUpdateWinInfo(wallID, winInfo);
+
+            },function(){
+
+            });
+        }else{
+            // 生成窗口
+
+            var wallID = $droppable.index($this),
+                $pep = $(e.target).parent(),
+                pTop = $this.offset().top,
+                pLeft = $this.offset().left,
+                winID, idArr = [], winInfo;
+
+            if(isTouch(e)){
+                startX = e.originalEvent.touches[0].pageX;
+                startY = e.originalEvent.touches[0].pageY;
+            }else{
+                startX = e.originalEvent.pageX;
+                startY = e.originalEvent.pageY;
+            }
+
+            $this.find('.pep').each(function(){
+                var _this = $(this)
+                idArr.push(parseInt(_this.attr(self.attrWinId)))
+            });
+            winID = idArr.queue();// 获取队列中新的ID
+
+            winInfo = {
+                id: winID,
+                level: $pep.css('z-index'),
+                src_ch: data.id,
+                src_hstart: 0,
+                src_vstart: 0,
+                src_hsize: 0,
+                src_vsize: 0,
+                title: data.title,
+                color: self.getRandomColor(),
+                win_x0: (startX - pLeft) / self.scale[wallID],
+                win_y0: (startY - pTop) / self.scale[wallID],
+                win_width: false,
+                win_height: false
+            };
+
+            self.handleInitWindow($this, winInfo, self.fullSingleScreen, true);
+        }
+
+    });
+}
 /**
  * 获取预设模式列表
  */
@@ -584,7 +708,19 @@ SkyApp.prototype.handleWindowAction = function(){
 
         var $this = $(this);
 
-        $this.addClass('active')
+        if($this.hasClass('disable')){
+            $this.removeClass('disable');
+            self.enableGesture = true;
+            $(self.selActiveDroppable).css({
+                cursor:'crosshair'
+            })
+        }else{
+            $this.addClass('disable');
+            self.enableGesture = false;
+            $(self.selActiveDroppable).css({
+                cursor:'-webkit-grab'
+            })
+        }
     });
 
 }
@@ -727,9 +863,7 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
         // 获取窗口静态信息
         winInfo = self.getStaticWinInfo($el, $activeDroppable, winInfo);
 
-        // 保存窗口信息到本地
         var wallID = $(self.selDroppable).index($activeDroppable)
-        self.insertOrUpdateWinInfo(wallID, winInfo);
         //TODO 发送移动窗口指令
         //<move,Wall_ID,Window_ID,Src_Ch,src_hstart,src_vstart,src_hsize,src_vsize,win_x0,win_y0,win_width,win_height>
         var cmd = '<move,'+
@@ -924,13 +1058,12 @@ SkyApp.prototype.handleDrawGrid = function() {
 
 /**
  * 拖拽生成window控件
- * @param $drag 按钮对象
- * @param type 控件类型
- * @param genCtrl 控件字符串
  */
-SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
+SkyApp.prototype.handleDragBtn = function(){
 
-    var self = this;
+    var self = this,
+        droppableCls = self.selActiveDroppable,
+        $drag = $(self.selInputList).find('.item .drag');
 
     $drag.pep({
         droppable: droppableCls,
@@ -944,12 +1077,14 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
         useCSSTranslation: false,
         initiate: function(ev,obj){
             //生成控件，并跟随浮动
-            obj.$el.find('.content').append(genCtrl);
+            var winInfo = self.getStaticWinInfo($drag, $(self.selActiveDroppable), {});
+
+            obj.$el.find('.content').append(self.getWinCtrl(winInfo.title, winInfo.id, winInfo.src_ch));
         },
         drag: function (ev, obj) {
             //转换事件适配触摸
             ev = obj.normalizeEvent(ev);
-            //记录鼠标或触目点的移动位置，写到全局中
+            //记录鼠标或触目点的移动位置，存到变量中
             if(obj.activeDropRegions.length !== 0 ){
 
                 var $relative = obj.activeDropRegions[0].parents().filter(function() {
@@ -977,16 +1112,7 @@ SkyApp.prototype.handleDragBtn = function($drag, droppableCls, type, genCtrl){
                 $contaner.append(genCtrl);
 
                 //var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
-                switch (type){
-                    case 1:
-                        //self.handleWindowCtrl($contaner.find('.pep:last'), droppableCls, startPos, false, true);
-                        self.handleInitWindow($contaner, {x:obj.customPosix.x, y:obj.customPosix.y, w:null, h:null}, true, true);
-                        break;
-                    case 2:
-                        break;
-                    default :
-                        break;
-                }
+                self.handleInitWindow($contaner, {x:obj.customPosix.x, y:obj.customPosix.y, w:null, h:null}, true, true);
 
             }
             //删除拖拽按钮中的控件
@@ -1123,7 +1249,7 @@ SkyApp.prototype.getStaticWinInfo = function($pep, $droppable, defaultInfo){
         winID = 0,
         winSID = 0,
         winTitle = '',
-        $selectedSignal = $('.input .item.active .drag');
+        $selectedSignal = $(self.selActiveInputList).find('.item.active .drag');
 
     var idArr = [];
     if($pep === null || typeof $pep === 'undefined'){
@@ -2040,7 +2166,9 @@ SkyApp.prototype.handleMouseDraw = function(){
 
     // 鼠标按下
     $droppable.on(self.evStar, function(e) {
-        console.log(e)
+
+        if(!self.enableGesture) return false;
+
         if(isTouch(e)){
             e.pageX = e.originalEvent.touches[0].pageX;
             e.pageY = e.originalEvent.touches[0].pageY;
@@ -2486,10 +2614,9 @@ SkyApp.prototype.handleLoadWall = function (wallID, $activeDroppable){
         resultHandle,
         winInfo;
 
-    if($activeDroppable.find('.pep').size() > 0){
-        return false;
-    }
-
+    //if($activeDroppable.find('.pep').size() > 0){
+    //    return false;
+    //}
 
     //TODO 查询窗口信息指令(<wallinf> 是获取屏幕墙信息)
     // <winf,Wall_ID>
@@ -2517,12 +2644,12 @@ SkyApp.prototype.handleLoadWall = function (wallID, $activeDroppable){
                     src_vstart: parseInt(info[4]),
                     src_hsize: parseInt(info[5]),
                     src_vsize: parseInt(info[6]),
-                    title: false,
+                    title: $(self.selActiveInputList).find('.item.active .drag a').html(),
                     color: false,
-                    win_x0: info[7] * self.scaleX[wallID],
-                    win_y0: info[8] * self.scaleY[wallID],
-                    win_width: info[9] * self.scaleX[wallID],
-                    win_height: info[10] * self.scaleY[wallID]
+                    win_x0: info[7] / self.scaleX[wallID],
+                    win_y0: info[8] / self.scaleY[wallID],
+                    win_width: info[9] / self.scaleX[wallID],
+                    win_height: info[10] / self.scaleY[wallID]
                 }
 
                 // 向指定屏幕墙添加窗口并缓存
