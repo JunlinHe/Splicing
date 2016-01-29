@@ -42,39 +42,18 @@ function SkyApp(){
     self.dbName = 'skyDB';
     self.tblWinInfo = 'tbl_win_wall';
     self.tblSceneInfo = 'tbl_scene_wall';
+    self.tblSetting = 'tbl_setting';
     // 其他
-    self.langKey = 'lang';
     self.editPanelSize = {w:false, h:false};
     self.scale = [];
     self.scaleX = [];
     self.scaleY = [];
     self.fullSingleScreen = false;// 是否在新建窗口时单屏最大化
     self.enableGesture = true; // 手势开窗
+    self.setting = {};
 
-    self.sceneInfo = {
-        id: 1,
-        screenshot: '',
-        winInfo: ''
-    };
-
-    self.winInfo = {
-        id: 0,
-        level: 0,
-        src_ch: 0,
-        src_hstart: 0,
-        src_vstart: 0,
-        src_hsize: 0,
-        src_vsize: 0,
-        title: '',
-        color: '',
-        win_x0: 0,
-        win_y0: 0,
-        win_width: 0,
-        win_height: 0
-    };// 窗体信息
-
-    // 加载本地化配置
-    self.handleI18n('Messages', 'assets/');
+    // 加载系统设置
+    self.handleGblSetting();
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     self.editPanelSize = self.request16to9();
@@ -113,8 +92,7 @@ function SkyApp(){
     // 初始化预设模式事件
     self.handleSceneAction();
 
-    // 初始化全局设置事件
-    self.handleGblSetting();
+
 
     $('.loader').fadeOut(300, function(){
 
@@ -160,7 +138,7 @@ SkyApp.prototype.log = function(msg, type){
  */
 SkyApp.prototype.handleI18n = function(name, path, lang){
     var self = this,
-        lang = lang || self.getCache(self.langKey) || navigator.language;
+        lang = lang || self.setting.lang || navigator.language;
 
     $.i18n.properties({
         cache: true, // 缓存配置文件
@@ -197,20 +175,42 @@ SkyApp.prototype.handleI18n = function(name, path, lang){
 SkyApp.prototype.handleGblSetting = function(){
     var self = this;
 
+    //加载设置
+    self.setting = self.getCache(self.tblSetting, true);
+    if(!self.setting){
+        self.setting = {
+            lang: 'zh-CN',// 简体中文
+            loggable: false// 显示控制指令
+        };
+    }
+
+    // 加载本地化配置
+    self.handleI18n('Messages', 'assets/', self.setting.lang);
+
     $('#gbl-setting').on(self.evClick, 'li a', function(){
 
         var $this = $(this);
 
         if($this.hasClass('en-US')){
-            self.setCache(self.langKey, 'en-US')
+            self.setting.lang = 'en-US';
+            self.setCache(self.tblSetting, self.setting, true);
             location.reload();
+            return false;
         }else if($this.hasClass('zh-CN')){
-            self.setCache(self.langKey, 'zh-CN')
+            self.setting.lang = 'zh-CN';
+            self.setCache(self.tblSetting, self.setting, true);
             location.reload();
-        }else{
+            return false;
+        }else if($this.hasClass('loggable')){
+            if(self.setting.loggable){
+                self.setting.loggable = false;
+            }else{
+                self.setting.loggable = true;
+            }
 
         }
 
+        self.setCache(self.tblSetting, self.setting, true);
     });
 }
 /**
@@ -688,7 +688,7 @@ SkyApp.prototype.handleWindowAction = function(){
 
         $pep = $(self.selActiveDroppable).find('.pep.active')
         if($pep.size() > 0){
-            self.handleCloseWin($pep, true)
+            self.handleCloseWin($pep, true, true)
         }else{
             self.log($.i18n.prop('index.msg.no.select_win'));
         }
@@ -699,7 +699,7 @@ SkyApp.prototype.handleWindowAction = function(){
 
         $pep = $(self.selActiveDroppable).find('.pep')
         if($pep.size() > 0){
-            self.handleCloseWinAll($pep, true)
+            self.handleCloseWinAll($pep, true, true)
         }
     });
 
@@ -729,8 +729,9 @@ SkyApp.prototype.handleWindowAction = function(){
  * 关闭窗口控件
  * @param $pep
  * @param cleanCache {boolean} 是否清除缓存
+ * @param sendCMD {boolean} 是否发送清除命令
  */
-SkyApp.prototype.handleCloseWin = function($pep, cleanCache){
+SkyApp.prototype.handleCloseWin = function($pep, cleanCache, sendCMD){
     var self = this,
         wallID, winID;
 
@@ -741,20 +742,24 @@ SkyApp.prototype.handleCloseWin = function($pep, cleanCache){
 
         if(cleanCache){
 
-            winID = $this.attr(self.attrWinId)
-            //todo 发送删除窗口指令
-            //<shut,Wall_ID,Window_ID>
-            var cmd = '<shut,'+
-                wallID+','+
-                winID+
-                '>';
-            self.cmd(cmd, function(){
+            winID = $this.attr(self.attrWinId);
 
-                // 删除本地数据
-                self.delWinInfoById(wallID, winID);
-            },function(){
+            // 删除本地数据
+            self.delWinInfoById(wallID, winID);
 
-            });
+            if(sendCMD){
+                //todo 发送删除窗口指令
+                //<shut,Wall_ID,Window_ID>
+                var cmd = '<shut,'+
+                    wallID+','+
+                    winID+
+                    '>';
+                self.cmd(cmd, function(){
+
+                },function(){
+
+                });
+            }
         }
 
         // 移除控件
@@ -769,8 +774,9 @@ SkyApp.prototype.handleCloseWin = function($pep, cleanCache){
  * 关闭当前屏幕墙上所有窗口控件
  * @param $pep
  * @param cleanCache {boolean} 是否清除缓存
+ * @param sendCMD {boolean} 是否发送清除命令
  */
-SkyApp.prototype.handleCloseWinAll = function($pep, cleanCache){
+SkyApp.prototype.handleCloseWinAll = function($pep, cleanCache, sendCMD){
     var self = this,
         wallID;
 
@@ -783,18 +789,21 @@ SkyApp.prototype.handleCloseWinAll = function($pep, cleanCache){
 
         if(cleanCache){
 
-            //todo 发送关闭一个显示墙组的所有窗口指令
-            //<reset,Wall_ID>
-            var cmd = '<reset,'+
-                wallID+
-                '>';
-            self.cmd(cmd, function(){
+            // 删除本地数据
+            self.delWinInfoByWallId(wallID);
+            if(sendCMD){
+                //todo 发送关闭一个显示墙组的所有窗口指令
+                //<reset,Wall_ID>
+                var cmd = '<reset,'+
+                    wallID+
+                    '>';
+                self.cmd(cmd, function(){
 
-                // 删除本地数据
-                self.delWinInfoByWallId(wallID);
-            },function(){
+                },function(){
 
-            });
+                });
+            }
+
         }
     });
 
@@ -813,10 +822,12 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
         dPosX = Math.round(pos[0]*self.scaleX[index]/self.scale[index]).toFixed(0),
         dPosY = Math.round(pos[1]*self.scaleY[index]/self.scale[index]).toFixed(0),
         dPosW = Math.round(pos[3]*self.scaleX[index]).toFixed(0),
-        dPosH = Math.round(pos[2]*self.scaleY[index]).toFixed(0);
+        dPosH = Math.round(pos[2]*self.scaleY[index]).toFixed(0),
+        winID = $el.attr(self.attrWinId),
+        winSID = $el.attr(self.attrWinSId);
 
-    $('#win-id').val($el.attr(self.attrWinId));
-    $('#win-sid').val($el.attr(self.attrWinSId));
+    $('#win-id').val(winID);
+    $('#win-sid').val(winSID);
     $('#win-x').val(dPosX);
     $('#win-y').val(dPosY);
     $('#win-w').val(dPosW);
@@ -844,14 +855,14 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
 
         // 保存窗口信息到本地
         var winInfo = {
-            id: 0,
+            id: parseInt(winID),
             level: parseInt($el.css('z-index')),
-            src_ch: 0,
+            src_ch: parseInt(winSID),
             src_hstart: 0,
             src_vstart: 0,
             src_hsize: 0,
             src_vsize: 0,
-            title: '',
+            title: $el.find('.title span').html(),
             color: $el.css('background-color'),
             win_x0: x,
             win_y0: y,
@@ -861,13 +872,13 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
         // 将窗口信息存到控件上
         $el.attr(self.attrWinInfo, [x, y, h, w])
         // 获取窗口静态信息
-        winInfo = self.getStaticWinInfo($el, $activeDroppable, winInfo);
+        //winInfo = self.getStaticWinInfo($el, $activeDroppable, winInfo);
 
-        var wallID = $(self.selDroppable).index($activeDroppable)
+        //var wallID = $(self.selDroppable).index($activeDroppable)
         //TODO 发送移动窗口指令
         //<move,Wall_ID,Window_ID,Src_Ch,src_hstart,src_vstart,src_hsize,src_vsize,win_x0,win_y0,win_width,win_height>
         var cmd = '<move,'+
-            wallID+','+
+            index+','+
             winInfo.id+','+
             winInfo.src_ch+','+
             winInfo.src_hstart+','+
@@ -882,7 +893,7 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
         self.cmd(cmd, function(){
 
             // 保存窗口信息到本地
-            self.insertOrUpdateWinInfo(wallID, winInfo);
+            self.insertOrUpdateWinInfo(index, winInfo);
 
             var info = '窗口标识:'+winInfo.id+'<br>'+
                 '窗口序号:'+winInfo.level+'<br>'+
@@ -1258,14 +1269,15 @@ SkyApp.prototype.getStaticWinInfo = function($pep, $droppable, defaultInfo){
             idArr.push(parseInt($this.attr(self.attrWinId)))
         });
         winID = idArr.queue();// 获取队列中新的ID
+        winSID = $selectedSignal.attr(self.attrSignalId);
+        winSID = winSID ? winSID : 1;
+
+        winTitle = $selectedSignal.find('a').html()
     }else{
         winID = $pep.attr(self.attrWinId);//获取自身的窗口ID
+        winSID = $pep.attr(self.attrWinSId);
+        winTitle = $pep.find('.title span').html();
     }
-
-    winSID = $selectedSignal.attr(self.attrSignalId);
-    winSID = winSID ? winSID : 1;
-
-    winTitle = $selectedSignal.find('a').html()
 
     defaultInfo.id = parseInt(winID);
     defaultInfo.title = winTitle;
@@ -1437,7 +1449,7 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     $el.find('.close').off(self.evClick).on(self.evClick, function(e){
         e.preventDefault();
 
-        self.handleCloseWin($el, true)
+        self.handleCloseWin($el, true, true)
 
         $obj.options.constrainTo = 'window';
     });
@@ -1522,7 +1534,7 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu){
                 //$popMenu.fadeOut(300,function(){
                 //    $el.find('.close').trigger(self.evClick);
                 //});
-                self.handleCloseWin($el, true)
+                self.handleCloseWin($el, true, true)
                 break;
             case 'go-top':
                 break;
@@ -2010,7 +2022,8 @@ SkyApp.prototype.cmd = function(param, success, fail){
         //crossDomain: true,
         contentType: 'text/html;charset=UTF-8',
         success: function(data){
-            self.log(data);
+            if(self.setting.loggable)
+                self.log(data);
             console.log(data);
             if(success)
                 success(data);
@@ -2026,7 +2039,8 @@ SkyApp.prototype.cmd = function(param, success, fail){
             self.log(XMLHttpRequest.status, 'error');
             self.log(XMLHttpRequest.readyState, 'error');
             self.log(textStatus, 'error');
-            if(errorThrown) self.log(errorThrown, 'error');
+            if(fail)
+                fail(XMLHttpRequest, textStatus, errorThrown);
         }
     });
 }
@@ -2304,7 +2318,7 @@ SkyApp.prototype.handleSynchronizeWall = function (win){
 
     // 清除现有窗口
     //$droppable.find('.pep').remove();
-    self.handleCloseWin($(self.selActiveDroppable).find('.pep'), true)
+    self.handleCloseWinAll($(self.selActiveDroppable).find('.pep'), true ,false)
 
     for(var i = 1; i < resultArr.length - 1; i++){
 
@@ -2630,7 +2644,7 @@ SkyApp.prototype.handleLoadWall = function (wallID, $activeDroppable){
             if(data.split('\r\n').length < 2) return false;
 
             //清除窗口
-            self.handleCloseWin($activeDroppable.find('.pep'), true);
+            self.handleCloseWinAll($activeDroppable.find('.pep'), true, false);
 
             var arr = data.split('\r\n');
             for(var i = 1; i < arr.length - 1; i++){
@@ -2657,7 +2671,7 @@ SkyApp.prototype.handleLoadWall = function (wallID, $activeDroppable){
             }
         }else if(data === 'offline'){
             //清除窗口
-            self.handleCloseWin($activeDroppable.find('.pep'), false);
+            self.handleCloseWinAll($activeDroppable.find('.pep'), false, false);
 
             resultHandle = self.getWinInfoByWallID(wallID);
 
@@ -2869,7 +2883,7 @@ SkyApp.prototype.handleLoadScene = function($item){
     self.cmd(cmd, function(data){
 
         // 清除现有窗口
-        self.handleCloseWin($activeDroppable.find('.pep'), true);
+        self.handleCloseWinAll($activeDroppable.find('.pep'), true, false);
         // 获取编辑区中的窗口信息
         sceneInfo = self.getSceneInfoById(wallID, index);
 
@@ -2922,7 +2936,7 @@ SkyApp.prototype.handleDelScene = function($item){
         $item.removeClass('active');
 
         // 清除现有窗口
-        //self.handleCloseWin($droppable.find('.pep'), true)
+        //self.handleCloseWin($droppable.find('.pep'), true , false)
 
         // 清除本地数据
         self.delSceneById(wallID, index);
