@@ -6,7 +6,7 @@ function SkyApp(){
     var self = this;
 
     // 选择离线模式不向服务器发送数据
-    self.offline = false;
+    self.offline = true;
     //self.serverUrl = 'http://172.16.1.72:8088/p';
     self.serverUrl = 'p';
     // 事件
@@ -37,7 +37,7 @@ function SkyApp(){
     self.selDragBtn = '.input .item .drag';
     self.selDroppable = '#sky-wrapper .placeholder>.droppable';
     self.selActiveDroppable = '#sky-wrapper > .tab-content > .tab-pane.active .placeholder>.droppable';
-    self.$editPanel = $('#sky-wrapper .right .placeholder');
+    //self.$editPanel = $('#sky-wrapper .right .placeholder');
     // 存储表名
     self.dbName = 'skyDB';
     self.tblWinInfo = 'tbl_win_wall';
@@ -1142,10 +1142,9 @@ SkyApp.prototype.handleDragBtn = function(){
  * @param winInfo {object} 窗口属性
  * @param fullSingleScreen {boolean} 是否触发单屏最大化
  */
-SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, winInfo, fullSingleScreen){
+SkyApp.prototype.handleWindowCtrl = function($pep, winInfo, fullSingleScreen){
 
-    var self = this,
-        $droppable = $(droppableCls);
+    var self = this;
 
     $pep.css({
         width: winInfo.win_width,
@@ -1155,7 +1154,7 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, winInfo, fullSi
 
     $pep.pep({
         //debug: true,
-        droppable: droppableCls,
+        droppable: self.selActiveDroppable,
         dragIcon: '.coor',//添加的拖拽缩放功能
         selectFloat: true,//选中元素上浮
         allowDragEventPropagation: false,//禁止DOM冒泡
@@ -1246,6 +1245,8 @@ SkyApp.prototype.handleWindowCtrl = function($pep, droppableCls, winInfo, fullSi
     // 保存窗口信息到本地
     //var wallID = $(self.selDroppable).index($droppable)
     //self.insertOrUpdateWinInfo(wallID, winInfo);
+
+    return $obj;
 }
 
 /**
@@ -1370,12 +1371,15 @@ SkyApp.prototype.handleInitWindow = function($droppable, defaultInfo, fullSingle
     $pep = $droppable.find('.pep:last');
 
     // 初始化
-    self.handleWindowCtrl(
+    var $obj = self.handleWindowCtrl(
         $pep,
-        $droppable,
+        //$droppable,
         winInfo,
         fullSingleScreen
     )
+
+    // 根据当前编辑区缩放比例设置窗口移动缩放比例
+    $obj.scale = self.scale[index];
 
     // 初始化完成获取完整信息
     winInfo = self.getDynamicWinInfo($pep, $droppable, winInfo);
@@ -1579,11 +1583,12 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
     var x, y, stepX, stepY,
         oTop, oLeft, oWidth, oHeight,
         pTop, pLeft, pWidth, pHeight,
-        dTop, dLeft, dWidth, dHeight,
+        dTop, dLeft, dWidth, dHeight,// 位移
         index = $(self.selDroppable).index($(self.selActiveDroppable));
 
     x = grid[0];
     y = grid[1];
+    //TODO 这里的缩放会影响窗口与网格间关系的判断，造成单屏最大化的误差
     stepX = grid[2] * self.scale[index];
     stepY = grid[3] * self.scale[index];
 
@@ -1953,7 +1958,7 @@ SkyApp.prototype.handleDroppablePanelScale = function(){
         })
 
     });
-
+    //  鼠标滑轮缩放
     self.mouseWheelScale();
 }
 /**
@@ -2102,7 +2107,7 @@ SkyApp.prototype.fitElement = function(inner, container) {
 SkyApp.prototype.request16to9 = function(){
 
     var self = this,
-        $placeholder = self.$editPanel,
+        $placeholder = $('#sky-wrapper .right .placeholder'),
         oW, oH, pWidth, pHeight, margin;
 
     pWidth = $placeholder.parent().innerWidth();
@@ -2158,7 +2163,7 @@ SkyApp.prototype.request16to9 = function(){
 SkyApp.prototype.requestCenter = function(){
 
     var self = this,
-        $element = self.$editPanel,
+        $element = $('#sky-wrapper .right .placeholder'),
         oW, oH, pWidth, pHeight, margin;
 
 
