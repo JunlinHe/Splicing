@@ -48,7 +48,6 @@ function SkyApp(){
     self.scale = [];
     self.scaleX = [];
     self.scaleY = [];
-    self.fullSingleScreen = false;// 是否在新建窗口时单屏最大化
     self.enableGesture = true; // 手势开窗
     self.setting = {};
 
@@ -175,12 +174,13 @@ SkyApp.prototype.handleI18n = function(name, path, lang){
 SkyApp.prototype.handleGblSetting = function(){
     var self = this;
 
-    //加载设置
+    // 读取设置
     self.setting = self.getCache(self.tblSetting, true);
     if(!self.setting){
         self.setting = {
             lang: 'zh-CN',// 简体中文
-            loggable: false// 显示控制指令
+            loggable: false,// 显示控制指令
+            fullSingleScreen: false// 是否在新建窗口时单屏最大化
         };
     }
 
@@ -191,17 +191,7 @@ SkyApp.prototype.handleGblSetting = function(){
 
         var $this = $(this);
 
-        if($this.hasClass('en-US')){
-            self.setting.lang = 'en-US';
-            self.setCache(self.tblSetting, self.setting, true);
-            location.reload();
-            return false;
-        }else if($this.hasClass('zh-CN')){
-            self.setting.lang = 'zh-CN';
-            self.setCache(self.tblSetting, self.setting, true);
-            location.reload();
-            return false;
-        }else if($this.hasClass('loggable')){
+        if($this.hasClass('loggable')){
             if(self.setting.loggable){
                 self.setting.loggable = false;
             }else{
@@ -212,7 +202,69 @@ SkyApp.prototype.handleGblSetting = function(){
 
         self.setCache(self.tblSetting, self.setting, true);
     });
+
+    // 软件设置事件
+    self.handleSoftwareSetting();
 }
+
+/**
+ * 软件设置事件
+ */
+SkyApp.prototype.handleSoftwareSetting = function(){
+    var self = this;
+
+    //加载设置
+    $('#software_setting').on('show.bs.modal', function () {
+        var $this = $(this);
+
+        //读取设置
+        self.setting = self.getCache(self.tblSetting, true);
+
+        var $langBtn = $this.find('#lang_btn [name=lang].' + self.setting.lang);
+
+        $this.find('#lang_btn .btn').removeClass('active');
+        $langBtn.parent().addClass('active');
+        $langBtn.prop('checked', true);
+
+        $this.find('#logic_fill input').prop('checked', self.setting.fullSingleScreen);
+        $this.find('#menu_prompt input').prop('checked', self.setting.menuPrompt);
+        $this.find('#scenario_tip input').prop('checked', self.setting.scenarioTip);
+    })
+
+    $('#software_setting #logic_fill input:checkbox').off(self.evClick).on(self.evClick, function(){
+        var $this = $(this),
+            logicFill;
+
+        logicFill = $this.prop('checked');
+        console.log(logicFill)
+        self.setting.fullSingleScreen = logicFill;
+
+        self.setCache(self.tblSetting, self.setting, true);
+    });
+
+    $('#software_setting #lang_switcher').off(self.evClick).on(self.evClick, function(){
+        var lang = $('#software_setting [name=lang]:checked').val();
+        self.setting.lang = lang;
+        self.setCache(self.tblSetting, self.setting, true);
+        location.reload();
+        return false;
+    });
+
+    $('#software_setting #menu_prompt input:checkbox').on(self.evClick, function(){
+        var $this = $(this),
+            menuPrompt = $this.prop('checked');
+        self.setting.menuPrompt = menuPrompt;
+        self.setCache(self.tblSetting, self.setting, true);
+    });
+
+    $('#software_setting #scenario_tip input:checkbox').on(self.evClick, function(){
+        var $this = $(this),
+            scenarioTip = $this.prop('checked');
+        self.setting.scenarioTip = scenarioTip;
+        self.setCache(self.tblSetting, self.setting, true);
+    });
+}
+
 /**
  * 获取window控件
  * @param title
@@ -568,7 +620,7 @@ SkyApp.prototype.handleSignalDrag = function(){
                 win_height: false
             };
 
-            self.handleInitWindow($this, winInfo, self.fullSingleScreen, true);
+            self.handleInitWindow($this, winInfo, self.setting.fullSingleScreen, true);
         }
 
     });
@@ -680,7 +732,7 @@ SkyApp.prototype.handleWindowAction = function(){
             win_width: false,
             win_height: false
         };
-        self.handleInitWindow($contaner, winInfo, self.fullSingleScreen, true);
+        self.handleInitWindow($contaner, winInfo, self.setting.fullSingleScreen, true);
     });
 
     $('#sky-wrapper .right .close-win').on(self.evClick,function(e){
@@ -2273,7 +2325,7 @@ SkyApp.prototype.handleMouseDraw = function(){
                     win_height: $active_box.height()
                 };
 
-                self.handleInitWindow($this, winInfo, self.fullSingleScreen, true);
+                self.handleInitWindow($this, winInfo, self.setting.fullSingleScreen, true);
             }
             $active_box.remove();
         }
@@ -2730,7 +2782,7 @@ SkyApp.prototype.handleSceneAction = function (){
         var $this = $(this),
             $activeList = $(self.selActiveSceneList);
 
-        $activeList.removeClass('active')
+        $activeList.find('li.item').removeClass('active')
         $this.addClass('active')
 
         $popMenu.fadeIn(300);
@@ -2739,17 +2791,30 @@ SkyApp.prototype.handleSceneAction = function (){
         })
     });
 
-    // 双击保存当前屏幕预设模式
+    //// 双击保存当前屏幕预设模式
+    //$sceneItem.hammer().on(self.evDbClick, function(){
+    //
+    //    var $this = $(this),
+    //        $activeList = $(self.selActiveSceneList);
+    //
+    //    $activeList.find('li.item').removeClass('active')
+    //    $this.addClass('active')
+    //
+    //    self.handleSaveScene($this);
+    //});
+
+    // 双击打开当前屏幕预设模式
     $sceneItem.hammer().on(self.evDbClick, function(){
 
         var $this = $(this),
             $activeList = $(self.selActiveSceneList);
 
-        $activeList.removeClass('active')
+        $activeList.find('li.item').removeClass('active')
         $this.addClass('active')
 
-        self.handleSaveScene($this);
+        self.handleLoadScene($this);
     });
+
 }
 
 /**

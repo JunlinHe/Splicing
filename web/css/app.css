@@ -745,3 +745,25 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     color: #fff;
     padding: 0 5px;
 }
+
+/*设置菜单*/
+.sky-checkbox{
+    display: inline-table;
+}
+
+#software_setting .lang{
+    display: inline-table;
+}
+#software_setting #lang_switcher{
+    float: right;
+}
+
+#version_info .company{
+    color: #0e408e;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align: center;
+    font-weight: bolder;
+}
+#version_info ul{
+    list-style: none;
+}

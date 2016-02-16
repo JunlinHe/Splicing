@@ -22,6 +22,7 @@
     <link href="lib/messenger/css/messenger.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger-theme-flat.css" rel="stylesheet">
     <link href="lib/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="lib/titatoggle/titatoggle-dist.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -59,16 +60,14 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars" aria-hidden="true"></i></a>
                             <ul id="gbl-setting" class="dropdown-menu">
-                                <li><a href="#" class="loggable"><i class="fa fa-comment-o fa-lg"></i> log</a></li>
-                                <li><a href="#" data-localize="index.setting.comm" data-replace="right"><i class="fa fa-link fa-lg"></i> </a></li>
-                                <li><a href="#" data-localize="index.setting.splice" data-replace="right"><i class="fa fa-th fa-lg"></i> </a></li>
-                                <li><a href="#" data-localize="index.setting.software" data-replace="right"><i class="fa fa-cube fa-lg"></i> </a></li>
+                                <li><a href="" class="loggable"><i class="fa fa-comment-o fa-lg"></i> log</a></li>
+                                <li><a href="" data-localize="index.setting.comm" data-replace="right" data-toggle="modal" data-target="#comm_setting"><i class="fa fa-link fa-lg"></i> </a></li>
+                                <li><a href="" data-localize="index.setting.splice" data-replace="right" data-toggle="modal" data-target="#splice_setting"><i class="fa fa-th fa-lg"></i> </a></li>
+                                <li><a href="" data-localize="index.setting.software" data-replace="right" data-toggle="modal" data-target="#software_setting"><i class="fa fa-cube fa-lg"></i> </a></li>
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header" data-localize="index.setting.help" data-replace="right"><i class="fa fa-language text-danger"></i></li>
-                                <li><a href="#" data-localize="index.setting.user_manual" data-replace="right"><i class="fa fa-book fa-lg"></i> </a></li>
-                                <li><a href="#" data-localize="index.setting.version_info" data-replace="right" data-toggle="modal" data-target=".version_info"><i class="fa fa-info-circle fa-lg"></i> </a></li>
-                                <li><a href="#" class="zh-CN"><i class="fa fa-rmb"></i> 简体中文</a></li>
-                                <li><a href="#" class="en-US"><i class="fa fa-usd"></i> English</a></li>
+                                <li><a href="" data-localize="index.setting.user_manual" data-replace="right"><i class="fa fa-book fa-lg"></i> </a></li>
+                                <li><a href="" data-localize="index.setting.version_info" data-replace="right" data-toggle="modal" data-target="#version_info"><i class="fa fa-info-circle fa-lg"></i> </a></li>
                             </ul>
                         </li>
                     </ul>
@@ -338,7 +337,7 @@
                             <ul class="action-btn-group left">
                                 <li class="sky-btn item"><a class="new-win" data-localize="index.right.action.btnname1" data-replace="right"><i class="fa fa-plus"></i> </a></li>
                                 <li class="sky-btn item"><a class="close-win" data-localize="index.right.action.btnname2" data-replace="right"><i class="fa fa-close"></i> </a></li>
-                                <li class="sky-btn item"><a class="clear-win" data-localize="index.right.action.btnname3" data-replace="right"><i class="fa fa-trash-o"></i> </a></li>
+                                <li class="sky-btn item"><a class="clean-win" data-localize="index.right.action.btnname3" data-replace="right"><i class="fa fa-trash-o"></i> </a></li>
                                 <li class="sky-btn item">
                                     <a class="draw-win" data-localize="index.right.action.btnname4" data-replace="right">
                                         <i class="fa fa-pencil-square-o"></i>
@@ -421,7 +420,7 @@
         <li><a class="sce-save"><i class="fa fa-save"></i><span data-localize="index.pop_menu.save"></span></a></li>
         <li><a class="sce-edit"><i class="fa fa-pencil"></i><span data-localize="index.pop_menu.edit"></span></a></li>
         <li><a class="sce-del"><i class="fa fa-close"></i><span data-localize="index.pop_menu.del"></span></a></li>
-        <li><a class="sce-clear"><i class="fa fa-trash-o"></i><span data-localize="index.pop_menu.clear"></span></a></li>
+        <li><a class="sce-clean"><i class="fa fa-trash-o"></i><span data-localize="index.pop_menu.clean"></span></a></li>
     </ul>
 </div>
 
@@ -507,8 +506,102 @@
     </div>
 </div>
 
+<!--通信设置-->
+<div id="comm_setting" class="modal fade communication" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.setting.comm"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--拼接设置-->
+<div id="splice_setting" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.setting.splice"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--软件设置-->
+<div id="software_setting" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.setting.software"></h4>
+            </div>
+            <div class="modal-body">
+                <!--语言设置-->
+                <div class="panel panel-primary">
+                    <div class="panel-heading" data-localize="index.setting.software.lang"></div>
+                    <div class="panel-body">
+                        <div id="lang_btn" class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary">
+                                <input type="radio" name="lang" class="zh-CN" value="zh-CN" autocomplete="off">
+                                <img src="img/lang/cn.gif">
+                                <div class="lang" data-localize="index.setting.software.zh_CN"></div>
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="lang" class="en-US" value="en-US" autocomplete="off">
+                                <img src="img/lang/us.gif">
+                                <div class="lang" data-localize="index.setting.software.en_US"></div>
+                            </label>
+                        </div>
+                        <button type="button" id="lang_switcher" class="btn btn-primary" data-localize="index.setting.software.lang_switcher">
+                        </button>
+                    </div>
+                </div>
+                <!--逻辑满屏-->
+                <div class="panel panel-primary">
+                    <div class="panel-heading" data-localize="index.setting.software.open_win"></div>
+                    <div class="panel-body">
+                        <label for="logic_fill" data-localize="index.setting.software.logic_fill"></label>
+                        <div id="logic_fill" class="sky-checkbox checkbox checkbox-slider--a">
+                            <label>
+                                <input name="logic_fill" type="checkbox"><span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!--消息设置-->
+                <div class="panel panel-primary">
+                    <div class="panel-heading" data-localize="index.setting.software.tip"></div>
+                    <div class="panel-body">
+                        <label for="menu_prompt" data-localize="index.setting.software.menu_prompt"></label>
+                        <div id="menu_prompt" class="sky-checkbox checkbox checkbox-slider--a">
+                            <label>
+                                <input type="checkbox"><span></span>
+                            </label>
+                        </div>
+                        <label for="scenario_tip" data-localize="index.setting.software.scenario_tip"></label>
+                        <div id="scenario_tip" class="sky-checkbox checkbox checkbox-slider--a">
+                            <label>
+                                <input type="checkbox"><span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--版本信息-->
-<div class="modal fade version_info" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div id="version_info" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -516,11 +609,12 @@
                 <h4 class="modal-title" data-localize="index.setting.version_info"></h4>
             </div>
             <div class="modal-body">
-                <h1>Skyworth 创维群欣</h1>
-                <p>产品名称：创维群欣智能拼接控制系统</p>
-                <p>文件版本：</p>
-                <p>控制器版本：</p>
-                <p>版权所有：&copy;深圳创维群欣安防科技有限公司。保留所有权</p>
+                <h1 class="company">Skyworth 创维群欣</h1>
+                <ul >
+                    <li><span data-localize="index.setting.vi.product_name"></span></li>
+                    <li><span data-localize="index.setting.vi.file_version"></span><span class="version-name"></span></li>
+                    <li><span data-localize="index.setting.vi.copyright"></span></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -550,6 +644,7 @@
 $(function() {
 
     var app = new SkyApp();
+
 
 });
 </script>
