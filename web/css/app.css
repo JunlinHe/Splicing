@@ -746,6 +746,36 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     padding: 0 5px;
 }
 
+/*分隔线*/
+.sky-tag{
+    border-bottom: 1px solid #D4D4D4;
+    padding-left: 20px;
+    margin: 5px 0;
+}
+.sky-tag .word{
+    position: relative;
+    display: inline-table;
+    color: #f9f9f9;
+    background: #5599ff;
+    padding: 0 5px;
+}
+.sky-tag .word::before{
+    content: '';
+    position: absolute;
+    left: -11px;
+    border-top:11px solid transparent;
+    border-bottom:11px solid transparent;
+    border-right:11px solid #5599ff;
+}
+.sky-tag .word::after{
+    content: '';
+    position: absolute;
+    right: -10px;
+    border-top:11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-left: 11px solid #5599ff;
+}
+
 /*设置菜单*/
 .sky-checkbox{
     display: inline-table;
@@ -766,4 +796,8 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 }
 #version_info ul{
     list-style: none;
+}
+
+#resolution_slider{
+    width: 100px;
 }
