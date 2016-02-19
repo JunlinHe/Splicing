@@ -27,6 +27,7 @@ function SkyApp(){
     self.attrSignalId = 'data-signal-id';
     self.attrSignalValid = 'data-signal-valid';
     self.attrSceneId = 'data-scene-id';
+    self.attrCommType = 'data-comm-type'
     // 选择器
     self.selWall = '#sky-wrapper > .tab-content > .tab-pane';
     self.selActiveWall = '#sky-wrapper > .tab-content > .tab-pane.active';
@@ -52,7 +53,7 @@ function SkyApp(){
     self.setting = {};
 
     // 加载系统设置
-    self.handleGblSetting();
+    self.handleGblSettings();
 
     // 将编辑区设置为16:9（必须在绘制网格前执行）
     self.editPanelSize = self.request16to9();
@@ -69,8 +70,6 @@ function SkyApp(){
     self.handleGetSignalList();
     // 读取预设模式
     self.handleGetSceneList();
-    // 读取上次退出时的编辑状态（同步）
-    self.handleLoadWall(0, $(self.selActiveDroppable));
 
     // 初始化拖拽按钮
     //self.handleDragBtn();
@@ -91,7 +90,8 @@ function SkyApp(){
     // 初始化预设模式事件
     self.handleSceneAction();
 
-
+    // 读取上次退出时的编辑状态（同步）
+    self.handleLoadWall(0, $(self.selActiveDroppable));
 
     $('.loader').fadeOut(300, function(){
 
@@ -171,46 +171,88 @@ SkyApp.prototype.handleI18n = function(name, path, lang){
 /**
  * 全局设置
  */
-SkyApp.prototype.handleGblSetting = function(){
+SkyApp.prototype.handleGblSettings = function(){
     var self = this;
 
     // 读取设置
     self.setting = self.getCache(self.tblSetting, true);
-    if(!self.setting){
+    console.log(self.setting)
+    if(!self.setting){ //默认设置
         self.setting = {
             lang: 'zh-CN',// 简体中文
-            loggable: false,// 显示控制指令
-            fullSingleScreen: false// 是否在新建窗口时单屏最大化
+            logTip: false,// 显示控制指令
+            fullSingleScreen: false,// 是否在新建窗口时单屏最大化,
+            commType: '0' ,//0 串口，1 网络
+            commInfo: [
+                {com_port: 3, com_baud_rate: 115200},
+                {ip: '192.168.1.128', mac:'0,8,220,1,2,3', mask:'255,255,255,0', gate:'192,168,1,1', port:'5100'}
+            ] //通信配置信息关联commType，com: ['串口号','波特率']; network: ['ip地址','mac地址','子网掩码','默认网关','端口']
         };
+
+        self.setCache(self.tblSetting, self.setting, true);
     }
 
     // 加载本地化配置
     self.handleI18n('Messages', 'assets/', self.setting.lang);
 
-    $('#gbl-setting').on(self.evClick, 'li a', function(){
+    // 通信设置事件
+    self.handleCommSettings();
+    // 软件设置事件
+    self.handleSoftwareSettings();
+    // 拼接设置事件
+    self.handleSplicingSettings();
+}
 
+/**
+ * 通信设置事件
+ */
+SkyApp.prototype.handleCommSettings = function(){
+    var self = this;
+
+    // 加载设置
+    $('#comm_setting').on('show.bs.modal', function () {
         var $this = $(this);
 
-        if($this.hasClass('loggable')){
-            if(self.setting.loggable){
-                self.setting.loggable = false;
-            }else{
-                self.setting.loggable = true;
-            }
+        // 读取设置
+        self.setting = self.getCache(self.tblSetting, true);
+        //TODO 加载配置到窗口上
 
+        console.log(self.setting)
+        $('#comm_tab li:eq(' + self.setting.commType + ') a').tab('show')
+
+        $('#com_port').val(self.setting.commInfo[0].com_port);
+        $('#com_baud_rate').val(self.setting.commInfo[0].com_baud_rate);
+
+        $('#ip_addr').val(self.setting.commInfo[1].ip);
+        $('#ip_port').val(self.setting.commInfo[1].port);
+
+        $('.selectpicker').selectpicker('render');// 刷新选择控件
+    });
+
+    $('#comm_setting .yes').on(self.evClick, function(){
+
+        var json = $('#comm_setting').find('.tab-pane.active form').serializeJson(),
+            commType = $('#comm_setting').find('.tab-pane.active').attr(self.attrCommType);
+
+        console.log(json)
+
+        self.setting.commType = commType;
+
+        if(commType === '0'){
+            self.setting.commInfo[0] = json;
+        }else{
+            self.setting.commInfo[1].ip = json.ip;
+            self.setting.commInfo[1].port = json.port;
         }
 
         self.setCache(self.tblSetting, self.setting, true);
     });
-
-    // 软件设置事件
-    self.handleSoftwareSetting();
 }
 
 /**
  * 软件设置事件
  */
-SkyApp.prototype.handleSoftwareSetting = function(){
+SkyApp.prototype.handleSoftwareSettings = function(){
     var self = this;
 
     //加载设置
@@ -229,6 +271,7 @@ SkyApp.prototype.handleSoftwareSetting = function(){
         $this.find('#logic_fill input').prop('checked', self.setting.fullSingleScreen);
         $this.find('#menu_prompt input').prop('checked', self.setting.menuPrompt);
         $this.find('#scenario_tip input').prop('checked', self.setting.scenarioTip);
+        $this.find('#log_tip input').prop('checked', self.setting.logTip);
     })
 
     $('#software_setting #logic_fill input:checkbox').off(self.evClick).on(self.evClick, function(){
@@ -262,6 +305,54 @@ SkyApp.prototype.handleSoftwareSetting = function(){
             scenarioTip = $this.prop('checked');
         self.setting.scenarioTip = scenarioTip;
         self.setCache(self.tblSetting, self.setting, true);
+    });
+
+    $('#software_setting #log_tip input:checkbox').on(self.evClick, function(){
+        var $this = $(this),
+            logTip = $this.prop('checked');
+        self.setting.logTip = logTip;
+        self.setCache(self.tblSetting, self.setting, true);
+    });
+}
+
+/**
+ * 拼接设置事件
+ */
+SkyApp.prototype.handleSplicingSettings = function(){
+    var self = this;
+
+    var slider = $('#resolution_slider').slider({
+        min: 1,
+        max: 5,
+        value: 5,
+        tooltip: 'hide'
+    }).on('slideStart', function(e){
+
+    }).on('slide', function(e){
+
+    }).on('slideStop', function(e){
+        var val = e.value,
+            resolution;
+
+        switch (val){
+            case 1:
+                resolution = '1024x768';
+                break;
+            case 2:
+                resolution = '1280x720';
+                break;
+            case 3:
+                resolution = '1280x1024';
+                break;
+            case 4:
+                resolution = '1366x768';
+                break;
+            default:
+                resolution = '1920x1080';
+                break;
+        }
+        $('#resolution_slider+.val_label').html(resolution)
+        console.log('slideStop', e.value)
     });
 }
 
@@ -620,7 +711,7 @@ SkyApp.prototype.handleSignalDrag = function(){
                 win_height: false
             };
 
-            self.handleInitWindow($this, winInfo, self.setting.fullSingleScreen, true);
+            self.handleInitWindow($this, winInfo, self.setting.fullSingleScreen, true, true);
         }
 
     });
@@ -732,7 +823,7 @@ SkyApp.prototype.handleWindowAction = function(){
             win_width: false,
             win_height: false
         };
-        self.handleInitWindow($contaner, winInfo, self.setting.fullSingleScreen, true);
+        self.handleInitWindow($contaner, winInfo, self.setting.fullSingleScreen, true, true);
     });
 
     $('#sky-wrapper .right .close-win').on(self.evClick,function(e){
@@ -839,26 +930,26 @@ SkyApp.prototype.handleCloseWinAll = function($pep, cleanCache, sendCMD){
     $pep.fadeOut(300, function(){
         $pep.remove();
 
-        if(cleanCache){
-
-            // 删除本地数据
-            self.delWinInfoByWallId(wallID);
-            if(sendCMD){
-                //todo 发送关闭一个显示墙组的所有窗口指令
-                //<reset,Wall_ID>
-                var cmd = '<reset,'+
-                    wallID+
-                    '>';
-                self.cmd(cmd, function(){
-
-                },function(){
-
-                });
-            }
-
-        }
     });
 
+    if(cleanCache){
+
+        // 删除本地数据
+        self.delWinInfoByWallId(wallID);
+        if(sendCMD){
+            //todo 发送关闭一个显示墙组的所有窗口指令
+            //<reset,Wall_ID>
+            var cmd = '<reset,'+
+                wallID+
+                '>';
+            self.cmd(cmd, function(){
+
+            },function(){
+
+            });
+        }
+
+    }
 }
 
 /**
@@ -1175,7 +1266,7 @@ SkyApp.prototype.handleDragBtn = function(){
                 $contaner.append(genCtrl);
 
                 //var startPos = { left:obj.customPosix.x, top: obj.customPosix.y};
-                self.handleInitWindow($contaner, {x:obj.customPosix.x, y:obj.customPosix.y, w:null, h:null}, true, true);
+                self.handleInitWindow($contaner, {x:obj.customPosix.x, y:obj.customPosix.y, w:null, h:null}, true, true, true);
 
             }
             //删除拖拽按钮中的控件
@@ -1402,8 +1493,9 @@ SkyApp.prototype.getDynamicWinInfo = function($pep, $droppable, winInfo){
  * @param defaultInfo
  * @param fullSingleScreen
  * @param cache {boolean} 是否缓存数据
+ * @param open 是否开窗
  */
-SkyApp.prototype.handleInitWindow = function($droppable, defaultInfo, fullSingleScreen, cache){
+SkyApp.prototype.handleInitWindow = function($droppable, defaultInfo, fullSingleScreen, cache, open){
     var self = this,
         winInfo,
         $pep,
@@ -1440,31 +1532,37 @@ SkyApp.prototype.handleInitWindow = function($droppable, defaultInfo, fullSingle
 
         var wallID = $(self.selDroppable).index($droppable)
 
-        // 保存窗口信息到本地
-        //self.insertOrUpdateWinInfo(wallID, winInfo)
+        if(open){
+            //TODO 发送开窗口指令
+            //<open,Wall_ID,Window_ID,Src_Ch,src_hstart,src_vstart,src_hsize,src_vsize,win_x0,win_y0,win_width,win_height>
+            var cmd = '<open,'+
+                wallID+','+
+                winInfo.id+','+
+                winInfo.src_ch+','+
+                winInfo.src_hstart+','+
+                winInfo.src_vstart+','+
+                winInfo.src_hsize+','+
+                winInfo.src_vsize+','+
+                Math.round(winInfo.win_x0*self.scaleX[index]).toFixed(0)+','+
+                Math.round(winInfo.win_y0*self.scaleY[index]).toFixed(0)+','+
+                Math.round(winInfo.win_width*self.scaleX[index]).toFixed(0)+','+
+                Math.round(winInfo.win_height*self.scaleY[index]).toFixed(0)+
+                '>';
+            self.cmd(cmd, function(data){
 
-        //TODO 发送开窗口指令
-        //<open,Wall_ID,Window_ID,Src_Ch,src_hstart,src_vstart,src_hsize,src_vsize,win_x0,win_y0,win_width,win_height>
-        var cmd = '<open,'+
-            wallID+','+
-            winInfo.id+','+
-            winInfo.src_ch+','+
-            winInfo.src_hstart+','+
-            winInfo.src_vstart+','+
-            winInfo.src_hsize+','+
-            winInfo.src_vsize+','+
-            Math.round(winInfo.win_x0*self.scaleX[index]).toFixed(0)+','+
-            Math.round(winInfo.win_y0*self.scaleY[index]).toFixed(0)+','+
-            Math.round(winInfo.win_width*self.scaleX[index]).toFixed(0)+','+
-            Math.round(winInfo.win_height*self.scaleY[index]).toFixed(0)+
-            '>';
-        self.cmd(cmd, function(data){
+                // 保存窗口信息到本地
+                self.insertOrUpdateWinInfo(wallID, winInfo)
+            },function(){
 
+            });
+
+        }else{
             // 保存窗口信息到本地
             self.insertOrUpdateWinInfo(wallID, winInfo)
-        },function(){
+        }
 
-        });
+
+
     }
 
 }
@@ -2064,22 +2162,30 @@ SkyApp.prototype.mouseWheelScale = function() {
  * @param fail function 失败回调函数
  */
 SkyApp.prototype.cmd = function(param, success, fail){
-    var self = this;
+    var self = this,
+        data = 'cmd=' + param;
 
     if(self.offline){
         success('offline');
         return false;
     }
+
+    if(self.setting.commType === '0'){// 串口通信
+        data += '&com=' + self.setting.commInfo[0].com_port + '&baudrate=' + self.setting.commInfo[0].com_baud_rate
+    }else if(self.setting.commType === '1'){// 网络通信
+        data += '&tcp=y&ip=' + self.setting.commInfo[1].ip + '&port=' + self.setting.commInfo[1].port
+    }
+
     $.ajax({
         url: self.serverUrl,
-        data: 'cmd=' + param,
+        data: data ,
         type: 'GET',
         async: false,// 同步执行
         //dataType:"JSONP",
         //crossDomain: true,
         contentType: 'text/html;charset=UTF-8',
         success: function(data){
-            if(self.setting.loggable)
+            if(self.setting.logTip)
                 self.log(data);
             console.log(data);
             if(success)
@@ -2093,9 +2199,9 @@ SkyApp.prototype.cmd = function(param, success, fail){
             console.log(XMLHttpRequest)
             console.log(textStatus)
             console.log(errorThrown)
-            self.log(XMLHttpRequest.status, 'error');
-            self.log(XMLHttpRequest.readyState, 'error');
-            self.log(textStatus, 'error');
+            //self.log(XMLHttpRequest.status, 'error');
+            //self.log(XMLHttpRequest.readyState, 'error');
+            //self.log(textStatus, 'error');
             if(fail)
                 fail(XMLHttpRequest, textStatus, errorThrown);
         }
@@ -2325,7 +2431,7 @@ SkyApp.prototype.handleMouseDraw = function(){
                     win_height: $active_box.height()
                 };
 
-                self.handleInitWindow($this, winInfo, self.setting.fullSingleScreen, true);
+                self.handleInitWindow($this, winInfo, self.setting.fullSingleScreen, true, true);
             }
             $active_box.remove();
         }
@@ -2408,7 +2514,7 @@ SkyApp.prototype.handleSynchronizeWall = function (win){
         };
         // 向指定屏幕墙添加窗口
 
-        self.handleInitWindow($droppable, winInfo, false, true);
+        self.handleInitWindow($droppable, winInfo, false, true, true);
     }
 
     // 保存窗口信息到本地(弃用，将保存方法放到添加窗口时)
@@ -2724,7 +2830,7 @@ SkyApp.prototype.handleLoadWall = function (wallID, $activeDroppable){
                 }
 
                 // 向指定屏幕墙添加窗口并缓存
-                self.handleInitWindow($activeDroppable, winInfo, false, true);
+                self.handleInitWindow($activeDroppable, winInfo, false, true, false);
             }
         }else if(data === 'offline'){
             //清除窗口
@@ -2847,7 +2953,7 @@ SkyApp.prototype.handleScenePopMenuAction = function($popMenu){
                     }
                 });
                 break;
-            case 'sce-clear':
+            case 'sce-clean':
                 $.confirm({
                     title: $.i18n.prop('index.modal.title.prompt'),
                     message: $.i18n.prop('index.modal.msg.del.all'),
@@ -2967,7 +3073,7 @@ SkyApp.prototype.handleLoadScene = function($item){
                 //winInfo[i].win_width = winInfo[i].win_width;
                 //winInfo[i].win_height = winInfo[i].win_height;
                 // 向指定屏幕墙添加窗口
-                self.handleInitWindow($activeDroppable, winInfo[i], false, true);
+                self.handleInitWindow($activeDroppable, winInfo[i], false, true, false);
             }
         }else{
             //TODO 如果本地没有缓存要向服务器读取，但是服务器没有保存截图，这是个问题！！！

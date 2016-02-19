@@ -20,7 +20,7 @@
 
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="lib/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
-    <link href="lib/bootstrap-slider/css/slider.css" rel="stylesheet">
+    <link href="lib/bootstrap-slider/css/bootstrap-slider.min.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger-theme-flat.css" rel="stylesheet">
     <link href="lib/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet">
@@ -62,7 +62,6 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars" aria-hidden="true"></i></a>
                             <ul id="gbl-setting" class="dropdown-menu">
-                                <li><a href="" class="loggable"><i class="fa fa-comment-o fa-lg"></i> log</a></li>
                                 <li><a href="" data-localize="index.setting.comm" data-replace="right" data-toggle="modal" data-target="#comm_setting"><i class="fa fa-link fa-lg"></i> </a></li>
                                 <li><a href="" data-localize="index.setting.splice" data-replace="right" data-toggle="modal" data-target="#splice_setting"><i class="fa fa-th fa-lg"></i> </a></li>
                                 <li><a href="" data-localize="index.setting.software" data-replace="right" data-toggle="modal" data-target="#software_setting"><i class="fa fa-cube fa-lg"></i> </a></li>
@@ -175,12 +174,12 @@
                                         <span data-localize="index.left.action.btnname2"></span>
                                     </a>
                                 </li>
-                                <li role="presentation" class="sky-btn item">
-                                    <a href="#setting-1" aria-controls="setting" role="tab" data-toggle="tab">
-                                        <i class="fa fa-gear fa-lg"></i>
-                                        <span data-localize="index.left.action.btnname3"></span>
-                                    </a>
-                                </li>
+                                <!--<li role="presentation" class="sky-btn item">-->
+                                    <!--<a href="#setting-1" aria-controls="setting" role="tab" data-toggle="tab">-->
+                                        <!--<i class="fa fa-gear fa-lg"></i>-->
+                                        <!--<span data-localize="index.left.action.btnname3"></span>-->
+                                    <!--</a>-->
+                                <!--</li>-->
                             </ul>
                         </div>
                     </div>
@@ -321,12 +320,12 @@
                                         <span data-localize="index.left.action.btnname2"></span>
                                     </a>
                                 </li>
-                                <li role="presentation" class="sky-btn item">
-                                    <a href="#setting-2" aria-controls="setting" role="tab" data-toggle="tab">
-                                        <i class="fa fa-gear fa-lg"></i>
-                                        <span data-localize="index.left.action.btnname3"></span>
-                                    </a>
-                                </li>
+                                <!--<li role="presentation" class="sky-btn item">-->
+                                    <!--<a href="#setting-2" aria-controls="setting" role="tab" data-toggle="tab">-->
+                                        <!--<i class="fa fa-gear fa-lg"></i>-->
+                                        <!--<span data-localize="index.left.action.btnname3"></span>-->
+                                    <!--</a>-->
+                                <!--</li>-->
                             </ul>
                         </div>
                     </div>
@@ -508,6 +507,7 @@
     </div>
 </div>
 
+<!--/////////////////////////设置dialog////////////////////////-->
 <!--通信设置-->
 <div id="comm_setting" class="modal fade communication" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">
@@ -518,51 +518,53 @@
             </div>
             <div class="modal-body">
                 <!-- Nav tabs -->
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#comm_ip" role="tab" data-toggle="tab" data-localize="index.setting.comm.network"></a></li>
-                    <li role="presentation"><a href="#comm_com" role="tab" data-toggle="tab" data-localize="index.setting.comm.com"></a></li>
+                <ul id="comm_tab" class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#comm_com" role="tab" data-toggle="tab" data-localize="index.setting.comm.com"></a></li>
+                    <li role="presentation"><a href="#comm_ip" role="tab" data-toggle="tab" data-localize="index.setting.comm.network"></a></li>
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade in active" id="comm_ip">
+                    <div role="tabpanel" class="tab-pane fade in active" id="comm_com" data-comm-type="0">
                         <br>
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label for="ip_addr" class="col-sm-4 control-label"  data-localize="index.setting.comm.ip"></label>
+                                <label for="com_port" class="col-sm-4 control-label"  data-localize="index.setting.comm.com_port"></label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="ip_addr" class="form-control" placeholder="ip">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="ip_port" class="col-sm-4 control-label"  data-localize="index.setting.comm.port"></label>
-                                <div class="col-sm-8">
-                                    <select id="ip_port" class="selectpicker form-control" data-style="btn-info">
-                                        <option>5000</option>
-                                        <option>5100</option>
-                                        <option>5200</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="comm_com">
-                        <br>
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label for="comm_port" class="col-sm-4 control-label"  data-localize="index.setting.comm.com_port"></label>
-                                <div class="col-sm-8">
-                                    <select id="comm_port" class="selectpicker form-control" data-style="btn-info">
-                                        <option>com1</option>
-                                        <option>com2</option>
+                                    <select id="com_port" name="com_port" class="selectpicker form-control" data-style="btn-info">
+                                        <option value="1">com1</option>
+                                        <option value="2">com2</option>
+                                        <option value="2" selected>com3</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="com_baud_rate" class="col-sm-4 control-label"  data-localize="index.setting.comm.baud_rate"></label>
                                 <div class="col-sm-8">
-                                    <select id="com_baud_rate" class="selectpicker form-control" data-style="btn-info">
+                                    <select id="com_baud_rate" name="com_baud_rate" class="selectpicker form-control" data-style="btn-info">
                                         <option>9600</option>
-                                        <option>115200</option>
+                                        <option selected>115200</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="comm_ip" data-comm-type="1">
+                        <br>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="ip_addr" class="col-sm-4 control-label"  data-localize="index.setting.comm.ip"></label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="ip_addr" name="ip" class="form-control" placeholder="192.168.1.128">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ip_port" class="col-sm-4 control-label"  data-localize="index.setting.comm.port"></label>
+                                <div class="col-sm-8">
+                                    <select id="ip_port" name="port" class="selectpicker form-control" data-style="btn-info">
+                                        <option>5000</option>
+                                        <option selected>5100</option>
+                                        <option>5200</option>
+                                        <option>5300</option>
                                     </select>
                                 </div>
                             </div>
@@ -571,11 +573,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-localize="index.btn.auto_recognition"></button>
-                    <button type="button" class="btn btn-primary" data-localize="index.btn.confirm"></button>
-                    <button type="button" class="btn btn-primary" data-localize="index.btn.cancel" data-dismiss="modal"></button>
-                </div>
+                <!--<div class="btn-group">-->
+                <!--</div>-->
+                <button type="button" class="btn btn-primary" data-localize="index.btn.auto_identification"></button>
+                <button type="button" class="btn btn-primary yes" data-localize="index.btn.confirm" data-dismiss="modal"></button>
+                <button type="button" class="btn btn-primary" data-localize="index.btn.cancel" data-dismiss="modal"></button>
             </div>
         </div>
     </div>
@@ -587,7 +589,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" data-localize="index.setting.splice"></h4>
+                <h4 class="modal-title" data-localize="index.setting.splice.title"></h4>
             </div>
             <div class="modal-body">
                 <!-- Nav tabs -->
@@ -600,11 +602,125 @@
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="screen_1">
-                        <div class="sky-tag"><span class="word" data-localize="index.setting.splice.resolution"></span></div>
-                        <input type="text" id="resolution_slider" class="span2" value="">
-                        <div class="sky-tag"><span class="word" data-localize="index.setting.splice.IMS"></span></div>
+                        <!--分辨率设置-->
+                        <div class="sky-tag">
+                            <span class="word" data-localize="index.setting.splice.resolution"></span>
 
-                        <div class="sky-tag"><span class="word" data-localize="index.setting.splice.param"></span></div>
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="physical_size" class="col-sm-4 control-label"  data-localize="index.setting.splice.physical_screen"></label>
+                                    <div id="physical_size" class="col-sm-8 input-group">
+                                        <input type="number" name="phy_row" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.row"></span>
+                                        <input type="number" name="phy_col" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.rol"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="logic_size" class="col-sm-4 control-label"  data-localize="index.setting.splice.logic_screen"></label>
+                                    <div id="logic_size" class="col-sm-8 input-group">
+                                        <input type="number" name="logic_row" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.row"></span>
+                                        <input type="number" name="logic_col" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.rol"></span>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <form class="form-horizontal">
+                                <div class="form-group line-height">
+
+                                    <input type="text" id="resolution_slider" class="sky-slider" value="">
+                                    <span class="val_label"></span>
+                                    <button type="button" class="btn btn-primary right" data-toggle="modal" data-target="#advance_resolution" data-localize="index.btn.advance"></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!--独立监视器设置-->
+                        <div class="sky-tag">
+                            <span class="word" data-localize="index.setting.splice.ims"></span>
+
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="left" class="col-sm-4 control-label"  data-localize="index.setting.splice.left_side"></label>
+                                    <div id="left" class="col-sm-8 input-group">
+                                        <input type="number" name="left_row" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.row"></span>
+                                        <input type="number" name="left_col" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.rol"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="right" class="col-sm-4 control-label"  data-localize="index.setting.splice.right_side"></label>
+                                    <div id="right" class="col-sm-8 input-group">
+                                        <input type="number" name="right_row" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.row"></span>
+                                        <input type="number" name="right_col" class="form-control" min="1" max="20">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.rol"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!--拼接屏参数-->
+                        <div class="sky-tag">
+                            <span class="word" data-localize="index.setting.splice.param"></span>
+
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="screen_width" class="col-sm-3 control-label" data-localize="index.setting.splice.screen_width"></label>
+                                    <div class="col-sm-3">
+                                        <input type="number"id="screen_width" name="right_row" class="form-control" min="500" max="1000">
+                                    </div>
+
+                                    <label for="screen_height" class="col-sm-3 control-label"  data-localize="index.setting.splice.screen_height"></label>
+                                    <div class="col-sm-3">
+                                        <input type="number"id="screen_height" name="right_row" class="col-sm-4 form-control" min="300" max="1000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="screen_border" class="col-sm-12 " data-localize="index.setting.splice.screen_border"></label>
+                                    <div id="screen_border" class="col-sm-12 input-group">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.border_top"></span>
+                                        <input type="number" name="border_top" class="form-control" min="1" max="200">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.border_bottom"></span>
+                                        <input type="number" name="border_bottom" class="form-control" min="1" max="200">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.border_left"></span>
+                                        <input type="number" name="border_left" class="form-control" min="1" max="200">
+                                        <span class="input-group-addon" data-localize="index.setting.splice.border_right"></span>
+                                        <input type="number" name="border_right" class="form-control" min="1" max="200">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="screen_enable" class="col-sm-12" data-localize="index.setting.splice.screen_enable"></label>
+                                <div id="screen_enable" class="col-sm-12">
+                                    <div class="sky-checkbox checkbox checkbox-slider--c">
+                                        <label>
+                                            <input name="logic_fill" type="checkbox"><span data-localize="index.setting.splice.screen1"></span>
+                                        </label>
+                                    </div>
+                                    <div class="sky-checkbox checkbox checkbox-slider--c">
+                                        <label>
+                                            <input name="logic_fill" type="checkbox"><span data-localize="index.setting.splice.screen2"></span>
+                                        </label>
+                                    </div>
+                                    <div class="sky-checkbox checkbox checkbox-slider--c">
+                                        <label>
+                                            <input name="logic_fill" type="checkbox"><span data-localize="index.setting.splice.screen3"></span>
+                                        </label>
+                                    </div>
+                                    <div class="sky-checkbox checkbox checkbox-slider--c">
+                                        <label>
+                                            <input name="logic_fill" type="checkbox"><span data-localize="index.setting.splice.screen4"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="screen_2">
                     </div>
@@ -624,63 +740,177 @@
     </div>
 </div>
 
+<!--分辨率高级设置-->
+<div id="advance_resolution" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="index.setting.splice.resolution_title"></h4>
+            </div>
+            <div class="modal-body">
+                <!--分辨率设置-->
+                <div class="sky-tag">
+                    <span class="word" data-localize="index.setting.splice.resolution"></span>
+
+                    <form class="form-horizontal">
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="h_pixel" name="h_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+
+                            <div class="col-sm-6">
+                                <input type="number" id="v_pixel" name="v_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="h_pixel" name="h_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+
+                            <div class="col-sm-6">
+                                <input type="number" id="v_pixel" name="v_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="h_pixel" name="h_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+
+                            <div class="col-sm-6">
+                                <input type="number" id="v_pixel" name="v_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="h_pixel" name="h_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+
+                            <div class="col-sm-6">
+                                <input type="number" id="v_pixel" name="v_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="h_pixel" name="h_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+
+                            <div class="col-sm-6">
+                                <input type="number" id="v_pixel" name="v_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="left" class="col-sm-6 control-label"
+                                   data-localize="index.setting.splice.left_side"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="h_pixel" name="h_pixel" class="form-control" min="1" max="20">
+                            </div>
+                        </div>
+
+                        <div class="clear"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-localize="index.btn.default"></button>
+                <button type="button" class="btn btn-primary" data-localize="index.btn.confirm"></button>
+                <button type="button" class="btn btn-primary" data-localize="index.btn.cancel" data-dismiss="modal"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--软件设置-->
 <div id="software_setting" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" data-localize="index.setting.software"></h4>
+                <h4 class="modal-title" data-localize="index.setting.software.title"></h4>
             </div>
             <div class="modal-body">
                 <!--语言设置-->
-                <div class="panel panel-primary">
-                    <div class="panel-heading" data-localize="index.setting.software.lang"></div>
-                    <div class="panel-body">
-                        <div id="lang_btn" class="btn-group" data-toggle="buttons">
-                            <label class="btn btn-primary">
-                                <input type="radio" name="lang" class="zh-CN" value="zh-CN" autocomplete="off">
-                                <img src="img/lang/cn.gif">
-                                <div class="lang" data-localize="index.setting.software.zh_CN"></div>
-                            </label>
-                            <label class="btn btn-primary">
-                                <input type="radio" name="lang" class="en-US" value="en-US" autocomplete="off">
-                                <img src="img/lang/us.gif">
-                                <div class="lang" data-localize="index.setting.software.en_US"></div>
-                            </label>
-                        </div>
-                        <button type="button" id="lang_switcher" class="btn btn-primary" data-localize="index.setting.software.lang_switcher">
-                        </button>
+                <div class="sky-tag">
+                    <span class="word" data-localize="index.setting.software.lang"></span>
+
+                    <div id="lang_btn" class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-info">
+                            <input type="radio" name="lang" class="zh-CN" value="zh-CN" autocomplete="off">
+                            <img src="img/lang/cn.gif">
+                            <div class="lang" data-localize="index.setting.software.zh_CN"></div>
+                        </label>
+                        <label class="btn btn-info">
+                            <input type="radio" name="lang" class="en-US" value="en-US" autocomplete="off">
+                            <img src="img/lang/us.gif">
+                            <div class="lang" data-localize="index.setting.software.en_US"></div>
+                        </label>
                     </div>
+                    <button type="button" id="lang_switcher" class="btn btn-info     right" data-localize="index.setting.software.lang_switcher">
+                    </button>
                 </div>
                 <!--逻辑满屏-->
-                <div class="panel panel-primary">
-                    <div class="panel-heading" data-localize="index.setting.software.open_win"></div>
-                    <div class="panel-body">
-                        <label for="logic_fill" data-localize="index.setting.software.logic_fill"></label>
-                        <div id="logic_fill" class="sky-checkbox checkbox checkbox-slider--a">
-                            <label>
-                                <input name="logic_fill" type="checkbox"><span></span>
-                            </label>
-                        </div>
+                <div class="sky-tag">
+                    <span class="word" data-localize="index.setting.software.logic_fill"></span>
+
+                    <label for="logic_fill" data-localize="index.setting.software.logic_fill"></label>
+                    <div id="logic_fill" class="sky-checkbox checkbox checkbox-slider--a">
+                        <label>
+                            <input name="logic_fill" type="checkbox"><span></span>
+                        </label>
                     </div>
                 </div>
                 <!--消息设置-->
-                <div class="panel panel-primary">
-                    <div class="panel-heading" data-localize="index.setting.software.tip"></div>
-                    <div class="panel-body">
-                        <label for="menu_prompt" data-localize="index.setting.software.menu_prompt"></label>
-                        <div id="menu_prompt" class="sky-checkbox checkbox checkbox-slider--a">
-                            <label>
-                                <input type="checkbox"><span></span>
-                            </label>
-                        </div>
-                        <label for="scenario_tip" data-localize="index.setting.software.scenario_tip"></label>
-                        <div id="scenario_tip" class="sky-checkbox checkbox checkbox-slider--a">
-                            <label>
-                                <input type="checkbox"><span></span>
-                            </label>
-                        </div>
+                <div class="sky-tag">
+                    <span class="word" data-localize="index.setting.software.tip"></span>
+
+                    <label for="menu_prompt" data-localize="index.setting.software.menu_prompt"></label>
+                    <div id="menu_prompt" class="sky-checkbox checkbox checkbox-slider--a">
+                        <label>
+                            <input type="checkbox"><span></span>
+                        </label>
+                    </div>
+                    <label for="scenario_tip" data-localize="index.setting.software.scenario_tip"></label>
+                    <div id="scenario_tip" class="sky-checkbox checkbox checkbox-slider--a">
+                        <label>
+                            <input type="checkbox"><span></span>
+                        </label>
+                    </div>
+                    <label for="log_tip" data-localize="index.setting.software.log_tip"></label>
+                    <div id="log_tip" class="sky-checkbox checkbox checkbox-slider--a">
+                        <label>
+                            <input type="checkbox"><span></span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -694,7 +924,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" data-localize="index.setting.version_info"></h4>
+                <h4 class="modal-title" data-localize="index.setting.version_info.title"></h4>
             </div>
             <div class="modal-body">
                 <h1 class="company">Skyworth 创维群欣</h1>
@@ -715,7 +945,7 @@
 <script src="lib/i18n/jquery.i18n.properties.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="lib/bootstrap-select/js/bootstrap-select.min.js"></script>
-<script src="lib/bootstrap-slider/js/bootstrap-slider.js"></script>
+<script src="lib/bootstrap-slider/js/bootstrap-slider.min.js"></script>
 <script src="lib/messenger/js/messenger.min.js"></script>
 <script src="lib/messenger/js/messenger-theme-flat.js"></script>
 <script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>
@@ -735,15 +965,6 @@ $(function() {
 
     var app = new SkyApp();
 
-    var slider = $('#resolution_slider').slider({
-        min: 0,
-        max: 100,
-        value: 10,
-        tooltip: 'hide'
-    })
-    slider.on('slide', function(){
-        console.log(11)
-    });
 });
 </script>
 </body>
