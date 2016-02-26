@@ -64,25 +64,12 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 .loader{
     position: absolute;
     top:0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
     z-index: 9999;
     text-align: center;
     color: #fff;
     font-size: 10vw;
     line-height: 100vh;
-}
-.frosted-glass{
-    background: rgba(25, 25, 25, 0.73);
-    -webkit-filter: blur(10px);
-    -moz-filter: blur(5px);
-    -ms-filter: blur(5px);
-    -o-filter: blur(5px);
-    filter: blur(5px);
-    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=4, MakeShadow=false);
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
 }
 .msg-time{
     font-size: 12px;
@@ -489,8 +476,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     overflow: hidden;
 }
 #sky-wrapper .row.off .left > .panel-inverse > .panel-footer {
-    /*height: 120px;*/
-    height: 80px;
+    height: 120px;
 }
 
 #sky-wrapper .panel-inverse .left-footer-bt{
@@ -524,8 +510,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     /* float: left; */
     /* display: inline-block; */
     width: 100%;
-    /*height: 33.3333%;*/
-    height: 50%;
+    height: 33.3333%;
 }
 #sky-wrapper .left .panel-body .tab-content{
     width: 100%;
@@ -547,7 +532,6 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     background: transparent;
     border-radius: 0;
     border: none;
-    color: #fff;
 }
 #sky-wrapper .panel-inverse .left-footer-btn .item > a:hover {
     background: initial;
@@ -587,11 +571,6 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 #sky-wrapper .right .panel-body {
     overflow: auto;
     padding: 0;
-}
-
-.input, .scene{
-    width: 100%;
-    height: 100%;
 }
 
 .input ul,.scene ul{
@@ -649,14 +628,6 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     width: 100%;
     height: 0;
     padding-bottom: 56.25%;
-
-    background: rgba(25, 25, 25, 0.73);
-    -webkit-filter: blur(10px);
-    -moz-filter: blur(5px);
-    -ms-filter: blur(5px);
-    -o-filter: blur(5px);
-    filter: blur(5px);
-    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=4, MakeShadow=false);
 }
 
 .scene ul .item .grid3x3{
@@ -704,7 +675,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     position: absolute;
     top: 0;left: 0;right: 0;bottom: 0;
     z-index: 999;
-    /*background: rgba(0,0,0,0.4);*/
+    background: rgba(0,0,0,0.4);
 }
 .pop-menu ul{
     position: absolute;
@@ -835,7 +806,12 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     list-style: none;
 }
 
-.val_label{
+/*重写slider样式*/
+.sky-slider{
+    /*width: 400px;*/
+}
+
+.sky-slider+span{
     display: inline-table;
     margin-left: 20px;
 }
@@ -847,9 +823,6 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     text-align: center;
     transform: rotate(20deg);
     font-size: 12px;
-}
-.sky-margin-10{
-    margin: 10px 0;
 }
 
 /*重写bootstrap样式*/
@@ -870,15 +843,4 @@ a, a:link, a:visited, a:hover, a:active ,ul{
 }
 .modal{
     overflow: auto;
-}
-
-.color-1{
-    color: #89ff7f;
-}
-
-#comm_tab i{
-    display: none;
-}
-#comm_tab .active .fa{
-    display: initial;
 }

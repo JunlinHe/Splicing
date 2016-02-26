@@ -52,6 +52,9 @@
                 <element signature="n#div#3;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#4;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#6;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#7;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#8;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#10;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#11;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#12;n#body#0;n#html#0;n#!!top" expanded="false" />
               </folding>
@@ -89,7 +92,7 @@
         <entry file="file://$PROJECT_DIR$/web/assets/Messages.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="154" column="12" selection-start-line="154" selection-start-column="10" selection-end-line="154" selection-end-column="12" />
+              <caret line="42" column="44" selection-start-line="42" selection-start-column="34" selection-end-line="42" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -848,8 +851,8 @@
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
-  <component name="SvnConfiguration" myUseAcceleration="nothing">
-    <configuration useDefault="false">C:\Users\User\AppData\Roaming\Subversion</configuration>
+  <component name="SvnConfiguration">
+    <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -864,15 +867,7 @@
       <workItem from="1454027925014" duration="18570000" />
       <workItem from="1455496271680" duration="21940000" />
       <workItem from="1455582827131" duration="29538000" />
-      <workItem from="1455669737243" duration="22278000" />
-      <workItem from="1455755416855" duration="34763000" />
-      <workItem from="1455841864966" duration="20712000" />
-      <workItem from="1456103189094" duration="21967000" />
-      <workItem from="1456187363121" duration="37355000" />
-      <workItem from="1456274377089" duration="27669000" />
-      <workItem from="1456360109209" duration="30867000" />
-      <workItem from="1456446728977" duration="136000" />
-      <workItem from="1456447004571" duration="26503000" />
+      <workItem from="1455669737243" duration="22182000" />
     </task>
     <task id="LOCAL-00001" summary="rename">
       <created>1453719057289</created>
@@ -1186,7 +1181,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/main.min.js">
+    <entry file="file://$PROJECT_DIR$/web/lib/jquery-2.1.4.min.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="8" column="211" selection-start-line="8" selection-start-column="211" selection-end-line="8" selection-end-column="211" />
