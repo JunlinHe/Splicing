@@ -297,4 +297,24 @@ window.isTouch = function(ev){
     //$.fn.confirm = function(option){
     //
     //};
+
+    // 数字输入框数字限制
+    $(document).on('keyup', 'input[type=number]', function(e){
+        var val = parseInt(this.value),
+            min = parseInt(this.min),
+            max = parseInt(this.max);
+
+        if(val < min){
+            this.value = min;
+        }else if(val > max){
+            this.value = max;
+        }else if(min <= val && val <= max){
+            this.value = val;
+        }else {
+            this.value = '';
+            return false;
+        }
+    });
 })(jQuery);
+
+
