@@ -2,25 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c939f15a-c224-409b-ac17-0d048c5835f1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/css/bootstrapValidator.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/css/bootstrapValidator.min.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/js/bootstrapValidator.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/js/bootstrapValidator.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/js/language/en_US.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/js/language/es_ES.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/js/language/zh_CN.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/bootstrap-validator/js/language/zh_TW.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/lib/jquery-cookie/jquery.cookie.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/login.html" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/css/app1.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/main1.js" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/assets/Messages.properties" afterPath="$PROJECT_DIR$/web/assets/Messages.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/assets/Messages_en-US.properties" afterPath="$PROJECT_DIR$/web/assets/Messages_en-US.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/assets/Messages_zh-CN.properties" afterPath="$PROJECT_DIR$/web/assets/Messages_zh-CN.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/css/app.css" afterPath="$PROJECT_DIR$/web/css/app.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/index.html" afterPath="$PROJECT_DIR$/web/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/web/js/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/tool.js" afterPath="$PROJECT_DIR$/web/js/tool.js" />
     </list>
     <ignored path="testhtml.iws" />
@@ -81,8 +63,8 @@
       <file leaf-file-name="tool.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/js/tool.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.122522525">
-              <caret line="41" column="17" selection-start-line="41" selection-start-column="17" selection-end-line="41" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.22702703">
+              <caret line="37" column="4" selection-start-line="37" selection-start-column="4" selection-end-line="37" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -878,7 +860,7 @@
       <workItem from="1456792708310" duration="23081000" />
       <workItem from="1456878832616" duration="27791000" />
       <workItem from="1456966090336" duration="32376000" />
-      <workItem from="1457052056176" duration="25568000" />
+      <workItem from="1457052056176" duration="25793000" />
     </task>
     <task id="LOCAL-00001" summary="rename">
       <created>1453719057289</created>
@@ -940,11 +922,17 @@
       <option name="project" value="LOCAL" />
       <updated>1456480592048</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="1.0">
+      <created>1457088711925</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1457088711925</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="541006000" />
+    <option name="totallyTimeSpent" value="541231000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1400,8 +1388,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/js/tool.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.122522525">
-          <caret line="41" column="17" selection-start-line="41" selection-start-column="17" selection-end-line="41" selection-end-column="17" />
+        <state vertical-scroll-proportion="0.22702703">
+          <caret line="37" column="4" selection-start-line="37" selection-start-column="4" selection-end-line="37" selection-end-column="4" />
           <folding />
         </state>
       </provider>

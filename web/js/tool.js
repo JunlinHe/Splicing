@@ -46,12 +46,12 @@ Array.prototype.queue = function(n) {
     arr.sort();
     //console.log(arr)
     // 生成从n开始的顺序队列
-    for(var i = n; i <= arr.length-1 ; i++){
+    for(var i = n; i <= arr[arr.length-1]; i++){
         queue.push(i);
     }
     //console.log(queue)
     // 取差集首个插入
-    tmp = Array.minus(arr, queue);
+    tmp = Array.minus(queue, arr);
     //console.log(tmp)
     if(tmp.length > 0){
         index = tmp[0];
