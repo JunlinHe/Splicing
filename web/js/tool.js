@@ -25,29 +25,33 @@ Array.prototype.remove = function(val) {
 };
 
 /**
- * 查询当前队列中可用的索引，队列从0开始
+ * 查询当前队列中可用的索引，队列从n开始
+ * @param n
  * @returns {number}
  */
-Array.prototype.queue = function() {
+Array.prototype.queue = function(n) {
     var arr = this,
         len = arr.length,
         index = 0,
         queue = [],
         tmp = [];
 
+    n = n && typeof n === 'number' ? n : 0;
+
     if(len === 0)
-        return 0;
+        return n;
+
     // 对当前队列去重排序
     arr = arr.unique();
     arr.sort();
     //console.log(arr)
-    // 生成从0开始的顺序队列
-    for(var i = 0; i <= arr[arr.length-1]; i++){
+    // 生成从n开始的顺序队列
+    for(var i = n; i <= arr.length-1 ; i++){
         queue.push(i);
     }
     //console.log(queue)
     // 取差集首个插入
-    tmp = Array.minus(queue, arr);
+    tmp = Array.minus(arr, queue);
     //console.log(tmp)
     if(tmp.length > 0){
         index = tmp[0];

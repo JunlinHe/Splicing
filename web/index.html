@@ -20,6 +20,7 @@
 
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="lib/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="lib/bootstrap-validator/css/bootstrapValidator.min.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger.css" rel="stylesheet">
     <link href="lib/messenger/css/messenger-theme-flat.css" rel="stylesheet">
     <link href="lib/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet">
@@ -35,10 +36,15 @@
     <![endif]-->
 </head>
 <body class="main-body">
-
+<!--加载动画-->
 <div class="loader">
     <div class="frosted-glass"></div>
     <i class="fa fa-spinner fa-pulse"></i>
+</div>
+<!--拖拽信号-->
+<div id="drag">
+    <i class="fa fa-plug fa-rotate-270"></i>
+    <span class="signal-name"></span>
 </div>
 
 <!--导航条-->
@@ -53,7 +59,16 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand toc item" href="#"><i class="fa fa-user"></i> admin</a>
+                    <!--<a class="navbar-brand toc item" href="#"><i class="fa fa-user"></i> admin</a>-->
+                    <ul class="nav navbar-nav user-info">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> <span id="user-name">admin</span></a>
+                            <ul id="user-menu" class="dropdown-menu">
+                                <li><a href="" class="ud_psw" data-toggle="modal" data-target="#modal-ud-psw" data-localize="user.action.ud_psw" data-replace="right"><i class="fa fa-key fa-fw"></i> </a></li>
+                                <li><a href="" class="exit" data-localize="user.action.exit" data-replace="right"><i class="fa fa-sign-out"></i> </a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
 
                 <div id="navbar" class="navbar-collapse collapse">
@@ -362,7 +377,7 @@
 
 <!--修改窗口信息弹出框-->
 <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>-->
-<div id="modal-win-info" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div id="modal-win-info" class="modal fade" tabindex="-1" role="dialog" >
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
@@ -406,7 +421,7 @@
 </div>
 
 <!--操作确认框-->
-<div id="modal-confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
@@ -425,7 +440,7 @@
 </div>
 
 <!--修改预设模式弹出框-->
-<div id="modal-scene-info" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div id="modal-scene-info" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
@@ -436,10 +451,49 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.modal.btn.cancel"></button>
-                <button type="button" id="op-save" class="btn btn-primary" data-dismiss="modal" data-localize="index.modal.btn.save"></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.btn.cancel"></button>
+                <button type="button" id="op-save" class="btn btn-primary" data-dismiss="modal" data-localize="index.btn.save"></button>
             </div>
         </div>
+    </div>
+</div>
+
+<!--修改密码-->
+<div id="modal-ud-psw" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <form id="ud-psw-form" class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" data-localize="user.authority.up_psw.title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="old_psw" class="col-sm-4 control-label"  data-localize="user.authority.up_psw.old"></label>
+                        <div class="col-sm-8">
+                            <input type="password" id="old_psw" name="old_psw" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_psw" class="col-sm-4 control-label"  data-localize="user.authority.up_psw.new"></label>
+                        <div class="col-sm-8">
+                            <input type="password" id="new_psw" name="new_psw" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_psw" class="col-sm-4 control-label"  data-localize="user.authority.up_psw.confirm"></label>
+                        <div class="col-sm-8">
+                            <input type="password" id="confirm_psw" name="confirm_psw" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="index.btn.cancel"></button>
+                <button type="reset" class="btn btn-primary reset" data-localize="index.btn.reset"></button>
+                <button type="submit" class="btn btn-primary submit" data-localize="index.btn.submit"></button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -552,8 +606,8 @@
 
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="physical_size" class="col-sm-4 control-label"  data-localize="index.setting.splice.physical_screen"></label>
-                                    <div id="physical_size" class="col-sm-8 input-group">
+                                    <label class="col-sm-4 control-label"  data-localize="index.setting.splice.physical_screen"></label>
+                                    <div class="col-sm-8 input-group">
                                         <input type="number" name="phyRow" class="form-control" min="1" max="20">
                                         <span class="input-group-addon" data-localize="index.setting.splice.row"></span>
                                         <input type="number" name="phyCol" class="form-control" min="1" max="20">
@@ -561,8 +615,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="logic_size" class="col-sm-4 control-label"  data-localize="index.setting.splice.logic_screen"></label>
-                                    <div id="logic_size" class="col-sm-8 input-group">
+                                    <label class="col-sm-4 control-label"  data-localize="index.setting.splice.logic_screen"></label>
+                                    <div class="col-sm-8 input-group">
                                         <input type="number" name="logicRow" class="form-control" min="1" max="20">
                                         <span class="input-group-addon" data-localize="index.setting.splice.row"></span>
                                         <input type="number" name="logicCol" class="form-control" min="1" max="20">
@@ -573,7 +627,7 @@
 
                             <form class="form-horizontal">
                                 <div class="form-group line-height">
-                                    <div id="resolution_select" class="btn-group" data-toggle="buttons">
+                                    <div class="btn-group resolution_select" data-toggle="buttons">
                                         <label class="btn btn-info active">
                                             <input type="radio" name="resolution" value="0" checked> 1
                                         </label>
@@ -957,13 +1011,15 @@
 <script src="lib/i18n/jquery.i18n.properties.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="lib/bootstrap-select/js/bootstrap-select.min.js"></script>
+<script src="lib/bootstrap-validator/js/bootstrapValidator.min.js"></script>
 <script src="lib/messenger/js/messenger.min.js"></script>
 <script src="lib/messenger/js/messenger-theme-flat.js"></script>
 <script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>
 <script src="lib/jquery-pep-js/jquery.pep.js" type="text/javascript"></script>
+<script src="lib/jquery-cookie/jquery.cookie.js" type="text/javascript"></script>
 <script src="lib/hammer-js/hammer.min.js" type="text/javascript"></script>
 <script src="lib/hammer-js/jquery.hammer.js" type="text/javascript"></script>
-<script src="lib/fullscreen.js" type="text/javascript"></script>
+<!--<script src="lib/fullscreen.js" type="text/javascript"></script>-->
 <!--<script src="lib/jquery-indexeddb/jquery.indexeddb.min.js" type="text/javascript"></script>-->
 <script src="lib/html2canvas/html2canvas.min.js" type="text/javascript"></script>
 <!--<script src="lib/jquery.mCustomScrollbar/js/jquery.mCustomScrollbar.concat.min.js" type="text/javascript"></script>-->
@@ -977,7 +1033,6 @@
 $(function() {
 
     var app = new SkyApp();
-
 });
 </script>
 </body>
