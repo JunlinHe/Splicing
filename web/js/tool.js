@@ -44,19 +44,20 @@ Array.prototype.queue = function(n) {
     // 对当前队列去重排序
     arr = arr.unique();
     arr.sort();
-    //console.log(arr)
+    //console.log('排序后的队列', arr)
     // 生成从n开始的顺序队列
     for(var i = n; i <= arr[arr.length-1]; i++){
         queue.push(i);
     }
-    //console.log(queue)
+    //console.log('从'+n+'开始的完整队列', queue)
     // 取差集首个插入
     tmp = Array.minus(queue, arr);
-    //console.log(tmp)
+    //console.log('差集', tmp)
+    //console.log('-----------------')
     if(tmp.length > 0){
         index = tmp[0];
     }else{
-        index = len;
+        index = arr[arr.length-1]+1;
     }
 
     return index;

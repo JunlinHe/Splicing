@@ -1,4 +1,4 @@
-a, a:link, a:visited, a:hover, a:active ,ul{
+a, a:link, a:visited, a:hover, a:active ,ul, div{
     text-decoration:none;
     color: inherit;
 
@@ -194,7 +194,7 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     opacity: 0.8;
 }
 .window.active{
-    z-index: 10;
+    /*z-index: 10 !important;*/
     border: 1px solid #fff;
 }
 .window.pep-active{
@@ -212,10 +212,15 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     font-weight: bold;
     color: #f9f9f9;
     overflow: hidden;
+    text-align: right;
+}
+.window .title span{
+    float: left;
 }
 
 .window .title .button {
-    float: right;
+    float: none;
+    display: inline-block;
     width: 25px;
     height: 25px;
     line-height: 25px;
@@ -238,6 +243,17 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     color: #ffffff;
     background: #2b81af;
 }
+
+.window .title .button.lock {
+    display: none;
+}
+.window.lock .title .button.lock {
+    display: inline-block;
+}
+.window.lock .title .button:not(.lock) {
+    display: none;
+}
+
 .window .content {
     height: 100%;
     /*background: rgba(3, 103, 132, 0.7);*/
@@ -634,6 +650,9 @@ a, a:link, a:visited, a:hover, a:active ,ul{
     bottom: 40px;
     color: #fff;
     background-color: rgba(0,0,0,0.5);
+}
+#sky-wrapper .off .left .panel-body {
+    bottom: 80px;
 }
 
 #sky-wrapper .left .panel-body {
