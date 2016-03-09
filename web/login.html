@@ -253,10 +253,8 @@ $(function(){
 
                 if(''+json.rec_psw === 'on'){
                     $.cookie('authority', authority, { expires: 7 });
-                }else{
-                    sessionStorage.authority = JSON.stringify(authority);
                 }
-
+                sessionStorage.authority = JSON.stringify(authority);
                 location.href = 'index.html';
             }
         });

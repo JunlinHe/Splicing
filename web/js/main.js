@@ -10,7 +10,7 @@ function SkyApp(){
     self.version = '1.0';
     // 选择离线模式不向服务器发送数据
     self.offline = true;
-    //if(!$.cookie('authority') || !sessionStorage.authority){
+    //if(!sessionStorage.authority){
     //    location.href = 'login.html';
     //    return ;
     //}
@@ -154,14 +154,14 @@ function SkyApp(){
     //$("#sky-wrapper .left .tab-pane").mCustomScrollbar({
     //    theme:'dark'
     //});
-    self.$scrollBar = $('#sky-wrapper .left .tab-content').slimScroll({
-        color: '#fff',
-        size: '10px',
-        height: 'auto',
-        alwaysVisible: false,
-        distance: '3px',
-        railVisible: true
-    });
+    //self.$scrollBar = $('#sky-wrapper .left .tab-content').slimScroll({
+    //    color: '#fff',
+    //    size: '10px',
+    //    height: 'auto',
+    //    alwaysVisible: false,
+    //    distance: '3px',
+    //    railVisible: true
+    //});
 
     //var color = [];
     //for (var i = 0; i<20;i++){
@@ -534,7 +534,7 @@ SkyApp.prototype.handleSplicingSettings = function(){
 
     // 加载设置
     $('#splice_setting').on('shown.bs.modal', function () {
-        var $this = $(this);
+        var $thisModal = $(this);
 
         // 读取设置
         self.settings = self.getCache(self.tblSetting, true);
@@ -543,12 +543,14 @@ SkyApp.prototype.handleSplicingSettings = function(){
         var splice = self.settings.splice;
         for(var i = 0; i < splice.length; i++){
 
-            var $panel = $this.find('.tab-pane:eq('+ i +')'),
+            var $panel = $thisModal.find('.tab-pane:eq('+ i +')'),
                 json = splice[i];
 
             // 将tab1的内容插入到2中再填充数据
-            if(i !== 0)
-                $panel.html($this.find('.tab-pane:eq(0)').html());
+            if(i !== 0 && $panel.html() === ''){
+                $panel.html($thisModal.find('.tab-pane:eq(0)').html());
+            }
+
 
             $panel.find('input').each(function(){
                 var $input = $(this);
@@ -558,7 +560,7 @@ SkyApp.prototype.handleSplicingSettings = function(){
                     var screenID = parseInt($input.val());
                     if(screenID === parseInt(json[$input.attr('name')])){
                         console.log('find', $input.val())
-                        $this.find('.resolution_select .btn').removeClass('active');
+                        $thisModal.find('.resolution_select .btn').eq(i).removeClass('active');
                         $input.parent().addClass('active');
                         $input.prop('checked', true);
 
@@ -571,14 +573,14 @@ SkyApp.prototype.handleSplicingSettings = function(){
         }
 
         // 加载屏幕使能
-        $this.find('#screen_enable input').each(function(i, el){
+        $thisModal.find('#screen_enable input').each(function(i, el){
             var $input = $(this),
                 enable = self.settings.screenEnable[i];
 
             $input.prop('checked', enable);
 
             if(!enable){
-                var $disableLi = $this.find('.nav.nav-tabs>li:eq('+ i +')');
+                var $disableLi = $thisModal.find('.nav.nav-tabs>li:eq('+ i +')');
                 $disableLi.addClass('disabled');
                 $disableLi.find('a').removeAttr('data-toggle');
             }
@@ -619,7 +621,7 @@ SkyApp.prototype.handleSplicingSettings = function(){
     // 按钮保存
     $('#splice_setting .modal-footer .btn').on(self.evClick, function(){
         var $this = $(this),
-            //wallId = $(self.selDroppable).index($(self.selActiveDroppable)),
+        //wallId = $(self.selDroppable).index($(self.selActiveDroppable)),
             $activeScreen = $('#splice_setting .tab-content>.tab-pane.active'),
             screenID = $activeScreen.prevAll().size();
 
@@ -702,6 +704,8 @@ SkyApp.prototype.handleSplicingSettings = function(){
             },function(){
 
             });
+
+            $('#splice_setting').modal('toggle');
         }
     });
 
@@ -789,23 +793,23 @@ SkyApp.prototype.getWinCtrl = function(title, dataId, dataSid, dataLevel){
         self.attrWinId+'="'+dataId+'" '+
         self.attrWinSId+'="'+dataSid+'" '+
         self.attrWinLevel+'="'+dataLevel+'">'+
-                '<div class="title">'+
-                    '<span>'+title+'</span>'+
-                    '<div class="button full-single-screen"><i class="fa fa-expand"></i></div>'+
-                    '<div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>'+
-                    '<div class="button close"><i class="fa fa-close"></i></div>'+
-                    '<div class="button lock"><i class="fa fa-lock"></i></div>'+
-                '</div>'+
-                '<div class="content"></div>'+
-                '<div class="coor nw"></div>'+
-                '<div class="coor ne"></div>'+
-                '<div class="coor sw"></div>'+
-                '<div class="coor se"></div>'+
-                '<div class="coor e"></div>'+
-                '<div class="coor s"></div>'+
-                '<div class="coor n"></div>'+
-                '<div class="coor w"></div>'+
-            '</div>';
+        '<div class="title">'+
+        '<span>'+title+'</span>'+
+        '<div class="button close"><i class="fa fa-close"></i></div>'+
+        '<div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>'+
+        '<div class="button full-single-screen"><i class="fa fa-expand"></i></div>'+
+        '<div class="button lock"><i class="fa fa-lock"></i></div>'+
+        '</div>'+
+        '<div class="content"></div>'+
+        '<div class="coor nw"></div>'+
+        '<div class="coor ne"></div>'+
+        '<div class="coor sw"></div>'+
+        '<div class="coor se"></div>'+
+        '<div class="coor e"></div>'+
+        '<div class="coor s"></div>'+
+        '<div class="coor n"></div>'+
+        '<div class="coor w"></div>'+
+        '</div>';
 }
 
 /**
@@ -835,12 +839,12 @@ SkyApp.prototype.getSignalCtrl = function(id, name, valid){
         draggable = 'draggable = "true"';
     }
     return '<li class="sky-btn item '+disable+'" >'+
-                icon+
-                '<div class="drag" '+self.attrSignalId+'="'+id+'" '+self.attrSignalValid+'="'+valid+'" '+self.attrSignalColor+'="'+color+'" '+draggable+'>'+
-                    '<a>'+id+'-'+name+'</a>'+
-                    '<div class="content"></div>'+
-                '</div>'+
-            '</li>';
+        icon+
+        '<div class="drag" '+self.attrSignalId+'="'+id+'" '+self.attrSignalValid+'="'+valid+'" '+self.attrSignalColor+'="'+color+'" '+draggable+'>'+
+        '<a>'+id+'-'+name+'</a>'+
+        '<div class="content"></div>'+
+        '</div>'+
+        '</li>';
 }
 
 /**
@@ -860,11 +864,11 @@ SkyApp.prototype.getSceneCtrl = function(id, title, src){
     src = typeof src === 'undefined' ? '' : 'style="background-image: url('+src+');"';
 
     return '<li class="sky-btn item" '+self.attrSceneId+'="'+id+'">'+
-                '<i class="fa fa-bookmark-o fa-lg"></i>'+
-                '<span>'+title+'</span>'+
-                //'<img class="grid'+grid+'" '+src+'>'+
-                '<img '+src+'>'+
-            '</li>';
+        '<i class="fa fa-bookmark-o fa-lg"></i>'+
+        '<span>'+title+'</span>'+
+            //'<img class="grid'+grid+'" '+src+'>'+
+        '<img '+src+'>'+
+        '</li>';
 }
 
 /**
@@ -924,14 +928,14 @@ SkyApp.prototype.handlePanelSlide = function(){
         idt = setTimeout(function() {
 
             // 滚动条重置
-            $('#sky-wrapper .left .tab-content').slimScroll({destroy:true}).slimScroll({
-                color: '#fff',
-                size: '10px',
-                height: 'auto',
-                alwaysVisible: false,
-                distance: '3px',
-                railVisible: true
-            });
+            //$('#sky-wrapper .left .tab-content').slimScroll({destroy:true}).slimScroll({
+            //    color: '#fff',
+            //    size: '10px',
+            //    height: 'auto',
+            //    alwaysVisible: false,
+            //    distance: '3px',
+            //    railVisible: true
+            //});
 
             var $activeDroppable = $(self.selActiveDroppable),
                 wallId = $dropable.index($activeDroppable)
@@ -1001,21 +1005,21 @@ SkyApp.prototype.handleGetSignalList = function(){
             }
         }else if(data === 'offline'){
             signalList = '<The valid Input is : SRC TYPE SIGNAL SUB_VALID\r\n'+
-            '01,VGA,1\r\n'+
-            '02,VGA,0\r\n'+
-            '03,HDMI,0\r\n'+
-            '04,HDMI,1\r\n'+
-            '05,BNCQ,3\r\n'+
-            '06,BNCQ,5\r\n'+
-            '07,4k,1\r\n'+
-            '08,4k,1\r\n'+
-            '09,4k,1\r\n'+
-            '10,4k,1\r\n'+
-            '11,DVI,0\r\n'+
-            '12,DVI,0\r\n'+
-            '13,DVI,0\r\n'+
-            '14,DVI,0\r\n'+
-            '>';
+                '01,VGA,1\r\n'+
+                '02,VGA,0\r\n'+
+                '03,HDMI,0\r\n'+
+                '04,HDMI,1\r\n'+
+                '05,BNCQ,3\r\n'+
+                '06,BNCQ,5\r\n'+
+                '07,4k,1\r\n'+
+                '08,4k,1\r\n'+
+                '09,4k,1\r\n'+
+                '10,4k,1\r\n'+
+                '11,DVI,0\r\n'+
+                '12,DVI,0\r\n'+
+                '13,DVI,0\r\n'+
+                '14,DVI,0\r\n'+
+                '>';
         }
 
         var resultArr = signalList.split('\r\n'),
@@ -1034,7 +1038,7 @@ SkyApp.prototype.handleGetSignalList = function(){
         $inputList.find('li:first').addClass('active')
 
         $inputList.find('li').hammer().off(self.evTap).on(self.evTap, function(e){
-        //$inputList.on(self.evClick,'li', function(e){
+            //$inputList.on(self.evClick,'li', function(e){
 
             //e.preventDefault();
 
@@ -1050,9 +1054,11 @@ SkyApp.prototype.handleGetSignalList = function(){
         })
 
         // 拖拽信号生成窗口
-        //self.handlePCSignalDrag();
-
-        self.handleTouchSignalDrag();
+        if (navigator.userAgent.match(/mobile/i)) {
+            self.handleTouchSignalDrag();
+        }else {
+            self.handlePCSignalDrag();
+        }
     },function(){
 
     });
@@ -1163,7 +1169,7 @@ SkyApp.prototype.handlePCSignalDrag = function(){
                 levelArr.push(parseInt(_this.attr(self.attrWinLevel)));
             });
             winID = idArr.queue();// 获取队列中新的ID
-            winLevel = levelArr.queue(1);// 获取队列中新的ID
+            winLevel = levelArr.queue();// 获取队列中新的ID
 
             winInfo = {
                 id: winID,
@@ -1193,11 +1199,11 @@ SkyApp.prototype.handlePCSignalDrag = function(){
 SkyApp.prototype.handleTouchSignalDrag = function(){
     var self = this,
         $signal = $(self.selInputList).find('li .drag'),
-        dataTransfer,
+        dataTransfer = {},
         dragFlag = false;
 
     $signal.hammer().on(self.evPress, function(ev){
-
+        ev.preventDefault();
         var $this = $(this),
             pageX = ev.gesture.pointers[0].pageX,
             pageY = ev.gesture.pointers[0].pageY,
@@ -1205,12 +1211,12 @@ SkyApp.prototype.handleTouchSignalDrag = function(){
             valid = $this.attr(self.attrSignalValid),
             title = $this.find('a').html(),
             color = $this.attr(self.attrSignalColor),
-            str = JSON.stringify({
+            str = {
                 id: id,
                 valid: valid,
                 title: title,
                 color: color
-            });
+            };
 
         if($this.attr(self.attrSignalValid) === '0'){
             self.log($.i18n.prop('index.msg.invalid.input_signal'));
@@ -1246,7 +1252,7 @@ SkyApp.prototype.handleTouchSignalDrag = function(){
     });
 
     $signal.hammer().on('panend', function(ev){
-
+        ev.preventDefault();
         if(!dragFlag) return false;
 
         $('#drag').removeClass('active')
@@ -1254,12 +1260,10 @@ SkyApp.prototype.handleTouchSignalDrag = function(){
         var pageX = ev.gesture.pointers[0].pageX,
             pageY = ev.gesture.pointers[0].pageY,
             $target = $(document.elementFromPoint(pageX, pageY)),
-            tagName = $target.prop('tagName'),
-            data;
+            tagName = $target.prop('tagName');
 
         // 切换信号
         if(tagName === 'DIV' && $target.hasClass('content')){
-            data = eval('('+ dataTransfer +')');
 
             // 保存窗口信息到本地
             var $pep = $target.parent(),
@@ -1267,11 +1271,11 @@ SkyApp.prototype.handleTouchSignalDrag = function(){
                 wallId = $(self.selDroppable).index($activeDroppable),
                 winInfo = self.getWinInfoById(wallId, parseInt($pep.attr(self.attrWinId)));
 
-            $pep.find('.title span').html(data.title);
+            $pep.find('.title span').html(dataTransfer.title);
 
-            winInfo.title = data.title;
-            winInfo.src_ch = data.id;
-            winInfo.color = data.color;
+            winInfo.title = dataTransfer.title;
+            winInfo.src_ch = dataTransfer.id;
+            winInfo.color = dataTransfer.color;
 
             $pep.attr(self.attrWinSId, winInfo.src_ch);
             $pep.css({'background':winInfo.color});
@@ -1296,7 +1300,6 @@ SkyApp.prototype.handleTouchSignalDrag = function(){
 
             });
         }else if(tagName === 'CANVAS'){//生成新窗口
-            data = eval('('+ dataTransfer +')');
 
             var $activeDroppable = $(self.selActiveDroppable),
                 wallId = $(self.selDroppable).index($activeDroppable),
@@ -1310,18 +1313,18 @@ SkyApp.prototype.handleTouchSignalDrag = function(){
                 levelArr.push(parseInt(_this.attr(self.attrWinLevel)));
             });
             winID = idArr.queue();// 获取队列中新的ID
-            winLevel = levelArr.queue(1);
+            winLevel = levelArr.queue();
 
             winInfo = {
                 id: winID,
                 level: winLevel,// 获取队列中新的窗口层次
-                src_ch: data.id,
+                src_ch: dataTransfer.id,
                 src_hstart: 0,
                 src_vstart: 0,
                 src_hsize: 0,
                 src_vsize: 0,
-                title: data.title,
-                color: data.color,
+                title: dataTransfer.title,
+                color: dataTransfer.color,
                 win_x0: (pageX - pLeft) / self.scale[wallId],
                 win_y0: (pageY - pTop) / self.scale[wallId],
                 win_width: false,
@@ -1374,8 +1377,8 @@ SkyApp.prototype.handleGetSceneList = function(){
                 }
             }else if(data === 'offline'){
                 sceneList = '< The valid Scene ID is :\r\n'+
-                '1,2,3,4\r\n'+
-                '>';
+                    '1,2,3,4\r\n'+
+                    '>';
             }
 
             resultArr = sceneList.split('\r\n');
@@ -1673,7 +1676,7 @@ SkyApp.prototype.handleUpdateWinAttr = function($obj){
             self.insertOrUpdateWinInfo(index, winInfo);
 
             var info = $.i18n.prop('index.msg.win_index') + (parseInt(winInfo.id)+1) +'<br>'+
-                $.i18n.prop('index.msg.win_zindex') + winInfo.level + '<br>'+
+                $.i18n.prop('index.msg.win_zindex') + (parseInt(winInfo.level)+1) + '<br>'+
                 $.i18n.prop('index.msg.win_pos') + '(' + x0 + ',' + y0 + ')' + '<br>'+
                 $.i18n.prop('index.msg.win_size') + '(' + w0 + ',' + h0 + ')';
             $el.find('.content').html(info);
@@ -1712,7 +1715,7 @@ SkyApp.prototype.handleDrawGrid = function() {
 
         var $thisDroppable = $(this),
 
-        $el = $(el);
+            $el = $(el);
 
         grid = $el.attr(self.attrGrid);
 
@@ -1875,11 +1878,11 @@ SkyApp.prototype.handleWindowCtrl = function($pep, winInfo, fullSingleScreen){
         dragIcon: '.coor',//添加的拖拽缩放功能
         selectFloat: true,//选中元素上浮
         allowDragEventPropagation: false,//禁止DOM冒泡
-        ignoreRightClick: false,// 允许右键移动
-        minSize:{'w':100,'h':80},
+        ignoreRightClick: true,// 不允许右键移动
+        minSize:{'w':50,'h':50},
         maxSize:null,
         constrainTo: 'window',
-        elementsWithInteraction: '.close',//指定某部分不会触发拖动
+        elementsWithInteraction: '.full-single-screen,.fullscreen,.close',//指定某部分不会触发拖动
         revert: true,
         revertAfter: 'ease',
         cssEaseDuration: 300,//滑动时间
@@ -1994,7 +1997,7 @@ SkyApp.prototype.getStaticWinInfo = function($pep, $droppable, defaultInfo){
         winSID = $selectedSignal.attr(self.attrSignalId);
         winSID = winSID ? winSID : 1;
 
-        winLevel = levelArr.queue(1);// 获取队列中新的level
+        winLevel = levelArr.queue();// 获取队列中新的level
 
         winTitle = $selectedSignal.find('a').html()
 
@@ -2188,7 +2191,7 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     });
 
     // 移动设备长按呼出菜单
-    $el.hammer().on(self.evPress,function(ev){
+    $el.find('.content').hammer().on(self.evPress,function(ev){
         ev.preventDefault();
 
         //var pointer = ev.gesture.pointers[0],
@@ -2203,7 +2206,7 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     });
 
     // 移除控件
-    $el.find('.close').on(self.evClick, function(e){
+    $el.find('.close').hammer().on(self.evTap, function(e){
         e.preventDefault();
 
         self.handleCloseWin($el, true, true)
@@ -2212,27 +2215,34 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
     });
 
     // 解锁控件
-    $el.find('.lock').on(self.evClick, function(e){
+    $el.find('.lock').hammer().on(self.evTap, function(e){
         e.preventDefault();
 
+        $obj.toggle(true);
         $el.removeClass('lock');
     });
 
     // 按钮 单屏最大化
-    $el.find('.full-single-screen').on(self.evClick, function(){
+    $el.find('.full-single-screen').hammer().on(self.evTap, function(){
         var x_y = $elParent.attr(self.attrGrid).split('_'),
             stepXY = $elParent.attr(self.attrGridStep).split('_'),
             grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, true);
+        setTimeout(function(){
+            self.handleCentering(null, $obj);
+        },300)
     });
     // 按钮 全屏最大化
-    $el.find('.fullscreen').on(self.evClick, function(){
+    $el.find('.fullscreen').hammer().on(self.evTap, function(){
         var x_y = $elParent.attr(self.attrGrid).split('_'),
             stepXY = $elParent.attr(self.attrGridStep).split('_'),
             grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
-        self.requestFullSingleScreen($obj, grid, false)
+        self.requestFullSingleScreen($obj, grid, false);
+        setTimeout(function(){
+            self.handleCentering(null, $obj);
+        },300)
     });
 
     // 双击 单屏最大化
@@ -2242,9 +2252,7 @@ SkyApp.prototype.handleInitWinCtrlAction = function($obj){
             grid = [x_y[0] * x_y[2], x_y[1] * x_y[3], stepXY[0], stepXY[1]];
 
         self.requestFullSingleScreen($obj, grid, true)
-
     });
-
 
 }
 
@@ -2280,7 +2288,7 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
     }
 
     $popMenu.fadeIn(300);
-    $popMenu.on(self.evClick,function(e){
+    $popMenu.off(self.evClick).on(self.evClick, function(e){
         e.preventDefault();
         $(this).fadeOut(300);
     });
@@ -2288,7 +2296,8 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
     $popMenu.off(self.evClick, 'a').on(self.evClick, 'a', function(ev){
         //ev.stopPropagation();// 阻止冒泡触发父元素事件
         var $this = $(this),
-            x_y, stepXY, grid;
+            x_y, stepXY, grid,
+            wallId = $(self.selDroppable).index($(self.selActiveDroppable));
 
         switch ($this.attr('class')){
             case 'single-screen':
@@ -2315,30 +2324,61 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
                 var currLevel = Number($el.css('z-index')),
                     $brother = $el.siblings('['+self.attrWinLevel+'="'+(currLevel+1)+'"]');
 
-                if(currLevel !== $el.siblings().size()){
+                if(currLevel !== $el.siblings().size()-1){
                     $brother.attr(self.attrWinLevel, currLevel);
                     $brother.css('z-index', currLevel);
                     $el.attr(self.attrWinLevel, currLevel+1);
                     $el.css('z-index', currLevel+1);
-                    setTimeout(function(){
+
+                    //发送窗口叠加层次更改指令
+                    var cmd = '<movz,'+
+                        wallId +','+
+                        $el.attr(self.attrWinId) +','+
+                        (currLevel+1) +
+                        '>';
+                    self.cmd(cmd, true, function(data){
                         self.handleCentering(null, $obj);
+                    },function(){
+                    });
+                    cmd = '<movz,'+
+                        wallId +','+
+                        $brother.attr(self.attrWinId) +','+
+                        currLevel +
+                        '>';
+                    self.cmd(cmd, true, function(data){
                         self.handleCentering(null, $brother.data('plugin_pep'));
-                    },300)
+                    },function(){
+                    });
                 }
                 break;
             case 'down-level':
                 var currLevel = Number($el.css('z-index')),
                     $littleBrother = $el.siblings('['+self.attrWinLevel+'="'+(currLevel-1)+'"]');
 
-                if(currLevel !== 1){
+                if(currLevel !== 0){
                     $littleBrother.attr(self.attrWinLevel, currLevel);
                     $littleBrother.css('z-index', currLevel);
                     $el.attr(self.attrWinLevel, currLevel-1);
                     $el.css('z-index', currLevel-1);
-                    setTimeout(function(){
+                    //发送窗口叠加层次更改指令
+                    var cmd = '<movz,'+
+                        wallId +','+
+                        $el.attr(self.attrWinId) +','+
+                        (currLevel-1) +
+                        '>';
+                    self.cmd(cmd, true, function(data){
                         self.handleCentering(null, $obj);
+                    },function(){
+                    });
+                    cmd = '<movz,'+
+                        wallId +','+
+                        $littleBrother.attr(self.attrWinId) +','+
+                        currLevel +
+                        '>';
+                    self.cmd(cmd, true, function(data){
                         self.handleCentering(null, $littleBrother.data('plugin_pep'));
-                    },300)
+                    },function(){
+                    });
                 }
                 break;
             case 'win-close':
@@ -2346,10 +2386,10 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
                 break;
             case 'go-top':
                 var currLevel = Number($el.css('z-index')),
-                    topLevel = $el.siblings().size(),
-                    $siblings = $el.siblings(),
-                    wallId = $(self.selDroppable).index($(self.selActiveDroppable));
+                    topLevel = $el.siblings().size()-1,
+                    $siblings = $el.siblings();
 
+                if(currLevel === topLevel) break;
                 $siblings.each(function(){
                     var _this = $(this),
                         siblingsLevel = Number(_this.attr(self.attrWinLevel)),
@@ -2364,9 +2404,7 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
                             (siblingsLevel-1) +
                             '>';
                         self.cmd(cmd, true, function(data){
-                            setTimeout(function(){
-                                self.handleCentering(null, _this.data('plugin_pep'));
-                            },300);
+                            self.handleCentering(null, _this.data('plugin_pep'));
                         },function(){
                         });
                     }
@@ -2374,22 +2412,29 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
 
                 $el.css('z-index', topLevel);
                 $el.attr(self.attrWinLevel, topLevel);
-                setTimeout(function(){
+                //发送窗口叠加层次更改指令
+                var cmd = '<movz,'+
+                    wallId +','+
+                    $el.attr(self.attrWinId) +','+
+                    topLevel +
+                    '>';
+                self.cmd(cmd, true, function(data){
                     self.handleCentering(null, $obj);
-                },300);
+                },function(){
+                });
                 break;
             case 'go-bottom':
                 var currLevel = Number($el.css('z-index')),
-                    bottomLevel = 1,
-                    $siblings = $el.siblings(),
-                    wallId = $(self.selDroppable).index($(self.selActiveDroppable));
+                    bottomLevel = 0,
+                    $siblings = $el.siblings();
 
+                if(currLevel === bottomLevel) break;
                 $siblings.each(function(){
                     var _this = $(this),
                         siblingsLevel = Number(_this.attr(self.attrWinLevel)),
                         winId = _this.attr(self.attrWinId);
                     if(siblingsLevel < currLevel){
-                        _this.css('z-index', siblingsLevel-1);
+                        _this.css('z-index', siblingsLevel+1);
                         _this.attr(self.attrWinLevel, siblingsLevel+1);
                         //发送窗口叠加层次更改指令
                         var cmd = '<movz,'+
@@ -2398,9 +2443,7 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
                             (siblingsLevel+1) +
                             '>';
                         self.cmd(cmd, true, function(data){
-                            setTimeout(function(){
-                                self.handleCentering(null, _this.data('plugin_pep'));
-                            },300);
+                            self.handleCentering(null, _this.data('plugin_pep'));
                         },function(){
                         });
                     }
@@ -2408,9 +2451,16 @@ SkyApp.prototype.handleContentPopMenuAction = function ($obj, $popMenu, pos){
 
                 $el.css('z-index', bottomLevel);
                 $el.attr(self.attrWinLevel, bottomLevel);
-                setTimeout(function(){
+                //发送窗口叠加层次更改指令
+                var cmd = '<movz,'+
+                    wallId +','+
+                    $el.attr(self.attrWinId) +','+
+                    bottomLevel +
+                    '>';
+                self.cmd(cmd, true, function(data){
                     self.handleCentering(null, $obj);
-                },300);
+                },function(){
+                });
                 break;
             case 'win-lock':
                 $obj.toggle(false);
@@ -2468,8 +2518,8 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
     pWidth = $elParent.innerWidth();
     pHeight = $elParent.innerHeight();
 
-    oTop = ($el.position().top - pTop);
-    oLeft = ($el.position().left - pLeft);
+    oTop = $el.position().top - pTop;
+    oLeft = $el.position().left - pLeft;
     oWidth = $el.outerWidth();
     oHeight = $el.outerHeight();
 
@@ -2479,12 +2529,12 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
         if(Math.abs(oTop+pTop - pTop) <= 1 && Math.abs(oLeft+pLeft - pLeft) <= 1 && Math.abs(oWidth - pWidth) <= 1 && Math.abs(oHeight - pHeight) <= 1){
 
             console.log('全屏最大化还原', 11)
-            if($obj.reverPosix){
-                $el.outerWidth($obj.reverPosix.w);
-                $el.outerHeight($obj.reverPosix.h);
-                $obj.moveTo($obj.reverPosix.x / self.scale[index], $obj.reverPosix.y / self.scale[index]);
+            if($obj.reverPos){
+                $el.outerWidth($obj.reverPos.w);
+                $el.outerHeight($obj.reverPos.h);
+                $obj.moveTo($obj.reverPos.x / self.scale[index], $obj.reverPos.y / self.scale[index]);
                 // 将窗口信息存到控件上
-                $el.attr(self.attrWinInfo, [$obj.reverPosix.x, $obj.reverPosix.y, $obj.reverPosix.h, $obj.reverPosix.w])
+                $el.attr(self.attrWinInfo, [$obj.reverPos.x, $obj.reverPos.y, $obj.reverPos.h, $obj.reverPos.w])
             }else{
                 $el.outerWidth(oWidth);
                 $el.outerHeight(oHeight);
@@ -2499,7 +2549,7 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
             $el.outerHeight(pHeight);
             $obj.moveTo(0, 0);
             // 保存控件变化前的坐标尺寸
-            $obj.reverPosix = {
+            $obj.reverPos = {
                 x:oLeft,
                 y:oTop,
                 w:oWidth,
@@ -2510,55 +2560,43 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
         }
 
     }else{//单屏最大化
-        for(var i = 0; i < x; i ++){
-            if(stepX*i <= oLeft && oLeft <= stepX*(i+1)){
-                dLeft = stepX*i;
-                break;
-            }
-        }
-        for(var j = 0; j < y; j ++){
-            if(stepY*j <= oTop && oTop <= stepY*(j+1)){
-                dTop = stepY*j;
-                break;
-            }
-        }
-        for(var k = 0; k < x; k ++){
-            var horizon = oLeft * self.scale[index] + oWidth;
-            if(stepX*k <= horizon && horizon <= stepX*(k+1)){
-                dWidth = stepX*(k+1) - dLeft;
-                break;
-            }
-        }
-        for(var l = 0; l < y; l ++){
-            var vertical = oTop * self.scale[index] + oHeight;
-            if(stepY*l <= vertical && vertical <= stepY*(l+1)){
-                dHeight = stepY*(l+1) - dTop;
-                break;
-            }
-        }
 
-        console.log(oTop, oLeft, oWidth, oHeight)
-        console.log(pTop, pLeft, pWidth, pHeight)
-        console.log(dTop, dLeft, dWidth, dHeight)
+        if($obj.reverPos){
+            $el.outerWidth($obj.reverPos.w);
+            $el.outerHeight($obj.reverPos.h);
+            $obj.moveTo($obj.reverPos.x + pLeft, $obj.reverPos.y + pTop);
+            // 将窗口信息存到控件上
+            $el.attr(self.attrWinInfo, [$obj.reverPos.x, $obj.reverPos.y, $obj.reverPos.h, $obj.reverPos.w])
 
-        //尺寸不变则缩小(允许1px误差)
-        if(Math.abs(oTop - dTop) <= 1 && Math.abs(oLeft - dLeft) <= 1 && Math.abs(oWidth - dWidth) <= 1 && Math.abs(oHeight - dHeight) <= 1){
-            //console.log([$obj.reverPosix.y + pTop, $obj.reverPosix.x + pLeft, $obj.reverPosix.w, $obj.reverPosix.h])
-            console.log('单屏最大化还原', 11)
-            if($obj.reverPosix){
-                $el.outerWidth($obj.reverPosix.w);
-                $el.outerHeight($obj.reverPosix.h);
-                $obj.moveTo($obj.reverPosix.x + pLeft, $obj.reverPosix.y + pTop);
-                // 将窗口信息存到控件上
-                $el.attr(self.attrWinInfo, [$obj.reverPosix.x, $obj.reverPosix.y, $obj.reverPosix.h, $obj.reverPosix.w])
-            }else{
-                $el.outerWidth(oWidth);
-                $el.outerHeight(oHeight);
-                $obj.moveTo(oLeft, oTop);
-                // 将窗口信息存到控件上
-                $el.attr(self.attrWinInfo, [oLeft, oTop, oHeight, oWidth])
-            }
+            $obj.reverPos = false;
         }else{
+
+            for(var i = 0; i < x; i ++){
+                if(stepX*i <= oLeft && oLeft <= stepX*(i+1)){
+                    dLeft = stepX*i;
+                    break;
+                }
+            }
+            for(var j = 0; j < y; j ++){
+                if(stepY*j <= oTop && oTop <= stepY*(j+1)){
+                    dTop = stepY*j;
+                    break;
+                }
+            }
+            for(var k = 0; k < x; k ++){
+                var horizon = oLeft * self.scale[index] + oWidth;
+                if(stepX*k <= horizon && horizon <= stepX*(k+1)){
+                    dWidth = stepX*(k+1) - dLeft;
+                    break;
+                }
+            }
+            for(var l = 0; l < y; l ++){
+                var vertical = oTop * self.scale[index] + oHeight;
+                if(stepY*l <= vertical && vertical <= stepY*(l+1)){
+                    dHeight = stepY*(l+1) - dTop;
+                    break;
+                }
+            }
 
             $el.outerWidth(dWidth / self.scale[index]);
             $el.outerHeight(dHeight / self.scale[index]);
@@ -2567,7 +2605,7 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
             //console.log(dLeft/self.scale * self.scaleX, dTop/self.scale*self.scaleY, dWidth*self.scaleX, dHeight*self.scaleY)
 
             // 保存控件变化前的坐标尺寸
-            $obj.reverPosix = {
+            $obj.reverPos = {
                 x:oLeft,
                 y:oTop,
                 w:oWidth,
@@ -2576,11 +2614,10 @@ SkyApp.prototype.requestFullSingleScreen = function($obj, grid, single){
             // 将窗口信息存到控件上
             $el.attr(self.attrWinInfo, [dLeft, dTop, dHeight / self.scale[index], dWidth / self.scale[index]])
         }
+
     }
 
 }
-
-
 ///**
 // * 显示日志
 // * @param msg
@@ -2645,7 +2682,7 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
 
         // 控件显示记录
         var info = $.i18n.prop('index.msg.win_index') + (parseInt(winInfo.id)+1) +'<br>'+
-            $.i18n.prop('index.msg.win_zindex') + winInfo.level + '<br>'+
+            $.i18n.prop('index.msg.win_zindex') + (parseInt(winInfo.level)+1) + '<br>'+
             $.i18n.prop('index.msg.win_pos') + '(' + dPosX + ',' + dPosY + ')' + '<br>'+
             $.i18n.prop('index.msg.win_size') + '(' + dPosW + ',' + dPosH + ')';
 
@@ -2739,18 +2776,18 @@ SkyApp.prototype.insideWithin = function(obj) {
 
         oTop = $el.position().top - pTop,
         oLeft = $el.position().left - pLeft,
-        //oHeight = $el.outerHeight(),
-        //oWidth = $el.outerWidth(),
+    //oHeight = $el.outerHeight(),
+    //oWidth = $el.outerWidth(),
         pos = $el.attr(self.attrWinInfo).split(','),
-        //oTop = pos[1],
-        //oLeft = pos[0],
+    //oTop = pos[1],
+    //oLeft = pos[0],
         oHeight = pos[2],
         oWidth = pos[3],
 
         moveTop = oTop,moveLeft = oLeft;
 
-    console.log('p_pos', pTop, pLeft, pWidth, pHeight)
-    console.log('o_pos', oTop, oLeft, oWidth, oHeight)
+    //console.log('p_pos', pTop, pLeft, pWidth, pHeight)
+    //console.log('o_pos', oTop, oLeft, oWidth, oHeight)
 
     if(0 > oTop){
         moveTop = 0;
@@ -2769,7 +2806,7 @@ SkyApp.prototype.insideWithin = function(obj) {
     obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
     //obj.options.constrainTo = [0, pWidth-oWidth, pHeight-oHeight, 0];
     //obj.options.constrainTo = self.selActiveDroppable;
-    console.log('约束区', obj.options.constrainTo)
+    //console.log('约束区', obj.options.constrainTo)
     //计算滑块相对编辑区的位置
     //var fTop,fRight,fBottom,fLeft;
     //fTop = moveTop - pTop;
@@ -2817,7 +2854,7 @@ SkyApp.prototype.handleDroppablePanelScale = function(){
 
         self.scale[index] = scale;//全局赋值
 
-        $activeDroppable.css({
+        $activeDroppable.parent().css({
             'transform': 'scale(' + scale + ')',
             'transform-origin': scale > 1 ? '0 0 0' : 'center'
         });
@@ -2827,7 +2864,7 @@ SkyApp.prototype.handleDroppablePanelScale = function(){
                 $pep = $this.data('plugin_pep');
             $pep.setScale(scale);
             //$pep.setMultiplier(scale);
-        })
+        });
 
     });
     //  鼠标滑轮缩放
@@ -2864,14 +2901,18 @@ SkyApp.prototype.mouseWheelScale = function() {
 
         $(self.selActiveWall).find('.sky-btn.dropdown a.dropdown-toggle').html( Math.round(scale*100).toFixed(0) +'% <span class="caret"></span>');
 
-        $thisDroppable.css({
+        $thisDroppable.parent().css({
             'transform': 'scale(' + scale + ')',
             'transform-origin': scale > 1 ? '0 0 0' : 'center'
         })
 
         $thisDroppable.find('.pep').each(function(){
-            var $this = $(this);
-            $this.data('plugin_pep').setScale(scale)
+            var $this = $(this),
+                $pep = $this.data('plugin_pep'),
+                constrainTo = $pep.options.constrainTo;
+            $pep.setScale(scale);
+            //$pep.setMultiplier(scale);
+            //$pep.options.constrainTo = [constrainTo[0]/scale, constrainTo[1]/scale, constrainTo[2]/scale, constrainTo[3]/scale];
         });
         return false;
     });
@@ -3118,7 +3159,7 @@ SkyApp.prototype.requestResolution = function(){
 SkyApp.prototype.handleMouseDraw = function(){
     var self = this,
         $droppable = $(self.selDroppable),
-        //$canvas = $droppable.find('canvas'),
+    //$canvas = $droppable.find('canvas'),
         winInfo = {};
 
     // startX, startY 为鼠标点击时初始坐标
@@ -3130,7 +3171,12 @@ SkyApp.prototype.handleMouseDraw = function(){
     // 鼠标按下
     $droppable.on(self.evStar, function(e) {
 
-        if(!self.enableGesture) return false;
+        if(!self.enableGesture){
+            return;
+        }else{
+            e.stopPropagation();
+            e.preventDefault();
+        }
 
         if(isTouch(e)){
             e.pageX = e.originalEvent.touches[0].pageX;
@@ -3158,6 +3204,8 @@ SkyApp.prototype.handleMouseDraw = function(){
 
     // 鼠标移动
     $droppable.on(self.evMove, function(e) {
+
+        //if(self.enableGesture) e.preventDefault();
 
         // 更新 box 尺寸
         var $this = $(this),
@@ -3192,7 +3240,7 @@ SkyApp.prototype.handleMouseDraw = function(){
 
         if($active_box.size() !== 0) {
             $active_box.removeAttr("id");
-            if($active_box.width() > 50 && $active_box.height() > 50) {
+            if($active_box.width() > 50 && $active_box.height() > 30) {
 
                 var $this = $(this),
                     pTop = $this.offset().top,
@@ -4022,7 +4070,7 @@ SkyApp.prototype.handleDelScene = function($item){
 SkyApp.prototype.handleDelSceneAll = function($item){
 
     var self = this,
-        //$activeList = $('#scene ul.active .item'),
+    //$activeList = $('#scene ul.active .item'),
         $droppable, wallId, sceneList;
 
     $droppable = $(self.selActiveDroppable);
@@ -4049,8 +4097,8 @@ SkyApp.prototype.handleDelSceneAll = function($item){
             sceneList = data;
         }else if(data === 'offline'){
             sceneList = '< The valid Scene ID is :\r\n' +
-            '1,2,3,4,5,6,7,8,9\r\n' +
-            '>';
+                '1,2,3,4,5,6,7,8,9\r\n' +
+                '>';
         }else {
             return false;
         }

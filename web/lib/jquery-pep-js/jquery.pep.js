@@ -506,6 +506,7 @@
             var hash = this.handleConstraint(dx, dy);
             var xOp, yOp;
 
+        console.log(hash)
             // if using not using CSS transforms, move object via absolute position
             if ( typeof this.options.moveTo === 'function') {
               xOp     = ( dx >= 0 ) ? "+=" + Math.abs(dx/this.scale)*this.options.multiplier : "-=" + Math.abs(dx/this.scale)*this.options.multiplier;
@@ -529,12 +530,12 @@
                 xOp = (hash.x !== false) ? hash.x : xOp;
                 yOp = (hash.y !== false) ? hash.y : yOp;
               }
-
               // only move along single axis, if necessary
               if ( this.options.axis  === 'x' ) yOp = hash.y;
               if ( this.options.axis  === 'y' ) xOp = hash.x;
 
               this.moveTo(xOp, yOp);
+
             }
             else {
 

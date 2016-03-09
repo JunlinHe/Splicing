@@ -28,6 +28,9 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
     min-width: 18px;
     text-align: center;
 }
+.fa-stack :nth-child(2){
+    line-height: inherit;
+}
 
 .display-table{
     display: table;
@@ -189,7 +192,7 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
     /*margin: 10px;*/
     border: 1px solid #ccc;
     cursor: move;
-    z-index: 9;
+    /*z-index: 1;*/
     filter: alpha(opacity=800);
     opacity: 0.8;
 }
@@ -212,14 +215,14 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
     font-weight: bold;
     color: #f9f9f9;
     overflow: hidden;
-    text-align: right;
 }
 .window .title span{
     float: left;
+    margin-left: 5px;
 }
 
 .window .title .button {
-    float: none;
+    float: right;
     display: inline-block;
     width: 25px;
     height: 25px;
@@ -286,7 +289,7 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
 
 #box { width: 200px; height: 100px; cursor: move; position: absolute; top: 30px; left: 30px; background-color: #FFF; border: 1px solid #CCCCCC;  -webkit-box-shadow: 10px 10px 25px #ccc;-moz-box-shadow: 10px 10px 25px #ccc;box-shadow: 10px 10px 25px #ccc;}
 
-.coor { box-sizing:content-box;padding:5px;display:none; width: 10px; height: 10px; overflow: hidden; position: absolute;}
+.coor { box-sizing:content-box;padding:15px;display:none; width: 10px; height: 10px; overflow: hidden; position: absolute;z-index: -1}
 .coor:before{
     content: '';
     display: block;
@@ -297,35 +300,35 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
 }
 .coor.ne{
     cursor: ne-resize;
-    top: -10px;right: -10px;
+    top: -20px;right: -20px;
 }
 .coor.n{
     cursor: n-resize;
-    top: -10px; left: calc(50% - 10px);
+    top: -20px; left: calc(50% - 20px);
 }
 .coor.nw{
     cursor: nw-resize;
-    top: -10px; left: -10px;
+    top: -20px; left: -20px;
 }
 .coor.e{
     cursor: e-resize;
-    top:calc(50% - 10px); right: -10px;
+    top:calc(50% - 20px); right: -20px;
 }
 .coor.w{
     cursor: w-resize;
-    top:calc(50% - 10px); left: -10px;
+    top:calc(50% - 20px); left: -20px;
 }
 .coor.sw{
     cursor: sw-resize;
-    bottom: -10px; left: -10px;
+    bottom: -20px; left: -20px;
 }
 .coor.s{
     cursor: s-resize;
-    bottom: -10px; left: calc(50% - 10px);
+    bottom: -20px; left: calc(50% - 20px);
 }
 .coor.se{
     cursor: se-resize;
-    right: -10px; bottom: -10px;
+    right: -20px; bottom: -20px;
 }
 
 /*.pep:hover .coor{*/
@@ -677,8 +680,8 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
 
 .input ul .item, .scene ul .item{
     margin: 10px 0;
-    height: 30px;
-    line-height: 30px;
+    height: 35px;
+    line-height: 35px;
     overflow: hidden;
 }
 
@@ -962,7 +965,7 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
     line-height: 15px;
     position: absolute;
     border-radius: 50px;
-    z-index: 999;
+    z-index: -1;
     padding: 5px;
 
     opacity:0;
@@ -974,5 +977,6 @@ a, a:link, a:visited, a:hover, a:active ,ul, div{
 }
 
 #drag.active {
+    z-index: 999;
     opacity:1;
 }
