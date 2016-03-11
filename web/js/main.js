@@ -9,11 +9,11 @@ function SkyApp(){
 
     self.version = '1.0';
     // 选择离线模式不向服务器发送数据
-    self.offline = false;
-    if(!sessionStorage.authority){
-        location.href = 'login.html';
-        return ;
-    }
+    self.offline = true;
+    //if(!sessionStorage.authority){
+    //    location.href = 'login.html';
+    //    return ;
+    //}
     self.serverUrl = 'p';
     // 事件
     self.evClick = 'click';
@@ -666,8 +666,8 @@ SkyApp.prototype.handleSplicingSettings = function(){
 
             var cmd = '<wallmod,'+
                 screenID + ','+
-                json.phyRow + ','+
                 json.phyCol + ','+
+                json.phyRow + ','+
                 json.screenWidth + ','+
                 json.screenHeight + ','+
                 json.frameLeft + ','+
@@ -3661,8 +3661,8 @@ SkyApp.prototype.handleSynScreeSettings = function(wallId){
 
             wallinf = self.settings.splice[wallId];
 
-            wallinf.phyRow = info[0];
-            wallinf.phyCol = info[1];
+            wallinf.phyCol = info[0];
+            wallinf.phyRow = info[1];
             wallinf.screenWidth = info[2];
             wallinf.screenHeight = info[3];
             wallinf.frameLeft = info[4];

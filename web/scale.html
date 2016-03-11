@@ -5,30 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Title</title>
 
+    <link href="css/app.css" rel="stylesheet">
     <style>
-        .draggable{
+        body, html{
             width: 100%;
             height: 100%;
+        }
+        .wrap{
+            position: relative;
+            width: 90%;
+            height: 90%;
+            margin: 30px;
+        }
+        .draggable{
+            position: absolute;
+            top:0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             border: 1px solid #000;
+            background: rgba(0,0,0,.5);
         }
         .test{
             width: 100px;
             height: 100px;
             border: 1px solid #000;
-            -webkit-transition: all 100ms ease-out;
-            -moz-transition: all 100ms ease-out;
-            -o-transition: all 100ms ease-out;
-            transition: all 100ms ease-out;
+
+            /*-webkit-transition: all 100ms ease-out;*/
+            /*-moz-transition: all 100ms ease-out;*/
+            /*-o-transition: all 100ms ease-out;*/
+            /*transition: all 100ms ease-out;*/
         }
     </style>
 </head>
 <body>
-<div class="draggable" style="position: absolute;">
-    <div class="draggable" style="transform: scale(0.8);">
-        <div class="test">dragMe
-            <input type="text">
+<div class="wrap">
+    <div class="draggable">
+        <div class="pep window active">
+            <div class="title"><span>1-VGA</span>
+                <div class="button close"><i class="fa fa-close"></i></div>
+                <div class="button fullscreen"><i class="fa fa-arrows-alt"></i></div>
+                <div class="button full-single-screen"><i class="fa fa-expand"></i></div>
+                <div class="button lock"><i class="fa fa-lock"></i></div>
+            </div>
+            <div class="content"></div>
+            <div class="coor nw"></div>
+            <div class="coor ne"></div>
+            <div class="coor sw"></div>
+            <div class="coor se"></div>
+            <div class="coor e"></div>
+            <div class="coor s"></div>
+            <div class="coor n"></div>
+            <div class="coor w"></div>
         </div>
-        <div class="test">dragMe</div>
+        <!--<div class="test">dragMe</div>-->
     </div>
 </div>
 
@@ -39,16 +69,56 @@
 
 <script src="lib/hammer-js/hammer.min.js" type="text/javascript"></script>
 <script src="lib/hammer-js/jquery.hammer.js" type="text/javascript"></script>
+<script src="lib/jquery-mousewheel/jquery.mousewheel.js" type="text/javascript"></script>
 
 <script src="lib/jquery-dragmove/jQuery.dragmove.js" type="text/javascript"></script>
 
 <script>
 $(function() {
-    $('.test').dragMove({
-        scale: 0.8,
+    $('.window').dragMove({
+//        scale: 0.8,
+        elementsWithInteraction: '.close',
+        resizeIcon: '.coor',
+        startPos:{
+            left: 100,
+            top: 100
+        },
         onMoveEnd: function(){
 //            alert(1)
         }
+    });
+
+    var i = 1,
+        scale = 1;
+
+    $('.draggable').on("mousewheel", function (event, delta) {
+
+        var $this = $(this);
+
+        i += delta * 0.1;
+
+        if(i < 0.5) {
+            i = 0.6;
+            return false;
+        }
+        if(i > 2) {
+            i = 1.9;
+            return false;
+        }
+
+        scale = Math.abs(i);
+
+        $this.css({
+            'transform': 'scale(' + scale + ')',
+            'transform-origin': scale > 1 ? '0 0 0' : 'center'
+        })
+
+        $this.find('.window').each(function(){
+            var _this = $(this),
+                $pep = _this.data('plugin_dragMove');
+            $pep.options.scale = scale;
+        });
+        return false;
     });
 });
 </script>
