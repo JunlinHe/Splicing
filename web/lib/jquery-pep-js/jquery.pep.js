@@ -383,7 +383,7 @@
 
                     var $pep = this.$el;
                     // 获得鼠标移动阀值内的移动数值
-                    var hash = this.handleDragIconMove(curX, curY);
+                    var hash = this.handleResizeMove(curX, curY);
                     var $dragIcon = this.dragPosix.$dragIcon;
 
                     if($dragIcon.hasClass('nw')){
@@ -462,7 +462,7 @@
      * @param curY
      * @returns {{curX: boolean, curY: boolean}}
      */
-    Pep.prototype.handleDragIconMove = function(curX, curY) {
+    Pep.prototype.handleResizeMove = function(curX, curY) {
         var hash = { curX: false, curY: false };
         var pTop, pLeft, pHeight, pWidth;
 
@@ -506,7 +506,6 @@
             var hash = this.handleConstraint(dx, dy);
             var xOp, yOp;
 
-        console.log(hash)
             // if using not using CSS transforms, move object via absolute position
             if ( typeof this.options.moveTo === 'function') {
               xOp     = ( dx >= 0 ) ? "+=" + Math.abs(dx/this.scale)*this.options.multiplier : "-=" + Math.abs(dx/this.scale)*this.options.multiplier;
