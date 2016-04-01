@@ -244,6 +244,14 @@ window.isTouch = function(ev){
     return ev.type.search('touch') > -1;
 };
 
+window.myStopPropagation = function(e){
+    if (window.event) {
+        event.cancelBubble = true;
+    }else{
+        e.stopPropagation();
+    }
+};
+
 (function($){
 
     /**

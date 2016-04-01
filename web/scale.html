@@ -80,13 +80,16 @@ $(function() {
     $('.window').dragMove({
 //        scale: 0.8,
         elementsWithInteraction: '.close',
-        resizeIcon: '.coor',
+        dragIcon: '.coor',
         startPos:{
             left: 100,
             top: 100
         },
         onMoveEnd: function(){
 //            alert(1)
+        },
+        onResizeEnd: function () {
+//            alert(1);
         }
     });
 
@@ -117,11 +120,20 @@ $(function() {
 
         $this.find('.window').each(function(){
             var _this = $(this),
-                $pep = _this.data('plugin_dragMove');
-            $pep.options.scale = scale;
+                $dragMove = _this.data('plugin_dragMove');
+            $dragMove.options.scale = scale;
         });
+
+
         return false;
     });
+
+//    setTimeout(function(){
+//        alert('锁定');
+//        var _this = $('.draggable').find('.window'),
+//                $dragMove = _this.data('plugin_dragMove');
+//        $dragMove.toggle(false);
+//    }, 5000)
 });
 </script>
 </body>
