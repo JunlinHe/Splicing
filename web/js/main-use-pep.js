@@ -2068,17 +2068,16 @@ SkyApp.prototype.handleWindowCtrl = function($pep, winInfo, fullSingleScreen){
             //handleInitWinCtrlAction(obj);
             var $this = obj.$el,
                 $parent = $this.parent(),
-                scale = obj.scale,
                 pLeft, pTop, pWidth, pHeight,
                 oLeft, oTop, oWidth, oHeight;
 
             pLeft = $parent.position().left;
             pTop = $parent.position().top;
-            pWidth = $parent.innerWidth() * scale;
-            pHeight = $parent.innerHeight() * scale;
+            pWidth = $parent.innerWidth();
+            pHeight = $parent.innerHeight();
 
-            oWidth = $this.outerWidth() * scale;
-            oHeight = $this.outerHeight() * scale;
+            oWidth = $this.outerWidth();
+            oHeight = $this.outerHeight();
 
             obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
         },
@@ -2091,16 +2090,14 @@ SkyApp.prototype.handleWindowCtrl = function($pep, winInfo, fullSingleScreen){
         },
         stop: function (ev, obj) {
             //rotate(obj.$el, 0);
+
+            //实际通过outerWidth()计算窗口宽高时已产生误差，再转换1080p数值也会有误差
             var $el = obj.$el,
-                $parent = $el.parent(),
 
                 winInfo = $el.attr(self.attrWinInfo).split(','),
 
-                pTop = $parent.position().top,
-                pLeft = $parent.position().left,
-
-                oTop = $el.position().top - pTop,
-                oLeft = $el.position().left - pLeft;
+                oTop = $el.position().top,
+                oLeft = $el.position().left;
 
             $el.attr(self.attrWinInfo, [oLeft, oTop, winInfo[2], winInfo[3]]);
 
@@ -2111,13 +2108,13 @@ SkyApp.prototype.handleWindowCtrl = function($pep, winInfo, fullSingleScreen){
         },
         onResizeEnd: function(ev, obj){
 
+            //TODO 通过outerHeight()计算宽高会有误差，它是一个经过四舍五入的值
             var $el = obj.$el,
-                $parent = $el.parent(),
-
+                scale = obj.scale,
                 winInfo = $el.attr(self.attrWinInfo).split(','),
 
-                oHeight = $el.outerHeight(),
-                oWidth = $el.outerWidth();
+                oHeight = $el.outerHeight() / scale,
+                oWidth = $el.outerWidth() / scale;
 
             $el.attr(self.attrWinInfo, [winInfo[0], winInfo[1], oHeight, oWidth]);
         }
@@ -2862,8 +2859,8 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
 
         var pos = self.insideWithin(obj),
             index = $(self.selDroppable).index($activeDroppable),
-            dPosX = Math.round(pos[0] / self.scale[index] * self.scaleX[index]).toFixed(0),
-            dPosY = Math.round(pos[1] / self.scale[index] * self.scaleY[index]).toFixed(0),
+            dPosX = Math.round(pos[0] * self.scaleX[index]).toFixed(0),
+            dPosY = Math.round(pos[1] * self.scaleY[index]).toFixed(0),
             dPosW = Math.round(pos[3] * self.scaleX[index]).toFixed(0),
             dPosH = Math.round(pos[2] * self.scaleY[index]).toFixed(0);
 
@@ -2878,8 +2875,8 @@ SkyApp.prototype.handleCentering = function(ev, obj) {
             src_vsize: 0,
             title: '',
             color: $pep.css('background-color'),
-            win_x0: pos[0] / self.scale[index],
-            win_y0: pos[1] / self.scale[index],
+            win_x0: pos[0],
+            win_y0: pos[1],
             win_width: pos[3],
             win_height: pos[2]
         };
@@ -2987,15 +2984,15 @@ SkyApp.prototype.insideWithin = function(obj) {
         pHeight = $parent.height(),
         pWidth = $parent.width(),
 
-        oTop = $el.position().top ,
-        oLeft = $el.position().left ,
+        oTop = $el.position().top / self.scale[index],
+        oLeft = $el.position().left / self.scale[index],
     //oHeight = $el.outerHeight(),
     //oWidth = $el.outerWidth(),
         pos = $el.attr(self.attrWinInfo).split(','),
         //oTop = pos[1],
         //oLeft = pos[0],
-        oHeight = parseFloat(pos[2]).toFixed(4),
-        oWidth = parseFloat(pos[3]).toFixed(4),
+        oHeight = parseFloat(pos[2]),
+        oWidth = parseFloat(pos[3]),
 
         moveTop = oTop,moveLeft = oLeft;
 
@@ -3027,41 +3024,36 @@ SkyApp.prototype.insideWithin = function(obj) {
     }
 
     if(step.length > 0){
-        stepX = parseFloat(step[0]).toFixed(4);
-        stepY = parseFloat(step[1]).toFixed(4);
+        stepX = parseFloat(step[0]);
+        stepY = parseFloat(step[1]);
     }
 
     for(var i = 0; i < phyCol * logicCol; i++){
 
         if(Math.abs(oLeft - stepX*i) <= error){
-            console.log('left')
             moveLeft = stepX*i;
             break;
         }
 
-        if(Math.abs((oLeft-pLeft+oWidth) - stepX*i) <= error){
-            console.log('right')
-            moveLeft = stepX*i + oWidth;
+        if(Math.abs((oLeft+oWidth) - stepX*i) <= error){
+            moveLeft = stepX*i - oWidth;
             break;
         }
     }
     for(var j = 0; j < phyRow * logicRow; j++){
 
         if(Math.abs(oTop - stepY*j) <= error){
-            console.log('top')
             moveTop = stepY*j;
             break;
         }
-        if(Math.abs((oTop-pTop+oHeight) - stepY*j) <= error){
-            console.log('bottom')
-            moveTop = stepY*j + oHeight;
+        if(Math.abs((oTop+oHeight) - stepY*j) <= error){
+            moveTop = stepY*j - oHeight;
             break;
         }
     }
     // ****逻辑吸边
 
-    console.log(moveLeft, moveTop)
-    $el.animate({top: moveTop / self.scale[index], left: moveLeft / self.scale[index]}, 0);
+    $el.animate({top: moveTop * self.scale[index], left: moveLeft * self.scale[index]}, 0);
 
     //将移动块约束在编辑区内 [top, right, bottom, left]
     obj.options.constrainTo = [pTop, pLeft+pWidth-oWidth, pTop+pHeight-oHeight, pLeft];
@@ -3146,6 +3138,7 @@ SkyApp.prototype.mouseWheelScale = function() {
 
     $droppable.on("mousewheel", function (event, delta) {
 
+        console.log(delta)
         i += delta * 0.1;
 
         //if(i < 0.5) {
@@ -3164,26 +3157,57 @@ SkyApp.prototype.mouseWheelScale = function() {
         var $thisDroppable = $(this),
             index = $droppable.index($thisDroppable);
 
-        scale = Math.abs(i);
+        scale = Number(Math.abs(i).toFixed(1));
 
-        self.scale[index] = scale;//全局赋值
+        console.log(scale)
 
         //$(self.selActiveWall).find('.sky-btn.dropdown a.dropdown-toggle').html( Math.round(scale*100).toFixed(0) +'% <span class="caret"></span>');
         $(self.selActiveWall).find('.action-btn-group input[type="range"]').val(scale);
 
-        $thisDroppable.parent().css({
-            'transform': 'scale(' + scale + ')',
-            'transform-origin': scale > 1 ? '0 0 0' : 'center'
-        })
+        //$thisDroppable.parent().css({
+        //    'transform': 'scale(' + scale + ')',
+        //    'transform-origin': scale > 1 ? '0 0 0' : 'center'
+        //});
+
+        //$thisDroppable.find('.pep').each(function(){
+        //    var $this = $(this),
+        //        $pep = $this.data('plugin_pep'),
+        //        constrainTo = $pep.options.constrainTo;
+        //    $pep.setScale(scale);
+        //    //$pep.setMultiplier(scale);
+        //    //$pep.options.constrainTo = [constrainTo[0]/scale, constrainTo[1]/scale, constrainTo[2]/scale, constrainTo[3]/scale];
+        //});
+
+        var w = $thisDroppable.parent().width(),
+            h = $thisDroppable.parent().height();
+
+        $thisDroppable.width(w * scale).find('canvas').width(w * scale);
+        $thisDroppable.height(h * scale).find('canvas').height(h * scale);
 
         $thisDroppable.find('.pep').each(function(){
             var $this = $(this),
-                $pep = $this.data('plugin_pep'),
-                constrainTo = $pep.options.constrainTo;
+                $pep = $this.data('plugin_pep');
+
             $pep.setScale(scale);
-            //$pep.setMultiplier(scale);
-            //$pep.options.constrainTo = [constrainTo[0]/scale, constrainTo[1]/scale, constrainTo[2]/scale, constrainTo[3]/scale];
+
+            if(self.scale[index] == 1 && !$pep.initPos){
+                $pep.initPos = {
+                    top: $this.position().top,
+                    left: $this.position().left,
+                    width: $this.outerWidth(),
+                    height: $this.outerHeight()
+                }
+            }
+
+            $this.css({
+                top: $pep.initPos.top * scale,
+                left: $pep.initPos.left * scale,
+                width: $pep.initPos.width * scale,
+                height: $pep.initPos.height * scale
+            })
         });
+
+        self.scale[index] = scale;//全局赋值
         return false;
     });
 }

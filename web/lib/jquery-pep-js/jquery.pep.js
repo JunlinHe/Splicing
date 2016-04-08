@@ -130,7 +130,7 @@
 
       // 声明全局变量控制拖拽按钮
       this.dragIconMove = false;
-      this.dragPosix = {};
+      this.dragPos = {};
 
     this.init();
     return this;
@@ -184,7 +184,7 @@
 
           var $el = self.$el;
           self.dragIconMove = true;
-          self.dragPosix = {
+          self.dragPos = {
               '$dragIcon': $(this),
               'w': $el.width(),
               'h': $el.height(),
@@ -197,7 +197,7 @@
           this.options.dragIcon,
           this.onDragIcon
       );
-      this.onStopDragIcon = function(ev){ self.dragIconMove = false; self.dragPosix = {}; self.options.onResizeEnd.call(self, ev, self);};
+      this.onStopDragIcon = function(ev){ self.dragIconMove = false; self.dragPos = {}; self.options.onResizeEnd.call(self, ev, self);};
       this.$el.on(
           this.stopTrigger,
           this.options.dragIcon,
@@ -381,54 +381,73 @@
                 // 当拖拽按钮被触发时，不移动元素，只控制其缩放
                 if(this.dragIconMove === true){
 
-                    var $pep = this.$el;
-                    // 获得鼠标移动阀值内的移动数值
-                    var hash = this.handleResizeMove(curX, curY);
-                    var $dragIcon = this.dragPosix.$dragIcon;
+                    var $pep = this.$el,
+                        hash = this.handleResizeMove(curX, curY),// 获得鼠标移动阀值内的移动数值
+                        $dragIcon = this.dragPos.$dragIcon,
+                        width, height;
 
                     if($dragIcon.hasClass('nw')){
+
+                        width = Math.max(this.options.minSize.w, (this.dragPos.x - hash.curX)/this.scale  + this.dragPos.w + 2);
+                        height = Math.max(this.options.minSize.h, (this.dragPos.y - hash.curY)/this.scale + this.dragPos.h + 2);
+                        $pep.animate({
+                            'width': width,
+                            'height': height
+                        }, 0, 'easeOutQuad', {queue: false});
+                        dx = width == this.options.minSize.w ? 0 : dx;
+                        dy = height == this.options.minSize.h ? 0 : dy;
                         this.doMoveTo(dx, dy);
-                        $pep.css({
-                            'width': Math.max(this.options.minSize.w, (this.dragPosix.x - hash.curX)/this.scale  + this.dragPosix.w),
-                            'height': Math.max(this.options.minSize.h, (this.dragPosix.y - hash.curY)/this.scale + this.dragPosix.h)
-                        });
                     }else if($dragIcon.hasClass('n')){
+
+                        height = Math.max(this.options.minSize.h, (this.dragPos.y - hash.curY)/this.scale + this.dragPos.h);
+                        $pep.animate({
+                            'height': height
+                        }, 0, 'easeOutQuad', {queue: false});
+                        dy = height == this.options.minSize.h ? 0 : dy;
                         this.doMoveTo(0, dy);
-                        $pep.css({
-                            'height': Math.max(this.options.minSize.h, (this.dragPosix.y - hash.curY)/this.scale + this.dragPosix.h)
-                        });
                     }else if($dragIcon.hasClass('ne')){
+
+                        width = Math.max(this.options.minSize.w, (hash.curX - this.dragPos.x)/this.scale + this.dragPos.w + 2);
+                        height = Math.max(this.options.minSize.h, (this.dragPos.y - hash.curY)/this.scale + this.dragPos.h + 2);
+                        $pep.animate({
+                            'width': width,
+                            'height': height
+                        }, 0, 'easeOutQuad', {queue: false});
+                        dy = height == this.options.minSize.h ? 0 : dy;
                         this.doMoveTo(0, dy);
-                        $pep.css({
-                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPosix.x)/this.scale + this.dragPosix.w),
-                            'height': Math.max(this.options.minSize.h, (this.dragPosix.y - hash.curY)/this.scale + this.dragPosix.h)
-                        });
                     }else if($dragIcon.hasClass('w')){
+
+                        width = Math.max(this.options.minSize.w, (this.dragPos.x - hash.curX)/this.scale  + this.dragPos.w + 2);
+                        $pep.animate({
+                            'width': width
+                        }, 0, 'easeOutQuad', {queue: false});
+                        dx = width == this.options.minSize.w ? 0 : dx;
                         this.doMoveTo(dx, 0);
-                        $pep.css({
-                            'width': Math.max(this.options.minSize.w, (this.dragPosix.x - hash.curX)/this.scale  + this.dragPosix.w)
-                        });
                     }else if($dragIcon.hasClass('e')){
-                        this.doMoveTo(0, 0);
-                        $pep.css({
-                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPosix.x)/this.scale + this.dragPosix.w)
-                        });
+                        //this.doMoveTo(0, 0);
+                        $pep.animate({
+                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPos.x)/this.scale + this.dragPos.w)
+                        }, 0, 'easeOutQuad', {queue: false})
                     }else if($dragIcon.hasClass('sw')){
+
+                        width = Math.max(this.options.minSize.w, (this.dragPos.x - hash.curX)/this.scale  + this.dragPos.w + 2);
+                        height = Math.max(this.options.minSize.h, (hash.curY - this.dragPos.y)/this.scale + this.dragPos.h + 2);
+                        $pep.animate({
+                            'width': width,
+                            'height': height
+                        }, 0, 'easeOutQuad', {queue: false});
+                        dx = width == this.options.minSize.w ? 0 : dx;
                         this.doMoveTo(dx, 0);
-                        $pep.css({
-                            'width': Math.max(this.options.minSize.w, (this.dragPosix.x - hash.curX)/this.scale  + this.dragPosix.w),
-                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPosix.y)/this.scale + this.dragPosix.h)
-                        });
                     }else if($dragIcon.hasClass('s')){
-                        this.doMoveTo(0, 0);
-                        $pep.css({
-                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPosix.y)/this.scale + this.dragPosix.h)
-                        });
+                        //this.doMoveTo(0, 0);
+                        $pep.animate({
+                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPos.y)/this.scale + this.dragPos.h)
+                        }, 0, 'easeOutQuad', {queue: false})
                     }else{
-                        $pep.css({
-                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPosix.x)/this.scale + this.dragPosix.w),
-                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPosix.y)/this.scale + this.dragPosix.h)
-                        });
+                        $pep.animate({
+                            'width': Math.max(this.options.minSize.w, (hash.curX - this.dragPos.x)/this.scale + this.dragPos.w),
+                            'height': Math.max(this.options.minSize.h, (hash.curY - this.dragPos.y)/this.scale + this.dragPos.h)
+                        }, 0, 'easeOutQuad', {queue: false})
                     }
 
                 }else{
@@ -607,7 +626,7 @@
 
             // 移动停止，重置拖拽缩放标识
             this.dragIconMove = false;
-            this.dragPosix = {};
+            this.dragPos = {};
   };
 
   //  ease();
