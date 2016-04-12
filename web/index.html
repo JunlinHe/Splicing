@@ -40,7 +40,6 @@
     <link href="lib/messenger/css/messenger-theme-flat.css" rel="stylesheet">
     <link href="lib/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="lib/titatoggle/titatoggle-dist.css" rel="stylesheet">
-    <!--<link href="lib/jquery.mCustomScrollbar/css/jquery.mCustomScrollbar.css" rel="stylesheet">-->
     <link href="css/app-pep.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -230,6 +229,15 @@
                                         </span>
                                     </a>
                                 </li>
+                                <li class="sky-btn item dropdown create-scene">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <span data-localize="index.right.action.scene"></span> <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="one-to-one"><span data-localize="index.right.action.one_to_one"></span></a></li>
+                                        <li><a class="one-to-four"><span data-localize="index.right.action.one_to_four"></span></a></li>
+                                    </ul>
+                                </li>
                             </ul>
                             <ul class="action-btn-group right">
                                 <li class="sky-btn item dropdown">
@@ -411,8 +419,11 @@
 
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary del-all" data-dismiss="modal" data-localize="index.btn.del_all"></button>
+                <button type="button" class="btn btn-primary del" data-dismiss="modal" data-localize="index.btn.del"></button>
+                <button type="button" class="btn btn-primary save" data-dismiss="modal" data-localize="index.btn.save"></button>
                 <button type="button" class="btn btn-default no" data-dismiss="modal" data-localize="index.btn.cancel"></button>
-                <button type="button" class="btn btn-primary ok" data-dismiss="modal" data-localize="index.btn.ok"></button>
+                <button type="button" class="btn btn-primary ok" data-dismiss="modal" data-localize="index.btn.open"></button>
             </div>
         </div>
     </div>
@@ -983,7 +994,6 @@
 <!--<script src="lib/fullscreen.js" type="text/javascript"></script>-->
 <!--<script src="lib/jquery-indexeddb/jquery.indexeddb.min.js" type="text/javascript"></script>-->
 <script src="lib/html2canvas/html2canvas.min.js" type="text/javascript"></script>
-<!--<script src="lib/jquery.mCustomScrollbar/js/jquery.mCustomScrollbar.concat.min.js" type="text/javascript"></script>-->
 <script src="lib/slimscroll/jquery.slimscroll.js" type="text/javascript"></script>
 <script src="lib/jquery.inputmask/inputmask.js" type="text/javascript"></script>
 <script src="lib/jquery.inputmask/inputmask.extensions.js" type="text/javascript"></script>
