@@ -2152,6 +2152,9 @@ SkyApp.prototype.handleWindowCtrl = function($pep, winInfo, fullSingleScreen){
 
             $el.attr(self.attrWinInfo, [oLeft, oTop, winInfo[2], winInfo[3]]);
 
+            // 单屏最大化初始位置重置，解决移动后单屏最大化还原上次位置的问题
+            obj.reverPos = false;
+
             self.handleCentering(ev, obj);
         },
         rest: function (ev, obj){
@@ -4430,8 +4433,9 @@ SkyApp.prototype.handleSceneAction = function (){
     self.handleScenePopMenuAction($popMenu);
 
     // 单击预览生效的预设模式
-    $sceneItem.off(self.evTap).on(self.evTap, function(){
+    $sceneItem.off(self.evTap).on(self.evTap, function(e){
 
+        e.preventDefault();
         var $this = $(this),
             $activeList = $(self.selActiveSceneList);
 

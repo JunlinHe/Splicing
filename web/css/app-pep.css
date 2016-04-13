@@ -1148,6 +1148,13 @@ div:active {
 .btn-float-r{
     text-align: right;
 }
+.btn-float-c{
+    margin: 15px 0 0;
+    text-align: center;
+}
+.btn-float-c .btn{
+    width: 100%;
+}
 
 #version_info .company{
     color: #0e408e;
